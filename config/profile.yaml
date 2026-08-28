@@ -58,4 +58,4 @@ generation:
   include_github_statistics: true
   include_repository_statistics: true
   include_activity_section: true
-  output_directory: "dist"
+  output_directory: "."

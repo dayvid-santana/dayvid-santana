@@ -143,7 +143,7 @@ class Generation(BaseModel):
     def validate_output_directory(cls, value: str) -> str:
         """Bloqueia caminhos absolutos e traversal na saída configurada."""
         candidate = Path(value)
-        if (
+        if value != "." and (
             candidate.is_absolute()
             or ".." in candidate.parts
             or not SAFE_OUTPUT_DIRECTORY.fullmatch(value)

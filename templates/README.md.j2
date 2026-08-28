@@ -7,10 +7,10 @@
 
 ![01 // Personnel Record](assets/sections/01-personnel-record.svg)
 
-**Operator:** {{ profile.display_name }}  
-**Callsign:** <code>{{ profile.callsign }}</code>  
-**Division:** {{ profile.division }}  
-**Role:** {{ profile.role }}  
+**Operator:** {{ profile.display_name }}<br>
+**Callsign:** <code>{{ profile.callsign }}</code><br>
+**Division:** {{ profile.division }}<br>
+**Role:** {{ profile.role }}<br>
 **Clearance:** <code>{{ profile.clearance }}</code> · **Location:** {{ profile.location }}
 
 ![05 // Mission Log](assets/sections/05-mission-log.svg)
@@ -27,8 +27,8 @@
 ![02 // Active Operations](assets/sections/02-active-operations.svg)
 
 {% if projects %}{% for project in projects %}
-**{{ project.id|upper }} // {{ project.codename }}** — {{ project.name }}  
-{{ project.description }}  
+**{{ project.id|upper }} // {{ project.codename }}** — {{ project.name }}<br>
+{{ project.description }}<br>
 <code>{{ project.classification }}</code> · <code>{{ project.status }}</code> · Priority <code>{{ project.priority }}</code>
 
 {% endfor %}{% else %}No active operations declared.{% endif %}

@@ -1,64 +1,48 @@
-<!--
-DSI GitHub Command Center
-Autor: Dayvid Santana
-Criado em: 28/08/2026
-Editado em: 28/08/2026
-Objetivo: Apresentar o projeto, instalação e fluxo de uso inicial.
--->
-# DSI GitHub Command Center
+<!-- DSI GitHub Command Center | Autor: Dayvid Santana | Criado/Editado: 28/08/2026 | Objetivo: Renderizar o README de perfil DSI. -->
+<p align="center"><img src="assets/dsi-banner.svg" alt="DSI — Dayvid Systems Initiative, operador Dayvid Santana" width="100%"></p>
 
-Gerador Python para criar um README de perfil GitHub e assets visuais originais da **DSI — Dayvid Systems Initiative**.
+<!-- DSI:AUTO:START -->
 
-## Requisitos
+<p align="center"><sub>DSI // SECURE DEVELOPMENT NETWORK · NODE DEV-01 · STATUS ACTIVE</sub></p>
 
-- Python 3.12 ou superior
-- PowerShell no Windows 11 ou WSL 2
+![01 // Personnel Record](assets/sections/01-personnel-record.svg)
 
-## Instalação
+**Operator:** Dayvid Santana<br>
+**Callsign:** <code>DS-01</code><br>
+**Division:** Software Engineering<br>
+**Role:** Software Developer<br>
+**Clearance:** <code>LEVEL 04</code> · **Location:** Brazil
 
-Windows 11 (PowerShell):
+![05 // Mission Log](assets/sections/05-mission-log.svg)
 
-```powershell
-python -m venv .venv
-.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-pip install -e ".[dev]"
-```
+### Building intelligent software systems
 
-WSL 2:
+Desenvolvedor de software construindo ferramentas, automações, agentes de IA e sistemas escaláveis.
 
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip
-pip install -e ".[dev]"
-```
+**Focus:** <code>Artificial Intelligence</code> · <code>Developer Tooling</code> · <code>Software Architecture</code> · <code>Automation</code> · <code>Data Engineering</code>
+&nbsp;
 
-## Uso inicial
 
-Edite `config/profile.yaml` e valide a configuração:
+![02 // Active Operations](assets/sections/02-active-operations.svg)
 
-```powershell
-dsi-profile validate
-dsi-profile generate
-```
+**OPERATION-001 // DEV-AGENT** — Developer Agent<br>
+Ambiente de desenvolvimento assistido por agentes de IA.<br>
+<code>AI SYSTEM</code> · <code>ACTIVE</code> · Priority <code>HIGH</code>
 
-O comando `generate` cria `dist/README.md`, o banner `dist/assets/dsi-banner.svg` e os divisores SVG. Para visualizar o perfil no GitHub, copie esses arquivos para o repositório especial <usuário>/<usuário>; a futura etapa de publicação automatizará essa cópia com segurança.
+![03 // System Capabilities](assets/sections/03-system-capabilities.svg)
 
-A integração GitHub será opcional e lerá `GITHUB_TOKEN` somente do ambiente ou de `.env` local, que não é versionado.
+- **Python** · Backend · <code>OPERATIONAL</code> · 90%
+- **FastAPI** · Backend · <code>OPERATIONAL</code> · 80%
+- **React** · Frontend · <code>OPERATIONAL</code> · 75%
+- **TypeScript** · Frontend · <code>OPERATIONAL</code> · 75%
+- **Docker** · Infrastructure · <code>TRAINING</code> · 65%
+- **Codex** · Artificial Intelligence · <code>ACTIVE</code> · 80%
 
-## Desenvolvimento
+![06 // Communication Channels](assets/sections/06-communication-channels.svg)
 
-```powershell
-ruff check .
-ruff format --check .
-mypy src
-pytest
-pytest --cov=src/dsi_profile
-```
+Communication channels not configured.
+---
 
-Veja [o plano de implementação](docs/IMPLEMENTATION_PLAN.md) e as regras para contribuidores automatizados em [AGENTS.md](AGENTS.md).
+<p align="center"><sub>DSI-NET // CONNECTION STABLE · ADVANCED SOFTWARE DIVISION</sub></p>
 
-## Licença
-
-MIT. Veja [LICENSE](LICENSE).
+<!-- DSI:AUTO:END -->
