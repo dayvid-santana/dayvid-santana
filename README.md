@@ -35,6 +35,8 @@ Ambiente de desenvolvimento assistido por agentes de IA.<br>
 
 ![03 // System Capabilities](assets/sections/03-system-capabilities.svg)
 
+![System Readiness](assets/system-readiness.svg)
+
 ![System Capabilities Console](assets/capabilities-console.svg)
 
 ![07 // Language Proficiency](assets/sections/07-language-proficiency.svg)
@@ -44,6 +46,10 @@ Ambiente de desenvolvimento assistido por agentes de IA.<br>
 ![09 // Tech Stack](assets/sections/09-tech-stack.svg)
 
 ![Tech Stack Console](assets/tech-stack-console.svg)
+
+![04 // Activity Telemetry](assets/sections/04-activity-telemetry.svg)
+
+![Deployment Map](assets/deployment-map.svg)
 
 ![06 // Communication Channels](assets/sections/06-communication-channels.svg)
 

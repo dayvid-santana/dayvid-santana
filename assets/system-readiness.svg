@@ -1,0 +1,50 @@
+<!-- DSI GitHub Command Center | Autor: Dayvid Santana | Criado/Editado: 28/08/2026 | Objetivo: Renderizar a matriz de prontidão de capacidades DSI. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="432" viewBox="0 0 1280 432" role="img" aria-labelledby="title description">
+  <title id="title">DSI System Readiness</title>
+  <desc id="description">Matriz de prontidão das capacidades técnicas declaradas pelo operador.</desc>
+  <rect width="1280" height="100%" fill="#06131F"/>
+  <path d="M42 78H1238" stroke="#37677D" stroke-width="1"/><text x="42" y="45" font-family="Consolas, 'Courier New', monospace" font-size="18" letter-spacing="2" fill="#74D9FF">SYSTEM READINESS // CAPABILITY MATRIX</text>
+  <text x="930" y="45" font-family="Consolas, 'Courier New', monospace" font-size="12" letter-spacing="2" fill="#648399">OPERATIONAL ENVELOPE</text>
+  <text x="42" y="112" font-family="Consolas, 'Courier New', monospace" font-size="16" fill="#EAF6FF">PYTHON</text>
+  <text x="270" y="112" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#648399">BACKEND</text>
+  <rect x="520" y="98" width="500" height="12" fill="#0A1F2E" stroke="#37677D" stroke-width="1"/>
+  <rect x="520" y="98" width="450" height="12" fill="#74D9FF" opacity=".82"><animate attributeName="width" from="0" to="450" dur="1.4s" fill="freeze"/></rect>
+  <circle cx="1056" cy="104" r="5" fill="#76D6A5"><animate attributeName="opacity" values="1;.35;1" dur="3s" begin="0.0s" repeatCount="indefinite"/></circle>
+  <text x="1075" y="112" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#B7ECFF">OPERATIONAL</text>
+  <text x="1215" y="112" text-anchor="end" font-family="Consolas, 'Courier New', monospace" font-size="14" fill="#EAF6FF">90%</text>
+  <text x="42" y="164" font-family="Consolas, 'Courier New', monospace" font-size="16" fill="#EAF6FF">FASTAPI</text>
+  <text x="270" y="164" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#648399">BACKEND</text>
+  <rect x="520" y="150" width="500" height="12" fill="#0A1F2E" stroke="#37677D" stroke-width="1"/>
+  <rect x="520" y="150" width="400" height="12" fill="#74D9FF" opacity=".82"><animate attributeName="width" from="0" to="400" dur="1.5599999999999998s" fill="freeze"/></rect>
+  <circle cx="1056" cy="156" r="5" fill="#76D6A5"><animate attributeName="opacity" values="1;.35;1" dur="3s" begin="0.2s" repeatCount="indefinite"/></circle>
+  <text x="1075" y="164" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#B7ECFF">OPERATIONAL</text>
+  <text x="1215" y="164" text-anchor="end" font-family="Consolas, 'Courier New', monospace" font-size="14" fill="#EAF6FF">80%</text>
+  <text x="42" y="216" font-family="Consolas, 'Courier New', monospace" font-size="16" fill="#EAF6FF">REACT</text>
+  <text x="270" y="216" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#648399">FRONTEND</text>
+  <rect x="520" y="202" width="500" height="12" fill="#0A1F2E" stroke="#37677D" stroke-width="1"/>
+  <rect x="520" y="202" width="375" height="12" fill="#74D9FF" opacity=".82"><animate attributeName="width" from="0" to="375" dur="1.72s" fill="freeze"/></rect>
+  <circle cx="1056" cy="208" r="5" fill="#76D6A5"><animate attributeName="opacity" values="1;.35;1" dur="3s" begin="0.4s" repeatCount="indefinite"/></circle>
+  <text x="1075" y="216" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#B7ECFF">OPERATIONAL</text>
+  <text x="1215" y="216" text-anchor="end" font-family="Consolas, 'Courier New', monospace" font-size="14" fill="#EAF6FF">75%</text>
+  <text x="42" y="268" font-family="Consolas, 'Courier New', monospace" font-size="16" fill="#EAF6FF">TYPESCRIPT</text>
+  <text x="270" y="268" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#648399">FRONTEND</text>
+  <rect x="520" y="254" width="500" height="12" fill="#0A1F2E" stroke="#37677D" stroke-width="1"/>
+  <rect x="520" y="254" width="375" height="12" fill="#74D9FF" opacity=".82"><animate attributeName="width" from="0" to="375" dur="1.88s" fill="freeze"/></rect>
+  <circle cx="1056" cy="260" r="5" fill="#76D6A5"><animate attributeName="opacity" values="1;.35;1" dur="3s" begin="0.6000000000000001s" repeatCount="indefinite"/></circle>
+  <text x="1075" y="268" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#B7ECFF">OPERATIONAL</text>
+  <text x="1215" y="268" text-anchor="end" font-family="Consolas, 'Courier New', monospace" font-size="14" fill="#EAF6FF">75%</text>
+  <text x="42" y="320" font-family="Consolas, 'Courier New', monospace" font-size="16" fill="#EAF6FF">DOCKER</text>
+  <text x="270" y="320" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#648399">INFRASTRUCTURE</text>
+  <rect x="520" y="306" width="500" height="12" fill="#0A1F2E" stroke="#37677D" stroke-width="1"/>
+  <rect x="520" y="306" width="325" height="12" fill="#74D9FF" opacity=".82"><animate attributeName="width" from="0" to="325" dur="2.04s" fill="freeze"/></rect>
+  <circle cx="1056" cy="312" r="5" fill="#76D6A5"><animate attributeName="opacity" values="1;.35;1" dur="3s" begin="0.8s" repeatCount="indefinite"/></circle>
+  <text x="1075" y="320" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#B7ECFF">TRAINING</text>
+  <text x="1215" y="320" text-anchor="end" font-family="Consolas, 'Courier New', monospace" font-size="14" fill="#EAF6FF">65%</text>
+  <text x="42" y="372" font-family="Consolas, 'Courier New', monospace" font-size="16" fill="#EAF6FF">CODEX</text>
+  <text x="270" y="372" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#648399">ARTIFICIAL INTELLIGENCE</text>
+  <rect x="520" y="358" width="500" height="12" fill="#0A1F2E" stroke="#37677D" stroke-width="1"/>
+  <rect x="520" y="358" width="400" height="12" fill="#74D9FF" opacity=".82"><animate attributeName="width" from="0" to="400" dur="2.2s" fill="freeze"/></rect>
+  <circle cx="1056" cy="364" r="5" fill="#76D6A5"><animate attributeName="opacity" values="1;.35;1" dur="3s" begin="1.0s" repeatCount="indefinite"/></circle>
+  <text x="1075" y="372" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#B7ECFF">ACTIVE</text>
+  <text x="1215" y="372" text-anchor="end" font-family="Consolas, 'Courier New', monospace" font-size="14" fill="#EAF6FF">80%</text>
+</svg>

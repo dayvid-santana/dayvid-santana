@@ -1,0 +1,51 @@
+<!-- DSI GitHub Command Center | Autor: Dayvid Santana | Criado/Editado: 28/08/2026 | Objetivo: Renderizar um mapa abstrato de implantação DSI. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="420" viewBox="0 0 1280 420" role="img" aria-labelledby="title description">
+  <title id="title">DSI Deployment Map</title>
+  <desc id="description">Mapa de nós de implantação para engenharia de software, inteligência artificial, dados e infraestrutura.</desc>
+  <defs><pattern id="map-grid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" fill="none" stroke="#17384A" opacity=".55"/></pattern></defs>
+  <rect width="1280" height="420" fill="#06131F"/><rect width="1280" height="420" fill="url(#map-grid)"/>
+  <text x="42" y="45" font-family="Consolas, 'Courier New', monospace" font-size="18" letter-spacing="2" fill="#74D9FF">DEPLOYMENT MAP // DSI-NET TOPOLOGY</text>
+  <text x="42" y="70" font-family="Consolas, 'Courier New', monospace" font-size="12" letter-spacing="2" fill="#648399">SECURE DEVELOPMENT NETWORK · NODE DEV-01</text>
+  <g stroke="#37677D" stroke-width="2" fill="none" opacity=".9">
+    <path d="M330 215H555M725 215H950M640 130V95M640 300V335M330 215 150 120M330 215 150 310M950 215 1130 120M950 215 1130 310"/>
+  </g>
+  <g transform="translate(640 215)" font-family="Consolas, 'Courier New', monospace" text-anchor="middle">
+    <circle r="85" fill="#0A1F2E" stroke="#74D9FF" stroke-width="3"/><circle r="54" fill="none" stroke="#17384A" stroke-width="2"/>
+    <text y="-7" font-size="18" fill="#EAF6FF">DEV-01</text><text y="17" font-size="11" letter-spacing="2" fill="#74D9FF">COMMAND NODE</text>
+<circle r="72" fill="none" stroke="#74D9FF" opacity=".4"><animate attributeName="r" values="62;82;62" dur="4s" repeatCount="indefinite"/><animate attributeName="opacity" values=".55;0;.55" dur="4s" repeatCount="indefinite"/></circle>  </g>
+  <g transform="translate(330 215)" font-family="Consolas, 'Courier New', monospace" text-anchor="middle">
+    <rect x="-76" y="-31" width="152" height="62" fill="#0A1F2E" stroke="#37677D" stroke-width="2"/><path d="M-76-31H-48M76 31H48" stroke="#74D9FF" stroke-width="2"/>
+    <circle cy="-11" r="4" fill="#76D6A5"><animate attributeName="opacity" values="1;.3;1" dur="3s" begin="0.0s" repeatCount="indefinite"/></circle>
+    <text y="8" font-size="14" fill="#EAF6FF">SOFTWARE</text><text y="23" font-size="10" letter-spacing="1" fill="#648399">ENGINEERING</text>
+  </g>
+  <g transform="translate(150 120)" font-family="Consolas, 'Courier New', monospace" text-anchor="middle">
+    <rect x="-76" y="-31" width="152" height="62" fill="#0A1F2E" stroke="#37677D" stroke-width="2"/><path d="M-76-31H-48M76 31H48" stroke="#74D9FF" stroke-width="2"/>
+    <circle cy="-11" r="4" fill="#76D6A5"><animate attributeName="opacity" values="1;.3;1" dur="3s" begin="0.25s" repeatCount="indefinite"/></circle>
+    <text y="8" font-size="14" fill="#EAF6FF">AI</text><text y="23" font-size="10" letter-spacing="1" fill="#648399">SYSTEMS</text>
+  </g>
+  <g transform="translate(150 310)" font-family="Consolas, 'Courier New', monospace" text-anchor="middle">
+    <rect x="-76" y="-31" width="152" height="62" fill="#0A1F2E" stroke="#37677D" stroke-width="2"/><path d="M-76-31H-48M76 31H48" stroke="#74D9FF" stroke-width="2"/>
+    <circle cy="-11" r="4" fill="#76D6A5"><animate attributeName="opacity" values="1;.3;1" dur="3s" begin="0.5s" repeatCount="indefinite"/></circle>
+    <text y="8" font-size="14" fill="#EAF6FF">DATA</text><text y="23" font-size="10" letter-spacing="1" fill="#648399">ENGINEERING</text>
+  </g>
+  <g transform="translate(1130 120)" font-family="Consolas, 'Courier New', monospace" text-anchor="middle">
+    <rect x="-76" y="-31" width="152" height="62" fill="#0A1F2E" stroke="#37677D" stroke-width="2"/><path d="M-76-31H-48M76 31H48" stroke="#74D9FF" stroke-width="2"/>
+    <circle cy="-11" r="4" fill="#76D6A5"><animate attributeName="opacity" values="1;.3;1" dur="3s" begin="0.75s" repeatCount="indefinite"/></circle>
+    <text y="8" font-size="14" fill="#EAF6FF">INFRA</text><text y="23" font-size="10" letter-spacing="1" fill="#648399">STRUCTURE</text>
+  </g>
+  <g transform="translate(1130 310)" font-family="Consolas, 'Courier New', monospace" text-anchor="middle">
+    <rect x="-76" y="-31" width="152" height="62" fill="#0A1F2E" stroke="#37677D" stroke-width="2"/><path d="M-76-31H-48M76 31H48" stroke="#74D9FF" stroke-width="2"/>
+    <circle cy="-11" r="4" fill="#76D6A5"><animate attributeName="opacity" values="1;.3;1" dur="3s" begin="1.0s" repeatCount="indefinite"/></circle>
+    <text y="8" font-size="14" fill="#EAF6FF">AUTOMATION</text><text y="23" font-size="10" letter-spacing="1" fill="#648399">OPS</text>
+  </g>
+  <g transform="translate(640 95)" font-family="Consolas, 'Courier New', monospace" text-anchor="middle">
+    <rect x="-76" y="-31" width="152" height="62" fill="#0A1F2E" stroke="#37677D" stroke-width="2"/><path d="M-76-31H-48M76 31H48" stroke="#74D9FF" stroke-width="2"/>
+    <circle cy="-11" r="4" fill="#76D6A5"><animate attributeName="opacity" values="1;.3;1" dur="3s" begin="1.25s" repeatCount="indefinite"/></circle>
+    <text y="8" font-size="14" fill="#EAF6FF">QUALITY</text><text y="23" font-size="10" letter-spacing="1" fill="#648399">ASSURANCE</text>
+  </g>
+  <g transform="translate(640 335)" font-family="Consolas, 'Courier New', monospace" text-anchor="middle">
+    <rect x="-76" y="-31" width="152" height="62" fill="#0A1F2E" stroke="#37677D" stroke-width="2"/><path d="M-76-31H-48M76 31H48" stroke="#74D9FF" stroke-width="2"/>
+    <circle cy="-11" r="4" fill="#76D6A5"><animate attributeName="opacity" values="1;.3;1" dur="3s" begin="1.5s" repeatCount="indefinite"/></circle>
+    <text y="8" font-size="14" fill="#EAF6FF">RESEARCH</text><text y="23" font-size="10" letter-spacing="1" fill="#648399">LAB</text>
+  </g>
+</svg>

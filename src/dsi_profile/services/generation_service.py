@@ -80,6 +80,14 @@ class GenerationService:
                 output_directory / "assets" / "tech-stack-console.svg",
                 self._renderer.render("svg/tech-stack-console.svg.j2", **context),
             ),
+            self._renderer.write(
+                output_directory / "assets" / "system-readiness.svg",
+                self._renderer.render("svg/system-readiness.svg.j2", **context),
+            ),
+            self._renderer.write(
+                output_directory / "assets" / "deployment-map.svg",
+                self._renderer.render("svg/deployment-map.svg.j2", **context),
+            ),
         ]
         for index, title, code in SECTIONS:
             slug = title.lower().replace(" ", "-")

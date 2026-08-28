@@ -73,12 +73,14 @@ def test_generates_readme_and_valid_svg_assets(tmp_path: Path) -> None:
     config = load_profile_config(Path("config/profile.yaml"))
     artifacts = _generate(config, tmp_path, tmp_path)
     readme = (tmp_path / "README.md").read_text(encoding="utf-8")
-    assert len(artifacts) == 15
+    assert len(artifacts) == 17
     assert "assets/dsi-banner.svg" in readme
     assert "assets/language-console.svg" in readme
     assert "assets/capabilities-console.svg" in readme
     assert "assets/mission-telemetry.svg" in readme
     assert "assets/tech-stack-console.svg" in readme
+    assert "assets/system-readiness.svg" in readme
+    assert "assets/deployment-map.svg" in readme
     assert "<!-- DSI:AUTO:START -->" in readme
     for asset in artifacts[:-1]:
         assert asset.suffix == ".svg"
@@ -92,7 +94,19 @@ def test_generation_is_deterministic(tmp_path: Path) -> None:
     readme_first = (tmp_path / "README.md").read_text(encoding="utf-8")
     _generate(config, tmp_path, tmp_path)
     assert (tmp_path / "README.md").read_text(encoding="utf-8") == readme_first
-    assert len(first) == 15
+    assert len(first) == 17
+
+
+def test_readiness_and_deployment_map_are_valid_svg(tmp_path: Path) -> None:
+    """Os novos painéis táticos devem ser XML válido e conter dados do operador."""
+    config = load_profile_config(Path("config/profile.yaml"))
+    _generate(config, tmp_path, tmp_path)
+    readiness = (tmp_path / "assets" / "system-readiness.svg").read_text(encoding="utf-8")
+    deployment = (tmp_path / "assets" / "deployment-map.svg").read_text(encoding="utf-8")
+    assert ElementTree.fromstring(readiness).tag.endswith("svg")
+    assert ElementTree.fromstring(deployment).tag.endswith("svg")
+    assert "SYSTEM READINESS" in readiness
+    assert config.profile.node in deployment
 
 
 def test_readme_shows_placeholder_when_language_report_missing(tmp_path: Path) -> None:

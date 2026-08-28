@@ -1,0 +1,18 @@
+<!-- DSI GitHub Command Center | Autor: Dayvid Santana | Criado/Editado: 28/08/2026 | Objetivo: Renderizar a matriz de prontidão de capacidades DSI. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="{{ 120 + (technologies|length * 52) }}" viewBox="0 0 1280 {{ 120 + (technologies|length * 52) }}" role="img" aria-labelledby="title description">
+  <title id="title">DSI System Readiness</title>
+  <desc id="description">Matriz de prontidão das capacidades técnicas declaradas pelo operador.</desc>
+  <rect width="1280" height="100%" fill="{{ theme.background }}"/>
+  <path d="M42 78H1238" stroke="{{ theme.border }}" stroke-width="1"/><text x="42" y="45" font-family="Consolas, 'Courier New', monospace" font-size="18" letter-spacing="2" fill="{{ theme.primary }}">SYSTEM READINESS // CAPABILITY MATRIX</text>
+  <text x="930" y="45" font-family="Consolas, 'Courier New', monospace" font-size="12" letter-spacing="2" fill="{{ theme.muted }}">OPERATIONAL ENVELOPE</text>
+  {% for technology in technologies %}
+  {% set y = 112 + (loop.index0 * 52) %}
+  <text x="42" y="{{ y }}" font-family="Consolas, 'Courier New', monospace" font-size="16" fill="{{ theme.text }}">{{ technology.name|upper }}</text>
+  <text x="270" y="{{ y }}" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="{{ theme.muted }}">{{ technology.category|upper }}</text>
+  <rect x="520" y="{{ y - 14 }}" width="500" height="12" fill="{{ theme.background_secondary }}" stroke="{{ theme.border }}" stroke-width="1"/>
+  <rect x="520" y="{{ y - 14 }}" width="{{ technology.level * 5 }}" height="12" fill="{{ theme.primary }}" opacity=".82">{% if enable_animations %}<animate attributeName="width" from="0" to="{{ technology.level * 5 }}" dur="{{ 1.4 + (loop.index0 * 0.16) }}s" fill="freeze"/>{% endif %}</rect>
+  <circle cx="1056" cy="{{ y - 8 }}" r="5" fill="{{ theme.success }}">{% if enable_animations %}<animate attributeName="opacity" values="1;.35;1" dur="3s" begin="{{ loop.index0 * 0.2 }}s" repeatCount="indefinite"/>{% endif %}</circle>
+  <text x="1075" y="{{ y }}" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="{{ theme.secondary }}">{{ technology.status }}</text>
+  <text x="1215" y="{{ y }}" text-anchor="end" font-family="Consolas, 'Courier New', monospace" font-size="14" fill="{{ theme.text }}">{{ technology.level }}%</text>
+  {% endfor %}
+</svg>

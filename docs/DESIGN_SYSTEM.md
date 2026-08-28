@@ -17,3 +17,10 @@ Quando habilitado, o movimento é lento e informativo: varredura de oito segundo
 radar de doze segundos, pulsos de conectividade e cursor de terminal. Todo efeito
 possui composição estática equivalente e pode ser removido com
 `dsi-profile generate --no-animations`.
+
+## Painéis táticos
+
+System Readiness usa barras de capacidade, rótulos de estado e uma composição
+industrial de painel. Deployment Map usa nós modulares, linhas de enlace e
+geometria de unidade mecanizada abstrata. A inspiração é funcional e original:
+não reproduz interfaces, nomes, símbolos ou assets de obras existentes.

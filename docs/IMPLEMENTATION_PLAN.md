@@ -26,6 +26,7 @@ deverá ser verificada novamente em um interpretador compatível.
 - [x] Gerar os seis divisores técnicos.
 - [x] Referenciar assets locais, com texto alternativo e fallback textual no README.
 - [x] Validar SVG como XML e testar geração determinística.
+- [x] Adicionar painéis System Readiness e Deployment Map ao README.
 
 ## Próximas fases
 
