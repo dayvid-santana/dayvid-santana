@@ -9,9 +9,12 @@
   <rect width="1280" height="360" fill="url(#band)"/><rect width="1280" height="360" fill="url(#grid)" opacity=".55"/>
   <path d="M0 48H480M0 312H1280M810 48H1280" stroke="#37677D" stroke-width="2"/>
   <path d="M40 100H1220M40 266H1220" stroke="#74D9FF" stroke-width="1" opacity=".45"/>
+  <rect x="0" y="-26" width="1280" height="26" fill="#74D9FF" opacity=".08">
+    <animate attributeName="y" values="-26;360" dur="8s" repeatCount="indefinite"/>
+  </rect>
   <g transform="translate(70 116)" fill="none" stroke="#74D9FF" stroke-width="3">
     <path d="M62 0 116 31v62l-54 31L8 93V31Z"/><circle cx="62" cy="62" r="23"/><path d="M62 0v39M8 93l33-19M116 93 83 74M39 62h46"/>
-    <circle cx="62" cy="39" r="4" fill="#76D6A5" stroke="none"/>
+    <circle cx="62" cy="39" r="4" fill="#76D6A5" stroke="none"><animate attributeName="r" values="4;7;4" dur="2.8s" repeatCount="indefinite"/></circle>
   </g>
   <g font-family="Consolas, 'Courier New', monospace" fill="#EAF6FF">
     <text x="230" y="112" font-size="16" letter-spacing="3" fill="#74D9FF">DSI // SECURE DEVELOPMENT NETWORK</text>
@@ -25,7 +28,10 @@
     <circle cx="8" cy="32" r="7" fill="#76D6A5"><animate attributeName="opacity" values="1;.35;1" dur="2.8s" repeatCount="indefinite"/></circle>
     <text x="25" y="37" font-size="17" fill="#EAF6FF">SYSTEM ONLINE</text>
     <path d="M0 55H265M0 80H210M0 105H245" stroke="#74D9FF" stroke-width="2" opacity=".7"/>
-    <text x="0" y="136" font-size="12" fill="#648399">UPLINK STABLE // IDENTITY VERIFIED</text>
+    <text x="0" y="136" font-size="12" fill="#648399">UPLINK STABLE // IDENTITY VERIFIED<tspan fill="#74D9FF"><animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/>_</tspan></text>
   </g>
+  <g transform="translate(1172 226)" fill="none" stroke="#74D9FF" opacity=".7">
+    <circle r="34" stroke-width="1"/><path d="M0-34V34M-34 0H34" stroke-width="1" opacity=".5"/>
+<path d="M0 0 0-31" stroke-width="2"><animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="12s" repeatCount="indefinite"/></path>  </g>
   <text x="42" y="338" font-family="Consolas, 'Courier New', monospace" font-size="11" letter-spacing="2" fill="#648399">DSI-DEV-01 // AUTHORIZED ACCESS // COORD 14.52S 46.63W</text>
 </svg>

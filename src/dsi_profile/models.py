@@ -8,6 +8,7 @@
 from __future__ import annotations
 
 import re
+from datetime import datetime
 from pathlib import Path
 from typing import Annotated
 
@@ -183,3 +184,27 @@ class ProfileConfig(BaseModel):
                 f"projects referencia tecnologias não declaradas: {', '.join(sorted(unknown))}"
             )
         return self
+
+
+class LanguageStat(BaseModel):
+    """Proficiência agregada em uma linguagem, calculada a partir de todos os repositórios."""
+
+    model_config = ConfigDict(extra="forbid")
+    name: Annotated[str, Field(min_length=1, max_length=60)]
+    byte_count: Annotated[int, Field(ge=0)]
+    percentage: Annotated[float, Field(ge=0, le=100)]
+    repository_count: Annotated[int, Field(ge=0)]
+    rank_code: Annotated[str, Field(min_length=1, max_length=20)]
+    title: Annotated[str, Field(min_length=1, max_length=80)]
+
+
+class LanguageReport(BaseModel):
+    """Relatório de proficiência em linguagens, publicado como API JSON estática."""
+
+    model_config = ConfigDict(extra="forbid")
+    github_username: Annotated[str, Field(min_length=1, max_length=39)]
+    generated_at: datetime
+    repository_count: Annotated[int, Field(ge=0)]
+    total_bytes: Annotated[int, Field(ge=0)]
+    operator_title: Annotated[str, Field(min_length=1, max_length=80)]
+    languages: list[LanguageStat]

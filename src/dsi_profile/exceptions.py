@@ -8,3 +8,7 @@
 
 class ProfileConfigurationError(Exception):
     """Indica que o arquivo de configuração não pode ser carregado ou validado."""
+
+
+class GitHubApiError(Exception):
+    """Indica falha ao consultar a API pública do GitHub."""

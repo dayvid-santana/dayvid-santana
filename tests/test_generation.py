@@ -43,3 +43,12 @@ def test_generate_command_writes_requested_output(tmp_path: Path) -> None:
     result = CliRunner().invoke(app, ["generate", "--output", str(tmp_path)])
     assert result.exit_code == 0
     assert (tmp_path / "assets" / "dsi-banner.svg").is_file()
+
+
+def test_no_animations_generates_static_svg(tmp_path: Path) -> None:
+    """A flag da CLI remove animações sem remover o conteúdo visual estático."""
+    result = CliRunner().invoke(app, ["generate", "--output", str(tmp_path), "--no-animations"])
+    banner = (tmp_path / "assets" / "dsi-banner.svg").read_text(encoding="utf-8")
+    assert result.exit_code == 0
+    assert "<animate" not in banner
+    assert "SYSTEM ONLINE" in banner

@@ -12,8 +12,9 @@ import typer
 from rich.console import Console
 
 from dsi_profile.config import load_profile_config
-from dsi_profile.exceptions import ProfileConfigurationError
+from dsi_profile.exceptions import GitHubApiError, ProfileConfigurationError
 from dsi_profile.services.generation_service import GenerationService
+from dsi_profile.services.github_language_service import GitHubLanguageService
 
 app = typer.Typer(no_args_is_help=True, help="DSI GitHub Command Center.")
 console = Console()
@@ -57,3 +58,40 @@ def generate(
         console.print(f"[red]GENERATION FAILED[/red] {error}")
         raise typer.Exit(code=1) from error
     console.print(f"[green]PROFILE GENERATED[/green] {len(artifacts)} files in {output_directory}")
+
+
+@app.command("fetch-languages")
+def fetch_languages(
+    username: Annotated[
+        str | None,
+        typer.Option("--username", "-u", help="Usuário GitHub (padrão: profile.github_username)."),
+    ] = None,
+    config: ConfigPath = Path("config/profile.yaml"),
+    output: Annotated[
+        Path, typer.Option("--output", "-o", help="Caminho do JSON de saída.")
+    ] = Path("data/languages.json"),
+    include_forks: Annotated[
+        bool, typer.Option("--include-forks", help="Inclui repositórios forkados na agregação.")
+    ] = False,
+) -> None:
+    """Agrega bytes de código por linguagem em todos os repositórios e publica um JSON estático."""
+    resolved_username = username
+    if resolved_username is None:
+        try:
+            resolved_username = load_profile_config(config).profile.github_username
+        except ProfileConfigurationError as error:
+            console.print(f"[red]LANGUAGE FETCH FAILED[/red] {error}")
+            raise typer.Exit(code=1) from error
+    try:
+        with GitHubLanguageService() as service:
+            report = service.build_report(resolved_username, include_forks=include_forks)
+    except GitHubApiError as error:
+        console.print(f"[red]LANGUAGE FETCH FAILED[/red] {error}")
+        raise typer.Exit(code=1) from error
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(report.model_dump_json(indent=2) + "\n", encoding="utf-8", newline="\n")
+    console.print(
+        f"[green]LANGUAGE REPORT GENERATED[/green] {report.operator_title} · "
+        f"{len(report.languages)} languages across {report.repository_count} repositories "
+        f"-> {output}"
+    )

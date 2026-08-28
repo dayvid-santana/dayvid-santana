@@ -55,6 +55,7 @@ class GenerationService:
                         title=title,
                         code=code,
                         theme=config.theme,
+                        enable_animations=config.generation.enable_animations,
                     ),
                 )
             )
