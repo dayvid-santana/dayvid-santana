@@ -13,6 +13,10 @@
 **Role:** Software Developer<br>
 **Clearance:** <code>LEVEL 04</code> · **Location:** Brazil
 
+![08 // Mission Telemetry](assets/sections/08-mission-telemetry.svg)
+
+![Mission Telemetry Console](assets/mission-telemetry.svg)
+
 ![05 // Mission Log](assets/sections/05-mission-log.svg)
 
 ### Building intelligent software systems
@@ -31,12 +35,15 @@ Ambiente de desenvolvimento assistido por agentes de IA.<br>
 
 ![03 // System Capabilities](assets/sections/03-system-capabilities.svg)
 
-- **Python** · Backend · <code>OPERATIONAL</code> · 90%
-- **FastAPI** · Backend · <code>OPERATIONAL</code> · 80%
-- **React** · Frontend · <code>OPERATIONAL</code> · 75%
-- **TypeScript** · Frontend · <code>OPERATIONAL</code> · 75%
-- **Docker** · Infrastructure · <code>TRAINING</code> · 65%
-- **Codex** · Artificial Intelligence · <code>ACTIVE</code> · 80%
+![System Capabilities Console](assets/capabilities-console.svg)
+
+![07 // Language Proficiency](assets/sections/07-language-proficiency.svg)
+
+![Language Proficiency Console](assets/language-console.svg)
+
+![09 // Tech Stack](assets/sections/09-tech-stack.svg)
+
+![Tech Stack Console](assets/tech-stack-console.svg)
 
 ![06 // Communication Channels](assets/sections/06-communication-channels.svg)
 

@@ -208,3 +208,16 @@ class LanguageReport(BaseModel):
     total_bytes: Annotated[int, Field(ge=0)]
     operator_title: Annotated[str, Field(min_length=1, max_length=80)]
     languages: list[LanguageStat]
+
+
+class MissionStats(BaseModel):
+    """Métricas agregadas de atividade pública no GitHub, publicadas como API JSON estática."""
+
+    model_config = ConfigDict(extra="forbid")
+    github_username: Annotated[str, Field(min_length=1, max_length=39)]
+    generated_at: datetime
+    repository_count: Annotated[int, Field(ge=0)]
+    star_count: Annotated[int, Field(ge=0)]
+    pull_request_count: Annotated[int, Field(ge=0)]
+    issue_count: Annotated[int, Field(ge=0)]
+    commit_count: Annotated[int, Field(ge=0)]

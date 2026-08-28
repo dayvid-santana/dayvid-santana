@@ -1,0 +1,65 @@
+{
+  "github_username": "dayvid-santana",
+  "generated_at": "2026-08-28T14:16:48.468626Z",
+  "repository_count": 3,
+  "total_bytes": 361933,
+  "operator_title": "OMEGA-CLASS TYPESCRIPT OPERATOR",
+  "languages": [
+    {
+      "name": "TypeScript",
+      "byte_count": 316417,
+      "percentage": 87.42,
+      "repository_count": 1,
+      "rank_code": "OMEGA",
+      "title": "PRIMARY SPECIALIZATION"
+    },
+    {
+      "name": "Python",
+      "byte_count": 21752,
+      "percentage": 6.01,
+      "repository_count": 1,
+      "rank_code": "BRAVO",
+      "title": "OPERATIONAL PROFICIENCY"
+    },
+    {
+      "name": "JavaScript",
+      "byte_count": 12168,
+      "percentage": 3.36,
+      "repository_count": 1,
+      "rank_code": "CHARLIE",
+      "title": "FIELD FAMILIARITY"
+    },
+    {
+      "name": "CSS",
+      "byte_count": 5710,
+      "percentage": 1.58,
+      "repository_count": 1,
+      "rank_code": "CHARLIE",
+      "title": "FIELD FAMILIARITY"
+    },
+    {
+      "name": "Jinja",
+      "byte_count": 4040,
+      "percentage": 1.12,
+      "repository_count": 1,
+      "rank_code": "CHARLIE",
+      "title": "FIELD FAMILIARITY"
+    },
+    {
+      "name": "Dockerfile",
+      "byte_count": 1328,
+      "percentage": 0.37,
+      "repository_count": 1,
+      "rank_code": "DELTA",
+      "title": "RECONNAISSANCE EXPOSURE"
+    },
+    {
+      "name": "HTML",
+      "byte_count": 518,
+      "percentage": 0.14,
+      "repository_count": 1,
+      "rank_code": "DELTA",
+      "title": "RECONNAISSANCE EXPOSURE"
+    }
+  ]
+}

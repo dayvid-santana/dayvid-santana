@@ -1,0 +1,76 @@
+<!-- DSI GitHub Command Center | Autor: Dayvid Santana | Criado/Editado: 28/08/2026 | Objetivo: Renderizar o console de linguagens + radar de setores de foco. -->
+{% set panel_height = 440 %}
+{% set top_languages = languages_report.languages[:8] if languages_report else [] %}
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="{{ panel_height }}" viewBox="0 0 1280 {{ panel_height }}" role="img" aria-labelledby="ts-title ts-desc">
+  <title id="ts-title">DSI — Tech Stack Console</title>
+  <desc id="ts-desc">Distribuição de linguagens por peso de código e de tecnologias por setor de foco.</desc>
+  <defs>
+    <pattern id="ts-grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="{{ theme.grid }}" stroke-width="1" opacity=".5"/></pattern>
+  </defs>
+  <rect width="1280" height="{{ panel_height }}" fill="{{ theme.background }}"/>
+  <rect width="1280" height="{{ panel_height }}" fill="url(#ts-grid)" opacity=".5"/>
+  <rect x="1" y="1" width="1278" height="{{ panel_height - 2 }}" fill="none" stroke="{{ theme.border }}" stroke-width="2"/>
+  {% if enable_animations %}
+  <rect x="0" y="-26" width="1280" height="26" fill="{{ theme.primary }}" opacity=".07">
+    <animate attributeName="y" values="-26;{{ panel_height }}" dur="8s" repeatCount="indefinite"/>
+  </rect>
+  {% endif %}
+  <g font-family="Consolas, 'Courier New', monospace">
+    <text x="40" y="48" font-size="20" font-weight="700" letter-spacing="2" fill="{{ theme.text }}">TECH STACK</text>
+    <text x="40" y="70" font-size="12" letter-spacing="2" fill="{{ theme.muted }}">LANGUAGE &amp; FOCUS BREAKDOWN{% if enable_animations %}<tspan fill="{{ theme.primary }}"><animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/>_</tspan>{% endif %}</text>
+    <circle cx="1152" cy="43" r="6" fill="{{ theme.success }}">{% if enable_animations %}<animate attributeName="opacity" values="1;.35;1" dur="2.8s" repeatCount="indefinite"/>{% endif %}</circle>
+    <text x="1168" y="48" font-size="13" font-weight="700" letter-spacing="1" fill="{{ theme.primary }}">{{ technologies|length }} SYSTEMS // {{ languages_report.languages|length if languages_report else 0 }} LANGUAGES</text>
+  </g>
+  <path d="M40 90H1240" stroke="{{ theme.primary }}" stroke-width="1" opacity=".45"/>
+  <line x1="640" y1="100" x2="640" y2="{{ panel_height - 20 }}" stroke="{{ theme.border }}" stroke-width="1" opacity=".5"/>
+
+  <text x="40" y="112" font-family="Consolas, 'Courier New', monospace" font-size="11" letter-spacing="2" fill="{{ theme.muted }}">LANGUAGE TELEMETRY</text>
+  {% if top_languages %}
+  <g font-family="Consolas, 'Courier New', monospace">
+    {% for language in top_languages %}
+    {% set row_y = 145 + loop.index0 * 27 %}
+    {% set bar_color = language_color(language.name) %}
+    {% set fill_width = (290 * language.percentage / 100) | round(1) %}
+    <g>
+      <text x="40" y="{{ row_y + 4 }}" font-size="12" fill="{{ theme.text }}">{{ language.name }}</text>
+      <rect x="170" y="{{ row_y - 6 }}" height="12" rx="3" fill="{{ bar_color }}" opacity=".85" width="{{ fill_width if not enable_animations else 0 }}">
+        {% if enable_animations %}<animate attributeName="width" from="0" to="{{ fill_width }}" dur="0.8s" begin="{{ (loop.index0 * 0.1) | round(2) }}s" fill="freeze"/>{% endif %}
+      </rect>
+      <text x="480" y="{{ row_y + 4 }}" font-size="11" fill="{{ theme.muted }}">{{ language.percentage }}%</text>
+    </g>
+    {% endfor %}
+  </g>
+  {% else %}
+  <text x="40" y="150" font-family="Consolas, 'Courier New', monospace" font-size="13" fill="{{ theme.muted }}">NO TELEMETRY. RUN <tspan fill="{{ theme.primary }}">dsi-profile fetch-languages</tspan>.</text>
+  {% endif %}
+
+  <text x="680" y="112" font-family="Consolas, 'Courier New', monospace" font-size="11" letter-spacing="2" fill="{{ theme.muted }}">FOCUS SECTORS</text>
+  {% if sector_chart %}
+  <circle cx="{{ sector_chart.center_x }}" cy="{{ sector_chart.center_y }}" r="{{ (sector_chart.radius / 3) | round(1) }}" fill="none" stroke="{{ theme.muted }}" stroke-width="0.5" stroke-dasharray="3,3" opacity=".25"/>
+  <circle cx="{{ sector_chart.center_x }}" cy="{{ sector_chart.center_y }}" r="{{ (sector_chart.radius * 2 / 3) | round(1) }}" fill="none" stroke="{{ theme.muted }}" stroke-width="0.5" stroke-dasharray="3,3" opacity=".25"/>
+  <circle cx="{{ sector_chart.center_x }}" cy="{{ sector_chart.center_y }}" r="{{ sector_chart.radius }}" fill="none" stroke="{{ theme.muted }}" stroke-width="0.5" stroke-dasharray="3,3" opacity=".25"/>
+  {% for sector in sector_chart.sectors %}
+  <path d="{{ sector.path_d }}" fill="{{ sector.color }}" fill-opacity=".12" stroke="{{ sector.color }}" stroke-opacity=".4" stroke-width="0.5"/>
+  {% endfor %}
+  {% if enable_animations %}
+  <g>
+    <polygon points="{{ sector_chart.center_x - 2.5 }},{{ sector_chart.center_y }} {{ sector_chart.sweep_tip_x }},{{ sector_chart.sweep_tip_y }} {{ sector_chart.center_x + 2.5 }},{{ sector_chart.center_y }}" fill="{{ theme.primary }}" opacity=".35"/>
+    <circle cx="{{ sector_chart.sweep_tip_x }}" cy="{{ sector_chart.sweep_tip_y }}" r="2" fill="{{ theme.primary }}" opacity=".7">
+      <animate attributeName="opacity" values=".4;.9;.4" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <animateTransform attributeName="transform" type="rotate" from="0 {{ sector_chart.center_x }} {{ sector_chart.center_y }}" to="360 {{ sector_chart.center_x }} {{ sector_chart.center_y }}" dur="12s" repeatCount="indefinite"/>
+  </g>
+  {% endif %}
+  {% for dot in sector_chart.dots %}
+  <circle cx="{{ dot.x }}" cy="{{ dot.y }}" r="2.5" fill="{{ dot.color }}" opacity=".35">
+    {% if enable_animations %}<animate attributeName="opacity" values=".35;.35;1;.35;.35" keyTimes="0;0.04;0.06;0.10;1" dur="8s" begin="{{ dot.begin }}s" repeatCount="indefinite"/>{% endif %}
+  </circle>
+  {% endfor %}
+  <g font-family="Consolas, 'Courier New', monospace">
+    {% for sector in sector_chart.sectors %}
+    <text x="{{ sector.label_x }}" y="{{ sector.label_y }}" fill="{{ sector.color }}" font-size="10" text-anchor="{{ sector.label_anchor }}">{{ sector.name }}</text>
+    <text x="{{ sector.label_x }}" y="{{ sector.count_label_y }}" fill="{{ theme.muted }}" font-size="9" text-anchor="{{ sector.label_anchor }}">({{ sector.count }})</text>
+    {% endfor %}
+  </g>
+  {% endif %}
+</svg>

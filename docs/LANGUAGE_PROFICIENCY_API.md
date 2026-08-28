@@ -65,3 +65,18 @@ proficiência de acordo com o percentual do total de bytes escritos nela:
 
 `operator_title` resume a linguagem dominante em um único título, ex.:
 `OMEGA-CLASS PYTHON OPERATOR`.
+
+## Console visual animado
+
+`dsi-profile generate` também renderiza `assets/language-console.svg`, um painel DSI com
+barras de proficiência animadas (uma por linguagem, coloridas pelo `rank_code`), varredura
+de fundo e indicador de status — embutido no README raiz logo após a seção "System
+Capabilities". Sem `data/languages.json`, o console mostra "NO TELEMETRY RECEIVED" em vez de
+falhar a geração.
+
+## Atualização automática
+
+O workflow [`update-profile.yml`](../.github/workflows/update-profile.yml) roda todo dia às
+06:00 UTC (e sob demanda via `workflow_dispatch`): executa `fetch-languages` e `generate`, e
+faz commit + push apenas quando algo muda. Assim `data/languages.json`, o README e os SVGs
+ficam sempre refletindo os repositórios atuais, sem intervenção manual.

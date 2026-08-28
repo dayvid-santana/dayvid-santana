@@ -13,6 +13,12 @@
 **Role:** {{ profile.role }}<br>
 **Clearance:** <code>{{ profile.clearance }}</code> · **Location:** {{ profile.location }}
 
+![08 // Mission Telemetry](assets/sections/08-mission-telemetry.svg)
+
+![Mission Telemetry Console](assets/mission-telemetry.svg)
+
+{% if not mission_stats %}Mission telemetry not generated yet. Run `dsi-profile fetch-stats`.
+{% endif %}
 ![05 // Mission Log](assets/sections/05-mission-log.svg)
 
 ### {{ mission.title }}
@@ -34,8 +40,17 @@
 {% endfor %}{% else %}No active operations declared.{% endif %}
 ![03 // System Capabilities](assets/sections/03-system-capabilities.svg)
 
-{% for technology in technologies %}- **{{ technology.name }}** · {{ technology.category }} · <code>{{ technology.status }}</code> · {{ technology.level }}%
-{% endfor %}
+![System Capabilities Console](assets/capabilities-console.svg)
+
+![07 // Language Proficiency](assets/sections/07-language-proficiency.svg)
+
+![Language Proficiency Console](assets/language-console.svg)
+
+{% if not languages_report %}Language proficiency data not generated yet. Run `dsi-profile fetch-languages`.
+{% endif %}
+![09 // Tech Stack](assets/sections/09-tech-stack.svg)
+
+![Tech Stack Console](assets/tech-stack-console.svg)
 
 ![06 // Communication Channels](assets/sections/06-communication-channels.svg)
 

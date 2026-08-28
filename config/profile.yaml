@@ -4,7 +4,7 @@
 # Editado em: 28/08/2026
 # Objetivo: Definir os dados variáveis do perfil DSI a serem validados e renderizados.
 profile:
-  github_username: "SEU_USUARIO"
+  github_username: "dayvid-santana"
   display_name: "Dayvid Santana"
   organization_name: "Dayvid Systems Initiative"
   organization_short_name: "DSI"
