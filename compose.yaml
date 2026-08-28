@@ -1,0 +1,89 @@
+name: ambiente-warflow
+
+services:
+  banco:
+    image: postgres:17-alpine
+    container_name: warflow-banco
+
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+    volumes:
+      - dados_postgres:/var/lib/postgresql/data
+
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+    networks:
+      - rede-warflow
+
+    restart: unless-stopped
+
+  integrador:
+    build:
+      context: ./projeto-integrador
+      dockerfile: Dockerfile
+
+    container_name: warflow-integrador
+
+    environment:
+      AIRFLOW_URL: ${AIRFLOW_URL}
+      AIRFLOW_USERNAME: ${AIRFLOW_USERNAME}
+      AIRFLOW_PASSWORD: ${AIRFLOW_PASSWORD}
+
+      DATABASE_URL: >-
+        postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@banco:5432/${POSTGRES_DB}
+
+    volumes:
+      - ./projeto-integrador:/app
+
+    depends_on:
+      banco:
+        condition: service_healthy
+
+    networks:
+      - rede-warflow
+
+    restart: unless-stopped
+
+  consumidor:
+    build:
+      context: ./projeto-consumidor
+      dockerfile: Dockerfile
+
+    container_name: warflow-consumidor
+
+    environment:
+      DATABASE_URL: >-
+        postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@banco:5432/${POSTGRES_DB}
+
+    volumes:
+      - ./projeto-consumidor:/app
+
+    ports:
+      - "8000:8000"
+
+    depends_on:
+      banco:
+        condition: service_healthy
+
+    networks:
+      - rede-warflow
+
+    restart: unless-stopped
+
+volumes:
+  dados_postgres:
+
+networks:
+  rede-warflow:
+    driver: bridge
