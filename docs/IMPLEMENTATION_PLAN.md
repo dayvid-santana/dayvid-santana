@@ -19,13 +19,19 @@ Validação concluída com Ruff, mypy e pytest. O host atual possui Python 3.11.
 instalação declarada continua exigindo Python 3.12+, portanto a instalação editável
 deverá ser verificada novamente em um interpretador compatível.
 
+## Fase 2 — README e primeira telemetria visual — Concluída
+
+- [x] Criar template determinístico do README de perfil.
+- [x] Gerar banner SVG original da DSI.
+- [x] Gerar os seis divisores técnicos.
+- [x] Referenciar assets locais, com texto alternativo e fallback textual no README.
+- [x] Validar SVG como XML e testar geração determinística.
+
 ## Próximas fases
 
-1. Gerador determinístico do README e marcadores automáticos.
-2. Banner e divisores SVG com design system documentado.
-3. Cards de projetos e badges.
-4. Integração opcional, cache e modo offline para GitHub.
-5. Preview HTML local.
-6. Publicação segura e limpeza seletiva.
-7. Workflows do GitHub Actions.
-8. Refinamento visual, acessibilidade e snapshots.
+1. Cards de projetos e badges.
+2. Integração opcional, cache e modo offline para GitHub.
+3. Preview HTML local.
+4. Publicação segura e limpeza seletiva.
+5. Workflows do GitHub Actions.
+6. Refinamento visual, acessibilidade e snapshots.

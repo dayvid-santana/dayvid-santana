@@ -1,0 +1,31 @@
+<!-- DSI GitHub Command Center | Autor: Dayvid Santana | Criado/Editado: 28/08/2026 | Objetivo: Renderizar o banner DSI original. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="360" viewBox="0 0 1280 360" role="img" aria-labelledby="title description">
+  <title id="title">DSI — Dayvid Systems Initiative</title>
+  <desc id="description">Painel de comando DSI do operador {{ profile.display_name }}.</desc>
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="{{ theme.grid }}" stroke-width="1" opacity=".55"/></pattern>
+    <linearGradient id="band" x1="0" x2="1"><stop stop-color="{{ theme.background }}"/><stop offset="1" stop-color="{{ theme.background_secondary }}"/></linearGradient>
+  </defs>
+  <rect width="1280" height="360" fill="url(#band)"/><rect width="1280" height="360" fill="url(#grid)" opacity=".55"/>
+  <path d="M0 48H480M0 312H1280M810 48H1280" stroke="{{ theme.border }}" stroke-width="2"/>
+  <path d="M40 100H1220M40 266H1220" stroke="{{ theme.primary }}" stroke-width="1" opacity=".45"/>
+  <g transform="translate(70 116)" fill="none" stroke="{{ theme.primary }}" stroke-width="3">
+    <path d="M62 0 116 31v62l-54 31L8 93V31Z"/><circle cx="62" cy="62" r="23"/><path d="M62 0v39M8 93l33-19M116 93 83 74M39 62h46"/>
+    <circle cx="62" cy="39" r="4" fill="{{ theme.success }}" stroke="none"/>
+  </g>
+  <g font-family="Consolas, 'Courier New', monospace" fill="{{ theme.text }}">
+    <text x="230" y="112" font-size="16" letter-spacing="3" fill="{{ theme.primary }}">DSI // SECURE DEVELOPMENT NETWORK</text>
+    <text x="230" y="165" font-size="47" font-weight="700" letter-spacing="2">DAYVID SYSTEMS INITIATIVE</text>
+    <text x="233" y="195" font-size="16" letter-spacing="2" fill="{{ theme.secondary }}">{{ profile.organization_subtitle|upper }}</text>
+    <text x="230" y="244" font-size="22">OPERATOR: {{ profile.display_name|upper }}</text>
+    <text x="230" y="274" font-size="15" fill="{{ theme.muted }}">CALLSIGN {{ profile.callsign }}   //   DIVISION {{ profile.division|upper }}</text>
+  </g>
+  <g transform="translate(925 117)" font-family="Consolas, 'Courier New', monospace">
+    <text x="0" y="0" font-size="13" fill="{{ theme.muted }}">NODE {{ profile.node }} / DSI-NET</text>
+    <circle cx="8" cy="32" r="7" fill="{{ theme.success }}">{% if enable_animations %}<animate attributeName="opacity" values="1;.35;1" dur="2.8s" repeatCount="indefinite"/>{% endif %}</circle>
+    <text x="25" y="37" font-size="17" fill="{{ theme.text }}">SYSTEM ONLINE</text>
+    <path d="M0 55H265M0 80H210M0 105H245" stroke="{{ theme.primary }}" stroke-width="2" opacity=".7"/>
+    <text x="0" y="136" font-size="12" fill="{{ theme.muted }}">UPLINK STABLE // IDENTITY VERIFIED</text>
+  </g>
+  <text x="42" y="338" font-family="Consolas, 'Courier New', monospace" font-size="11" letter-spacing="2" fill="{{ theme.muted }}">DSI-DEV-01 // AUTHORIZED ACCESS // COORD 14.52S 46.63W</text>
+</svg>

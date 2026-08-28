@@ -12,3 +12,4 @@ Objetivo: Manter um histórico conciso das alterações entregues.
 ### Added
 
 - Fundação da Fase 1: configuração, validação Pydantic, CLI `validate` e testes iniciais.
+- Geração de README de perfil, banner SVG DSI e seis divisores técnicos via `dsi-profile generate`.

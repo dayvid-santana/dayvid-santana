@@ -40,9 +40,12 @@ Edite `config/profile.yaml` e valide a configuração:
 
 ```powershell
 dsi-profile validate
+dsi-profile generate
 ```
 
-Os próximos comandos de geração, preview e publicação serão entregues nas fases seguintes. A integração GitHub será opcional e lerá `GITHUB_TOKEN` somente do ambiente ou de `.env` local, que não é versionado.
+O comando `generate` cria `dist/README.md`, o banner `dist/assets/dsi-banner.svg` e os divisores SVG. Para visualizar o perfil no GitHub, copie esses arquivos para o repositório especial <usuário>/<usuário>; a futura etapa de publicação automatizará essa cópia com segurança.
+
+A integração GitHub será opcional e lerá `GITHUB_TOKEN` somente do ambiente ou de `.env` local, que não é versionado.
 
 ## Desenvolvimento
 

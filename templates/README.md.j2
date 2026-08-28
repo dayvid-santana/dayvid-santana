@@ -1,0 +1,51 @@
+<!-- DSI GitHub Command Center | Autor: Dayvid Santana | Criado/Editado: 28/08/2026 | Objetivo: Renderizar o README de perfil DSI. -->
+<p align="center"><img src="assets/dsi-banner.svg" alt="DSI — Dayvid Systems Initiative, operador {{ profile.display_name }}" width="100%"></p>
+
+<!-- DSI:AUTO:START -->
+
+<p align="center"><sub>DSI // SECURE DEVELOPMENT NETWORK · NODE {{ profile.node }} · STATUS {{ profile.status }}</sub></p>
+
+![01 // Personnel Record](assets/sections/01-personnel-record.svg)
+
+**Operator:** {{ profile.display_name }}  
+**Callsign:** <code>{{ profile.callsign }}</code>  
+**Division:** {{ profile.division }}  
+**Role:** {{ profile.role }}  
+**Clearance:** <code>{{ profile.clearance }}</code> · **Location:** {{ profile.location }}
+
+![05 // Mission Log](assets/sections/05-mission-log.svg)
+
+### {{ mission.title }}
+
+{{ mission.description }}
+
+**Focus:** {% for item in focus %}<code>{{ item }}</code>{% if not loop.last %} · {% endif %}{% endfor %}
+
+&nbsp;
+
+
+![02 // Active Operations](assets/sections/02-active-operations.svg)
+
+{% if projects %}{% for project in projects %}
+**{{ project.id|upper }} // {{ project.codename }}** — {{ project.name }}  
+{{ project.description }}  
+<code>{{ project.classification }}</code> · <code>{{ project.status }}</code> · Priority <code>{{ project.priority }}</code>
+
+{% endfor %}{% else %}No active operations declared.{% endif %}
+![03 // System Capabilities](assets/sections/03-system-capabilities.svg)
+
+{% for technology in technologies %}- **{{ technology.name }}** · {{ technology.category }} · <code>{{ technology.status }}</code> · {{ technology.level }}%
+{% endfor %}
+
+![06 // Communication Channels](assets/sections/06-communication-channels.svg)
+
+{% if social.github %}- GitHub: {{ social.github }}
+{% endif %}{% if social.linkedin %}- LinkedIn: {{ social.linkedin }}
+{% endif %}{% if social.email %}- Email: {{ social.email }}
+{% endif %}{% if not social.github and not social.linkedin and not social.email %}Communication channels not configured.
+{% endif %}
+---
+
+<p align="center"><sub>DSI-NET // CONNECTION STABLE · ADVANCED SOFTWARE DIVISION</sub></p>
+
+<!-- DSI:AUTO:END -->
