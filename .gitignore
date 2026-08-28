@@ -1,0 +1,18 @@
+# DSI GitHub Command Center
+# Autor: Dayvid Santana
+# Criado em: 28/08/2026
+# Editado em: 28/08/2026
+# Objetivo: Excluir ambientes, segredos, caches e produtos locais do controle de versão.
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.cache/
+.env
+dist/*
+!dist/.gitkeep
+*.backup-*

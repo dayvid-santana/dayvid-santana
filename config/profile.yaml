@@ -1,0 +1,61 @@
+# DSI GitHub Command Center
+# Autor: Dayvid Santana
+# Criado em: 28/08/2026
+# Editado em: 28/08/2026
+# Objetivo: Definir os dados variáveis do perfil DSI a serem validados e renderizados.
+profile:
+  github_username: "SEU_USUARIO"
+  display_name: "Dayvid Santana"
+  organization_name: "Dayvid Systems Initiative"
+  organization_short_name: "DSI"
+  organization_subtitle: "Advanced Software Division"
+  role: "Software Developer"
+  callsign: "DS-01"
+  node: "DEV-01"
+  division: "Software Engineering"
+  status: "ACTIVE"
+  clearance: "LEVEL 04"
+  location: "Brazil"
+  locale: "pt-BR"
+mission:
+  title: "Building intelligent software systems"
+  description: "Desenvolvedor de software construindo ferramentas, automações, agentes de IA e sistemas escaláveis."
+focus: ["Artificial Intelligence", "Developer Tooling", "Software Architecture", "Automation", "Data Engineering"]
+technologies:
+  - { name: "Python", category: "Backend", status: "OPERATIONAL", level: 90 }
+  - { name: "FastAPI", category: "Backend", status: "OPERATIONAL", level: 80 }
+  - { name: "React", category: "Frontend", status: "OPERATIONAL", level: 75 }
+  - { name: "TypeScript", category: "Frontend", status: "OPERATIONAL", level: 75 }
+  - { name: "Docker", category: "Infrastructure", status: "TRAINING", level: 65 }
+  - { name: "Codex", category: "Artificial Intelligence", status: "ACTIVE", level: 80 }
+projects:
+  - id: "operation-001"
+    codename: "DEV-AGENT"
+    name: "Developer Agent"
+    description: "Ambiente de desenvolvimento assistido por agentes de IA."
+    repository: ""
+    classification: "AI SYSTEM"
+    status: "ACTIVE"
+    priority: "HIGH"
+    technologies: ["Python", "Codex"]
+social: { github: "", linkedin: "", email: "" }
+theme:
+  name: "dsi-command"
+  background: "#06131F"
+  background_secondary: "#0A1F2E"
+  primary: "#74D9FF"
+  secondary: "#B7ECFF"
+  text: "#EAF6FF"
+  muted: "#648399"
+  warning: "#EAB768"
+  success: "#76D6A5"
+  grid: "#17384A"
+  border: "#37677D"
+generation:
+  enable_animations: true
+  generate_dark_variant: true
+  generate_light_variant: true
+  include_github_statistics: true
+  include_repository_statistics: true
+  include_activity_section: true
+  output_directory: "dist"
