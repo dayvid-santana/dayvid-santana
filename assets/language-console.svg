@@ -13,7 +13,7 @@
   </rect>
   <g font-family="Consolas, 'Courier New', monospace">
     <text x="40" y="48" font-size="20" font-weight="700" letter-spacing="2" fill="#EAF6FF">LANGUAGE PROFICIENCY</text>
-    <text x="40" y="70" font-size="12" letter-spacing="2" fill="#648399">SOURCE CODE ANALYSIS // 3 REPOSITORIES SCANNED<tspan fill="#74D9FF"><animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/>_</tspan></text>
+    <text x="40" y="70" font-size="12" letter-spacing="2" fill="#648399">SOURCE CODE ANALYSIS // 4 REPOSITORIES SCANNED<tspan fill="#74D9FF"><animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/>_</tspan></text>
     <circle cx="1152" cy="43" r="6" fill="#76D6A5"><animate attributeName="opacity" values="1;.35;1" dur="2.8s" repeatCount="indefinite"/></circle>
     <text x="1168" y="48" font-size="13" font-weight="700" letter-spacing="1" fill="#74D9FF">OMEGA-CLASS TYPESCRIPT OPERATOR</text>
   </g>
@@ -24,8 +24,8 @@
       <text x="40" y="121" font-size="15" font-weight="600" fill="#EAF6FF">TypeScript</text>
       <rect x="380" y="109" width="500" height="14" rx="3" fill="#0A1F2E" stroke="#37677D" stroke-width="1"/>
       <rect x="380" y="109" height="14" rx="3" fill="#76D6A5" width="0">
-<animate attributeName="width" from="0" to="437.1" dur="1s" begin="0.0s" fill="freeze"/>      </rect>
-      <text x="892" y="121" font-size="13" fill="#EAF6FF">87.42%</text>
+<animate attributeName="width" from="0" to="376.9" dur="1s" begin="0.0s" fill="freeze"/>      </rect>
+      <text x="892" y="121" font-size="13" fill="#EAF6FF">75.37%</text>
       <rect x="950" y="108" width="76" height="20" rx="3" fill="none" stroke="#76D6A5" stroke-width="1.5"/>
       <text x="988" y="121" font-size="11" letter-spacing="1" fill="#76D6A5" text-anchor="middle">OMEGA</text>
     </g>
@@ -34,38 +34,38 @@
       <text x="40" y="167" font-size="15" font-weight="600" fill="#EAF6FF">Python</text>
       <rect x="380" y="155" width="500" height="14" rx="3" fill="#0A1F2E" stroke="#37677D" stroke-width="1"/>
       <rect x="380" y="155" height="14" rx="3" fill="#EAB768" width="0">
-<animate attributeName="width" from="0" to="30.1" dur="1s" begin="0.12s" fill="freeze"/>      </rect>
-      <text x="892" y="167" font-size="13" fill="#EAF6FF">6.01%</text>
+<animate attributeName="width" from="0" to="70.2" dur="1s" begin="0.12s" fill="freeze"/>      </rect>
+      <text x="892" y="167" font-size="13" fill="#EAF6FF">14.03%</text>
       <rect x="950" y="154" width="76" height="20" rx="3" fill="none" stroke="#EAB768" stroke-width="1.5"/>
       <text x="988" y="167" font-size="11" letter-spacing="1" fill="#EAB768" text-anchor="middle">BRAVO</text>
     </g>
     <g>
-      <title>JavaScript — FIELD FAMILIARITY (1 repo)</title>
-      <text x="40" y="213" font-size="15" font-weight="600" fill="#EAF6FF">JavaScript</text>
+      <title>Jinja — OPERATIONAL PROFICIENCY (1 repo)</title>
+      <text x="40" y="213" font-size="15" font-weight="600" fill="#EAF6FF">Jinja</text>
       <rect x="380" y="201" width="500" height="14" rx="3" fill="#0A1F2E" stroke="#37677D" stroke-width="1"/>
-      <rect x="380" y="201" height="14" rx="3" fill="#B7ECFF" width="0">
-<animate attributeName="width" from="0" to="16.8" dur="1s" begin="0.24s" fill="freeze"/>      </rect>
-      <text x="892" y="213" font-size="13" fill="#EAF6FF">3.36%</text>
-      <rect x="950" y="200" width="76" height="20" rx="3" fill="none" stroke="#B7ECFF" stroke-width="1.5"/>
-      <text x="988" y="213" font-size="11" letter-spacing="1" fill="#B7ECFF" text-anchor="middle">CHARLIE</text>
+      <rect x="380" y="201" height="14" rx="3" fill="#EAB768" width="0">
+<animate attributeName="width" from="0" to="33.3" dur="1s" begin="0.24s" fill="freeze"/>      </rect>
+      <text x="892" y="213" font-size="13" fill="#EAF6FF">6.66%</text>
+      <rect x="950" y="200" width="76" height="20" rx="3" fill="none" stroke="#EAB768" stroke-width="1.5"/>
+      <text x="988" y="213" font-size="11" letter-spacing="1" fill="#EAB768" text-anchor="middle">BRAVO</text>
     </g>
     <g>
-      <title>CSS — FIELD FAMILIARITY (1 repo)</title>
-      <text x="40" y="259" font-size="15" font-weight="600" fill="#EAF6FF">CSS</text>
+      <title>JavaScript — FIELD FAMILIARITY (1 repo)</title>
+      <text x="40" y="259" font-size="15" font-weight="600" fill="#EAF6FF">JavaScript</text>
       <rect x="380" y="247" width="500" height="14" rx="3" fill="#0A1F2E" stroke="#37677D" stroke-width="1"/>
       <rect x="380" y="247" height="14" rx="3" fill="#B7ECFF" width="0">
-<animate attributeName="width" from="0" to="7.9" dur="1s" begin="0.36s" fill="freeze"/>      </rect>
-      <text x="892" y="259" font-size="13" fill="#EAF6FF">1.58%</text>
+<animate attributeName="width" from="0" to="12.2" dur="1s" begin="0.36s" fill="freeze"/>      </rect>
+      <text x="892" y="259" font-size="13" fill="#EAF6FF">2.44%</text>
       <rect x="950" y="246" width="76" height="20" rx="3" fill="none" stroke="#B7ECFF" stroke-width="1.5"/>
       <text x="988" y="259" font-size="11" letter-spacing="1" fill="#B7ECFF" text-anchor="middle">CHARLIE</text>
     </g>
     <g>
-      <title>Jinja — FIELD FAMILIARITY (1 repo)</title>
-      <text x="40" y="305" font-size="15" font-weight="600" fill="#EAF6FF">Jinja</text>
+      <title>CSS — FIELD FAMILIARITY (1 repo)</title>
+      <text x="40" y="305" font-size="15" font-weight="600" fill="#EAF6FF">CSS</text>
       <rect x="380" y="293" width="500" height="14" rx="3" fill="#0A1F2E" stroke="#37677D" stroke-width="1"/>
       <rect x="380" y="293" height="14" rx="3" fill="#B7ECFF" width="0">
-<animate attributeName="width" from="0" to="5.6" dur="1s" begin="0.48s" fill="freeze"/>      </rect>
-      <text x="892" y="305" font-size="13" fill="#EAF6FF">1.12%</text>
+<animate attributeName="width" from="0" to="5.7" dur="1s" begin="0.48s" fill="freeze"/>      </rect>
+      <text x="892" y="305" font-size="13" fill="#EAF6FF">1.14%</text>
       <rect x="950" y="292" width="76" height="20" rx="3" fill="none" stroke="#B7ECFF" stroke-width="1.5"/>
       <text x="988" y="305" font-size="11" letter-spacing="1" fill="#B7ECFF" text-anchor="middle">CHARLIE</text>
     </g>
@@ -74,8 +74,8 @@
       <text x="40" y="351" font-size="15" font-weight="600" fill="#EAF6FF">Dockerfile</text>
       <rect x="380" y="339" width="500" height="14" rx="3" fill="#0A1F2E" stroke="#37677D" stroke-width="1"/>
       <rect x="380" y="339" height="14" rx="3" fill="#648399" width="0">
-<animate attributeName="width" from="0" to="1.9" dur="1s" begin="0.6s" fill="freeze"/>      </rect>
-      <text x="892" y="351" font-size="13" fill="#EAF6FF">0.37%</text>
+<animate attributeName="width" from="0" to="1.4" dur="1s" begin="0.6s" fill="freeze"/>      </rect>
+      <text x="892" y="351" font-size="13" fill="#EAF6FF">0.27%</text>
       <rect x="950" y="338" width="76" height="20" rx="3" fill="none" stroke="#648399" stroke-width="1.5"/>
       <text x="988" y="351" font-size="11" letter-spacing="1" fill="#648399" text-anchor="middle">DELTA</text>
     </g>
@@ -84,8 +84,8 @@
       <text x="40" y="397" font-size="15" font-weight="600" fill="#EAF6FF">HTML</text>
       <rect x="380" y="385" width="500" height="14" rx="3" fill="#0A1F2E" stroke="#37677D" stroke-width="1"/>
       <rect x="380" y="385" height="14" rx="3" fill="#648399" width="0">
-<animate attributeName="width" from="0" to="0.7" dur="1s" begin="0.72s" fill="freeze"/>      </rect>
-      <text x="892" y="397" font-size="13" fill="#EAF6FF">0.14%</text>
+<animate attributeName="width" from="0" to="0.5" dur="1s" begin="0.72s" fill="freeze"/>      </rect>
+      <text x="892" y="397" font-size="13" fill="#EAF6FF">0.1%</text>
       <rect x="950" y="384" width="76" height="20" rx="3" fill="none" stroke="#648399" stroke-width="1.5"/>
       <text x="988" y="397" font-size="11" letter-spacing="1" fill="#648399" text-anchor="middle">DELTA</text>
     </g>
