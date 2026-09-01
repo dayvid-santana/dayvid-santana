@@ -1,22 +1,30 @@
 {
   "github_username": "dayvid-santana",
-  "generated_at": "2026-08-31T12:48:11.055446Z",
-  "repository_count": 4,
-  "total_bytes": 499135,
+  "generated_at": "2026-09-01T11:10:03.165252Z",
+  "repository_count": 5,
+  "total_bytes": 665355,
   "operator_title": "OMEGA-CLASS TYPESCRIPT OPERATOR",
   "languages": [
     {
       "name": "TypeScript",
       "byte_count": 376178,
-      "percentage": 75.37,
+      "percentage": 56.54,
       "repository_count": 1,
       "rank_code": "OMEGA",
       "title": "PRIMARY SPECIALIZATION"
     },
     {
+      "name": "CSS",
+      "byte_count": 171930,
+      "percentage": 25.84,
+      "repository_count": 2,
+      "rank_code": "ALPHA",
+      "title": "CORE PROFICIENCY"
+    },
+    {
       "name": "Python",
       "byte_count": 70006,
-      "percentage": 14.03,
+      "percentage": 10.52,
       "repository_count": 1,
       "rank_code": "BRAVO",
       "title": "OPERATIONAL PROFICIENCY"
@@ -24,23 +32,15 @@
     {
       "name": "Jinja",
       "byte_count": 33227,
-      "percentage": 6.66,
-      "repository_count": 1,
-      "rank_code": "BRAVO",
-      "title": "OPERATIONAL PROFICIENCY"
-    },
-    {
-      "name": "JavaScript",
-      "byte_count": 12168,
-      "percentage": 2.44,
+      "percentage": 4.99,
       "repository_count": 1,
       "rank_code": "CHARLIE",
       "title": "FIELD FAMILIARITY"
     },
     {
-      "name": "CSS",
-      "byte_count": 5710,
-      "percentage": 1.14,
+      "name": "JavaScript",
+      "byte_count": 12168,
+      "percentage": 1.83,
       "repository_count": 1,
       "rank_code": "CHARLIE",
       "title": "FIELD FAMILIARITY"
@@ -48,7 +48,7 @@
     {
       "name": "Dockerfile",
       "byte_count": 1328,
-      "percentage": 0.27,
+      "percentage": 0.2,
       "repository_count": 1,
       "rank_code": "DELTA",
       "title": "RECONNAISSANCE EXPOSURE"
@@ -56,7 +56,7 @@
     {
       "name": "HTML",
       "byte_count": 518,
-      "percentage": 0.1,
+      "percentage": 0.08,
       "repository_count": 1,
       "rank_code": "DELTA",
       "title": "RECONNAISSANCE EXPOSURE"
