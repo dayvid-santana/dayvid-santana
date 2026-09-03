@@ -13,39 +13,39 @@
   </rect>
   <g font-family="Consolas, 'Courier New', monospace">
     <text x="40" y="48" font-size="20" font-weight="700" letter-spacing="2" fill="#EAF6FF">LANGUAGE PROFICIENCY</text>
-    <text x="40" y="70" font-size="12" letter-spacing="2" fill="#648399">SOURCE CODE ANALYSIS // 5 REPOSITORIES SCANNED<tspan fill="#74D9FF"><animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/>_</tspan></text>
+    <text x="40" y="70" font-size="12" letter-spacing="2" fill="#648399">SOURCE CODE ANALYSIS // 7 REPOSITORIES SCANNED<tspan fill="#74D9FF"><animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/>_</tspan></text>
     <circle cx="1152" cy="43" r="6" fill="#76D6A5"><animate attributeName="opacity" values="1;.35;1" dur="2.8s" repeatCount="indefinite"/></circle>
-    <text x="1168" y="48" font-size="13" font-weight="700" letter-spacing="1" fill="#74D9FF">OMEGA-CLASS TYPESCRIPT OPERATOR</text>
+    <text x="1168" y="48" font-size="13" font-weight="700" letter-spacing="1" fill="#74D9FF">OMEGA-CLASS PYTHON OPERATOR</text>
   </g>
   <path d="M40 90H1240" stroke="#74D9FF" stroke-width="1" opacity=".45"/>
   <g font-family="Consolas, 'Courier New', monospace">
     <g>
-      <title>TypeScript — PRIMARY SPECIALIZATION (1 repo)</title>
-      <text x="40" y="121" font-size="15" font-weight="600" fill="#EAF6FF">TypeScript</text>
+      <title>Python — PRIMARY SPECIALIZATION (3 repos)</title>
+      <text x="40" y="121" font-size="15" font-weight="600" fill="#EAF6FF">Python</text>
       <rect x="380" y="109" width="500" height="14" rx="3" fill="#0A1F2E" stroke="#37677D" stroke-width="1"/>
       <rect x="380" y="109" height="14" rx="3" fill="#76D6A5" width="0">
-<animate attributeName="width" from="0" to="282.7" dur="1s" begin="0.0s" fill="freeze"/>      </rect>
-      <text x="892" y="121" font-size="13" fill="#EAF6FF">56.54%</text>
+<animate attributeName="width" from="0" to="246.3" dur="1s" begin="0.0s" fill="freeze"/>      </rect>
+      <text x="892" y="121" font-size="13" fill="#EAF6FF">49.27%</text>
       <rect x="950" y="108" width="76" height="20" rx="3" fill="none" stroke="#76D6A5" stroke-width="1.5"/>
       <text x="988" y="121" font-size="11" letter-spacing="1" fill="#76D6A5" text-anchor="middle">OMEGA</text>
     </g>
     <g>
-      <title>CSS — CORE PROFICIENCY (2 repos)</title>
-      <text x="40" y="167" font-size="15" font-weight="600" fill="#EAF6FF">CSS</text>
+      <title>TypeScript — PRIMARY SPECIALIZATION (1 repo)</title>
+      <text x="40" y="167" font-size="15" font-weight="600" fill="#EAF6FF">TypeScript</text>
       <rect x="380" y="155" width="500" height="14" rx="3" fill="#0A1F2E" stroke="#37677D" stroke-width="1"/>
-      <rect x="380" y="155" height="14" rx="3" fill="#74D9FF" width="0">
-<animate attributeName="width" from="0" to="129.2" dur="1s" begin="0.12s" fill="freeze"/>      </rect>
-      <text x="892" y="167" font-size="13" fill="#EAF6FF">25.84%</text>
-      <rect x="950" y="154" width="76" height="20" rx="3" fill="none" stroke="#74D9FF" stroke-width="1.5"/>
-      <text x="988" y="167" font-size="11" letter-spacing="1" fill="#74D9FF" text-anchor="middle">ALPHA</text>
+      <rect x="380" y="155" height="14" rx="3" fill="#76D6A5" width="0">
+<animate attributeName="width" from="0" to="164.2" dur="1s" begin="0.12s" fill="freeze"/>      </rect>
+      <text x="892" y="167" font-size="13" fill="#EAF6FF">32.83%</text>
+      <rect x="950" y="154" width="76" height="20" rx="3" fill="none" stroke="#76D6A5" stroke-width="1.5"/>
+      <text x="988" y="167" font-size="11" letter-spacing="1" fill="#76D6A5" text-anchor="middle">OMEGA</text>
     </g>
     <g>
-      <title>Python — OPERATIONAL PROFICIENCY (1 repo)</title>
-      <text x="40" y="213" font-size="15" font-weight="600" fill="#EAF6FF">Python</text>
+      <title>CSS — OPERATIONAL PROFICIENCY (2 repos)</title>
+      <text x="40" y="213" font-size="15" font-weight="600" fill="#EAF6FF">CSS</text>
       <rect x="380" y="201" width="500" height="14" rx="3" fill="#0A1F2E" stroke="#37677D" stroke-width="1"/>
       <rect x="380" y="201" height="14" rx="3" fill="#EAB768" width="0">
-<animate attributeName="width" from="0" to="52.6" dur="1s" begin="0.24s" fill="freeze"/>      </rect>
-      <text x="892" y="213" font-size="13" fill="#EAF6FF">10.52%</text>
+<animate attributeName="width" from="0" to="70.8" dur="1s" begin="0.24s" fill="freeze"/>      </rect>
+      <text x="892" y="213" font-size="13" fill="#EAF6FF">14.17%</text>
       <rect x="950" y="200" width="76" height="20" rx="3" fill="none" stroke="#EAB768" stroke-width="1.5"/>
       <text x="988" y="213" font-size="11" letter-spacing="1" fill="#EAB768" text-anchor="middle">BRAVO</text>
     </g>
@@ -54,28 +54,28 @@
       <text x="40" y="259" font-size="15" font-weight="600" fill="#EAF6FF">Jinja</text>
       <rect x="380" y="247" width="500" height="14" rx="3" fill="#0A1F2E" stroke="#37677D" stroke-width="1"/>
       <rect x="380" y="247" height="14" rx="3" fill="#B7ECFF" width="0">
-<animate attributeName="width" from="0" to="24.9" dur="1s" begin="0.36s" fill="freeze"/>      </rect>
-      <text x="892" y="259" font-size="13" fill="#EAF6FF">4.99%</text>
+<animate attributeName="width" from="0" to="12.7" dur="1s" begin="0.36s" fill="freeze"/>      </rect>
+      <text x="892" y="259" font-size="13" fill="#EAF6FF">2.54%</text>
       <rect x="950" y="246" width="76" height="20" rx="3" fill="none" stroke="#B7ECFF" stroke-width="1.5"/>
       <text x="988" y="259" font-size="11" letter-spacing="1" fill="#B7ECFF" text-anchor="middle">CHARLIE</text>
     </g>
     <g>
-      <title>JavaScript — FIELD FAMILIARITY (1 repo)</title>
+      <title>JavaScript — RECONNAISSANCE EXPOSURE (1 repo)</title>
       <text x="40" y="305" font-size="15" font-weight="600" fill="#EAF6FF">JavaScript</text>
       <rect x="380" y="293" width="500" height="14" rx="3" fill="#0A1F2E" stroke="#37677D" stroke-width="1"/>
-      <rect x="380" y="293" height="14" rx="3" fill="#B7ECFF" width="0">
-<animate attributeName="width" from="0" to="9.2" dur="1s" begin="0.48s" fill="freeze"/>      </rect>
-      <text x="892" y="305" font-size="13" fill="#EAF6FF">1.83%</text>
-      <rect x="950" y="292" width="76" height="20" rx="3" fill="none" stroke="#B7ECFF" stroke-width="1.5"/>
-      <text x="988" y="305" font-size="11" letter-spacing="1" fill="#B7ECFF" text-anchor="middle">CHARLIE</text>
+      <rect x="380" y="293" height="14" rx="3" fill="#648399" width="0">
+<animate attributeName="width" from="0" to="4.7" dur="1s" begin="0.48s" fill="freeze"/>      </rect>
+      <text x="892" y="305" font-size="13" fill="#EAF6FF">0.93%</text>
+      <rect x="950" y="292" width="76" height="20" rx="3" fill="none" stroke="#648399" stroke-width="1.5"/>
+      <text x="988" y="305" font-size="11" letter-spacing="1" fill="#648399" text-anchor="middle">DELTA</text>
     </g>
     <g>
-      <title>Dockerfile — RECONNAISSANCE EXPOSURE (1 repo)</title>
+      <title>Dockerfile — RECONNAISSANCE EXPOSURE (3 repos)</title>
       <text x="40" y="351" font-size="15" font-weight="600" fill="#EAF6FF">Dockerfile</text>
       <rect x="380" y="339" width="500" height="14" rx="3" fill="#0A1F2E" stroke="#37677D" stroke-width="1"/>
       <rect x="380" y="339" height="14" rx="3" fill="#648399" width="0">
-<animate attributeName="width" from="0" to="1.0" dur="1s" begin="0.6s" fill="freeze"/>      </rect>
-      <text x="892" y="351" font-size="13" fill="#EAF6FF">0.2%</text>
+<animate attributeName="width" from="0" to="1.1" dur="1s" begin="0.6s" fill="freeze"/>      </rect>
+      <text x="892" y="351" font-size="13" fill="#EAF6FF">0.22%</text>
       <rect x="950" y="338" width="76" height="20" rx="3" fill="none" stroke="#648399" stroke-width="1.5"/>
       <text x="988" y="351" font-size="11" letter-spacing="1" fill="#648399" text-anchor="middle">DELTA</text>
     </g>
@@ -84,8 +84,8 @@
       <text x="40" y="397" font-size="15" font-weight="600" fill="#EAF6FF">HTML</text>
       <rect x="380" y="385" width="500" height="14" rx="3" fill="#0A1F2E" stroke="#37677D" stroke-width="1"/>
       <rect x="380" y="385" height="14" rx="3" fill="#648399" width="0">
-<animate attributeName="width" from="0" to="0.4" dur="1s" begin="0.72s" fill="freeze"/>      </rect>
-      <text x="892" y="397" font-size="13" fill="#EAF6FF">0.08%</text>
+<animate attributeName="width" from="0" to="0.2" dur="1s" begin="0.72s" fill="freeze"/>      </rect>
+      <text x="892" y="397" font-size="13" fill="#EAF6FF">0.04%</text>
       <rect x="950" y="384" width="76" height="20" rx="3" fill="none" stroke="#648399" stroke-width="1.5"/>
       <text x="988" y="397" font-size="11" letter-spacing="1" fill="#648399" text-anchor="middle">DELTA</text>
     </g>
