@@ -13,7 +13,7 @@
   </rect>
   <g font-family="Consolas, 'Courier New', monospace">
     <text x="40" y="48" font-size="20" font-weight="700" letter-spacing="2" fill="#EAF6FF">LANGUAGE PROFICIENCY</text>
-    <text x="40" y="70" font-size="12" letter-spacing="2" fill="#648399">SOURCE CODE ANALYSIS // 8 REPOSITORIES SCANNED<tspan fill="#74D9FF"><animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/>_</tspan></text>
+    <text x="40" y="70" font-size="12" letter-spacing="2" fill="#648399">SOURCE CODE ANALYSIS // 9 REPOSITORIES SCANNED<tspan fill="#74D9FF"><animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/>_</tspan></text>
     <circle cx="1152" cy="43" r="6" fill="#76D6A5"><animate attributeName="opacity" values="1;.35;1" dur="2.8s" repeatCount="indefinite"/></circle>
     <text x="1168" y="48" font-size="13" font-weight="700" letter-spacing="1" fill="#74D9FF">OMEGA-CLASS PYTHON OPERATOR</text>
   </g>
