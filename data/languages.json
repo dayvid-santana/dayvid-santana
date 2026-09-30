@@ -1,62 +1,38 @@
 {
   "github_username": "dayvid-santana",
-  "generated_at": "2026-09-29T12:12:01.680259Z",
-  "repository_count": 10,
-  "total_bytes": 1378908,
+  "generated_at": "2026-09-30T11:58:35.370642Z",
+  "repository_count": 7,
+  "total_bytes": 398316,
   "operator_title": "OMEGA-CLASS PYTHON OPERATOR",
   "languages": [
     {
       "name": "Python",
-      "byte_count": 672265,
-      "percentage": 48.75,
-      "repository_count": 3,
+      "byte_count": 351003,
+      "percentage": 88.12,
+      "repository_count": 2,
       "rank_code": "OMEGA",
       "title": "PRIMARY SPECIALIZATION"
-    },
-    {
-      "name": "TypeScript",
-      "byte_count": 458635,
-      "percentage": 33.26,
-      "repository_count": 1,
-      "rank_code": "OMEGA",
-      "title": "PRIMARY SPECIALIZATION"
-    },
-    {
-      "name": "CSS",
-      "byte_count": 199223,
-      "percentage": 14.45,
-      "repository_count": 3,
-      "rank_code": "BRAVO",
-      "title": "OPERATIONAL PROFICIENCY"
     },
     {
       "name": "Jinja",
       "byte_count": 33227,
-      "percentage": 2.41,
+      "percentage": 8.34,
+      "repository_count": 1,
+      "rank_code": "BRAVO",
+      "title": "OPERATIONAL PROFICIENCY"
+    },
+    {
+      "name": "CSS",
+      "byte_count": 13478,
+      "percentage": 3.38,
       "repository_count": 1,
       "rank_code": "CHARLIE",
       "title": "FIELD FAMILIARITY"
     },
     {
-      "name": "JavaScript",
-      "byte_count": 12168,
-      "percentage": 0.88,
-      "repository_count": 1,
-      "rank_code": "DELTA",
-      "title": "RECONNAISSANCE EXPOSURE"
-    },
-    {
       "name": "Dockerfile",
-      "byte_count": 2872,
-      "percentage": 0.21,
-      "repository_count": 3,
-      "rank_code": "DELTA",
-      "title": "RECONNAISSANCE EXPOSURE"
-    },
-    {
-      "name": "HTML",
-      "byte_count": 518,
-      "percentage": 0.04,
+      "byte_count": 608,
+      "percentage": 0.15,
       "repository_count": 1,
       "rank_code": "DELTA",
       "title": "RECONNAISSANCE EXPOSURE"
