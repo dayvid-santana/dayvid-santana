@@ -1,41 +1,33 @@
 {
   "github_username": "dayvid-santana",
-  "generated_at": "2026-10-05T13:42:21.986559Z",
-  "repository_count": 7,
-  "total_bytes": 479468,
+  "generated_at": "2026-10-06T12:48:47.749593Z",
+  "repository_count": 6,
+  "total_bytes": 116711,
   "operator_title": "OMEGA-CLASS PYTHON OPERATOR",
   "languages": [
     {
       "name": "Python",
-      "byte_count": 432155,
-      "percentage": 90.13,
-      "repository_count": 2,
+      "byte_count": 70006,
+      "percentage": 59.98,
+      "repository_count": 1,
       "rank_code": "OMEGA",
       "title": "PRIMARY SPECIALIZATION"
     },
     {
       "name": "Jinja",
       "byte_count": 33227,
-      "percentage": 6.93,
+      "percentage": 28.47,
       "repository_count": 1,
-      "rank_code": "BRAVO",
-      "title": "OPERATIONAL PROFICIENCY"
+      "rank_code": "ALPHA",
+      "title": "CORE PROFICIENCY"
     },
     {
       "name": "CSS",
       "byte_count": 13478,
-      "percentage": 2.81,
+      "percentage": 11.55,
       "repository_count": 1,
-      "rank_code": "CHARLIE",
-      "title": "FIELD FAMILIARITY"
-    },
-    {
-      "name": "Dockerfile",
-      "byte_count": 608,
-      "percentage": 0.13,
-      "repository_count": 1,
-      "rank_code": "DELTA",
-      "title": "RECONNAISSANCE EXPOSURE"
+      "rank_code": "BRAVO",
+      "title": "OPERATIONAL PROFICIENCY"
     }
   ]
 }
