@@ -1,0 +1,171 @@
+{
+  "schema_version": 1,
+  "implementation_status": "rework-required-to-match-approved-llm-interaction-policy",
+  "provider_independent_contract": "Backend/app/gateway.py",
+  "response_block_contracts": "Backend/app/contracts.py",
+  "capabilities": {
+    "provider_protocol": {
+      "status": "implemented",
+      "evidence": [
+        "Backend/app/gateway.py",
+        "Backend/app/model_gateway.py"
+      ]
+    },
+    "openai_adapter": {
+      "status": "implemented",
+      "evidence": [
+        "Backend/app/model_gateway.py",
+        "Backend/tests/test_model_gateway.py"
+      ]
+    },
+    "fake_adapter": {
+      "status": "implemented",
+      "evidence": [
+        "Backend/app/model_gateway.py",
+        "Backend/tests/test_model_gateway.py"
+      ]
+    },
+    "model_alias_resolution": {
+      "status": "implemented",
+      "logical_alias_env": "IARA_DEFAULT_MODEL",
+      "default_alias": "principal",
+      "provider_model_id_env": {
+        "openai": "IARA_OPENAI_MODEL_ID"
+      },
+      "backend_only": true,
+      "evidence": [
+        "Backend/app/catalogo_modelos.py",
+        "Backend/tests/test_catalogo_modelos.py"
+      ]
+    },
+    "canonical_event_normalization": {
+      "status": "implemented",
+      "evidence": [
+        "Backend/app/solicitacoes.py",
+        "Backend/app/contracts.py"
+      ]
+    },
+    "structured_output_validation": {
+      "status": "implemented",
+      "evidence": [
+        "Backend/app/contracts.py",
+        "Backend/app/model_gateway.py",
+        "Backend/tests/test_model_gateway.py"
+      ]
+    },
+    "timeouts_and_cancellation": {
+      "status": "implemented",
+      "evidence": [
+        "Backend/app/solicitacoes.py",
+        "Backend/tests/test_solicitacoes.py"
+      ]
+    },
+    "safe_error_normalization": {
+      "status": "implemented",
+      "evidence": [
+        "Backend/app/model_gateway.py",
+        "Backend/app/main.py",
+        "Backend/tests/test_model_gateway.py",
+        "Backend/tests/test_observabilidade_seguranca.py"
+      ]
+    },
+    "credential_isolation": {
+      "status": "implemented",
+      "evidence": [
+        "Backend/app/configuracao.py",
+        "Backend/.env.example"
+      ]
+    },
+    "provider_observability": {
+      "status": "implemented",
+      "evidence": [
+        "Backend/app/observabilidade.py",
+        "Backend/app/model_gateway.py",
+        "Backend/app/main.py",
+        "Backend/tests/test_observabilidade_provider.py"
+      ]
+    },
+    "langchain_openai_adapter": {
+      "status": "implemented",
+      "library": "langchain-openai",
+      "scope": "OpenAI LangChain adapter; direct manager-request flow with bounded tools and structured Iara output",
+      "structured_intent": "Former intent-classification call is superseded; replace with direct request orchestration and validated typed response",
+      "response_stream": "ChatOpenAI.astream; text-only-chunk-normalization",
+      "automatic_retries": false,
+      "langchain_response_cache": false,
+      "evidence": [
+        "Backend/app/model_gateway.py",
+        "Backend/pyproject.toml",
+        "Backend/requirements.lock.txt",
+        "Backend/tests/test_model_gateway.py",
+        "Backend/tests/test_observabilidade_seguranca.py"
+      ],
+      "api_style": "chat-completions-preserved",
+      "tool_calling": "Only backend-owned allowlisted typed tools; bounded rounds, deadlines, cancellation, authorization and result validation",
+      "system_prompt": "Server-owned versioned SystemMessage; implementation alignment pending"
+    },
+    "direct_llm_interaction": {
+      "status": "policy-defined",
+      "contract": "harness/rules/backend.model-orchestration.md",
+      "evidence": [
+        "Backend/harness/rules/backend.model-orchestration.md",
+        "Backend/harness/rules/backend.model-gateway.md",
+        "Backend/harness/config/decisions.json"
+      ],
+      "implementation": "pending; current application code still has the former interpretation flow and five-message context"
+    },
+    "conversation_context_window": {
+      "status": "policy-defined",
+      "maximum_messages": 40,
+      "includes_current_composed_human_message": true,
+      "excludes_system_message": true,
+      "implementation": "pending; current application code still limits context to five prior messages",
+      "evidence": [
+        "Backend/harness/rules/backend.model-orchestration.md",
+        "Backend/harness/config/decisions.json"
+      ]
+    },
+    "safe_structured_html": {
+      "status": "policy-defined",
+      "value": "No arbitrary HTML rendering; only future versioned typed block with sanitizing isolated renderer; existing normalized blocks remain default",
+      "evidence": [
+        "Backend/harness/rules/backend.model-orchestration.md",
+        "Backend/harness/config/decisions.json"
+      ]
+    },
+    "system_prompt_composition": {
+      "status": "policy-defined",
+      "version": "1",
+      "runtime_integration": "pending; this Harness prompt is not loaded by the application runtime",
+      "requirements": [
+        "server-owned",
+        "versioned",
+        "SystemMessage",
+        "not-persisted-as-conversation-message"
+      ],
+      "evidence": [
+        "Backend/harness/prompts/system.md",
+        "Backend/harness/rules/backend.model-orchestration.md",
+        "Backend/harness/config/decisions.json"
+      ]
+    }
+  },
+  "invariants": [
+    "frontend-never-receives-provider-credentials",
+    "provider-invocation-is-backend-only",
+    "all-provider-outputs-are-normalized-to-iara-contracts",
+    "structured-output-is-validated-before-persistence-or-rendering",
+    "public-errors-never-contain-raw-provider-payloads",
+    "default-automated-suite-uses-fake-adapter-without-network",
+    "model-provider-identity-is-backend-internal-and-omitted-from-public-ui-contracts",
+    "grafana-mcp-access-is-backend-only-and-uses-explicitly-allowed-read-tools",
+    "only-server-authored-system-messages-can-enter-provider-prompt"
+  ],
+  "company_data_source": {
+    "provider": "Grafana MCP",
+    "status": "real-access-deferred-until-final-mvp-stage",
+    "backend_only": true,
+    "direct_database_access": false,
+    "synthetic_fixtures_default_for_demonstration": true
+  }
+}

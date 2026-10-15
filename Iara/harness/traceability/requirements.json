@@ -1,0 +1,455 @@
+{
+  "schema_version": 1,
+  "criteria": [
+    {
+      "id": "auth.session",
+      "requirement": "Usuário autentica e mantém sessão",
+      "status": "implemented",
+      "evidence": [
+        "Backend/app/main.py",
+        "Frontend/src"
+      ],
+      "gates": [
+        "backend.verify",
+        "integration.e2e"
+      ]
+    },
+    {
+      "id": "auth.conversation-ownership",
+      "requirement": "Leituras e alterações de conversas são limitadas ao usuário autenticado proprietário",
+      "status": "implemented",
+      "evidence": [
+        "Backend/app",
+        "Backend/tests"
+      ],
+      "gates": [
+        "backend.verify",
+        "integration.e2e"
+      ]
+    },
+    {
+      "id": "conversation.create",
+      "requirement": "Usuário inicia conversa nova",
+      "status": "implemented",
+      "evidence": [
+        "Backend/app/main.py",
+        "Frontend/src"
+      ],
+      "gates": [
+        "backend.verify",
+        "frontend.verify",
+        "integration.e2e"
+      ]
+    },
+    {
+      "id": "conversation.persist-and-resume",
+      "requirement": "Mensagens, modelo e blocos são persistidos e conversa antiga pode ser retomada",
+      "status": "implemented",
+      "evidence": [
+        "Backend/app",
+        "Backend/tests",
+        "Frontend/src"
+      ],
+      "gates": [
+        "backend.verify",
+        "integration.e2e"
+      ]
+    },
+    {
+      "id": "conversation.request-idempotency",
+      "requirement": "Aceitar uma única vez envios e retries explícitos, recuperando o mesmo aceite em replay idêntico e rejeitando conteúdo, sessão, recurso ou chave inválidos.",
+      "status": "implemented",
+      "evidence": [
+        "Backend/tests/test_persistencia.py",
+        "Backend/tests/test_fluxo_conversas.py",
+        "Backend/tests/test_solicitacoes.py"
+      ],
+      "gates": [
+        "harness.validate",
+        "backend.verify"
+      ]
+    },
+    {
+      "id": "model.metadata-private",
+      "requirement": "Identidade do provider/modelo pode ser registrada internamente no backend para rastreabilidade, sem exposição ao gestor ou no contrato público",
+      "status": "policy-defined",
+      "evidence": [
+        "Backend/harness/config/harness.json",
+        "Frontend/harness/config/harness.json"
+      ],
+      "gates": [
+        "harness.validate",
+        "backend.verify",
+        "frontend.verify"
+      ]
+    },
+    {
+      "id": "gateway.provider-isolation",
+      "requirement": "Frontend consome contrato Iara e nunca chama provider diretamente",
+      "status": "implemented",
+      "evidence": [
+        "Backend/app/gateway.py",
+        "Backend/app/model_gateway.py",
+        "Backend/harness/config/model-gateway.json"
+      ],
+      "gates": [
+        "harness.validate",
+        "backend.verify",
+        "frontend.verify"
+      ]
+    },
+    {
+      "id": "gateway.openai-demo",
+      "requirement": "Adapter OpenAI configurado no backend demonstra o modelo escolhido sem expor credenciais",
+      "status": "planned",
+      "evidence": [
+        "Backend/app/gateway.py",
+        "Backend/.env.example"
+      ],
+      "gates": [
+        "backend.verify",
+        "provider.live-demo"
+      ]
+    },
+    {
+      "id": "streaming.canonical-events",
+      "requirement": "Resposta progressiva usa eventos canônicos e estado final persistido",
+      "status": "implemented",
+      "evidence": [
+        "Backend/app/gateway.py",
+        "harness/config/project.json"
+      ],
+      "gates": [
+        "harness.validate",
+        "backend.verify",
+        "integration.e2e"
+      ]
+    },
+    {
+      "id": "streaming.persisted-partial-snapshots",
+      "requirement": "Persistir deltas validados no snapshot da mensagem ativa e preservar texto parcial após reinício sem alterar o contrato SSE ou o DDL.",
+      "status": "implemented",
+      "evidence": [
+        "Backend/app/solicitacoes.py",
+        "Backend/app/persistencia.py",
+        "Backend/tests/test_solicitacoes.py",
+        "Backend/tests/test_persistencia.py"
+      ],
+      "gates": [
+        "backend.verify"
+      ]
+    },
+    {
+      "id": "query.validated-source-completeness",
+      "requirement": "Validar o resultado interno da fonte antes de enviar à LLM e informar parcialidade, lacunas ou ausência de dados somente conforme sinais confirmados pela fonte.",
+      "status": "implemented",
+      "evidence": [
+        "Backend/app/contrato_consulta.py",
+        "Backend/app/fontes.py",
+        "Backend/app/model_gateway.py",
+        "Backend/tests/test_contrato_consulta.py",
+        "Backend/tests/test_model_gateway.py"
+      ],
+      "gates": [
+        "backend.verify"
+      ]
+    },
+    {
+      "id": "streaming.source-operational-progress",
+      "requirement": "Encaminhar somente etapas tipadas e seguras de progresso da fonte pelos eventos status existentes, sem alterar o contrato SSE ou exibir raciocínio privado.",
+      "status": "implemented",
+      "evidence": [
+        "Backend/app/fontes.py",
+        "Backend/app/model_gateway.py",
+        "Backend/tests/test_model_gateway.py",
+        "Frontend/src/api.ts",
+        "Frontend/src/funcionalidades/conversas/hooks/useConversa.ts"
+      ],
+      "gates": [
+        "backend.verify",
+        "frontend.verify"
+      ]
+    },
+    {
+      "id": "streaming.disconnect-recovery",
+      "requirement": "Aplicar limite total de execução e retomar conexão SSE pelo último cursor sem criar solicitação ou execução duplicada.",
+      "status": "implemented",
+      "evidence": [
+        "Backend/app/solicitacoes.py",
+        "Backend/tests/test_solicitacoes.py",
+        "Frontend/src/api.ts",
+        "Frontend/src/api.test.ts"
+      ],
+      "gates": [
+        "backend.verify",
+        "frontend.verify"
+      ]
+    },
+    {
+      "id": "streaming.cancel-and-recovery",
+      "requirement": "Geração pode ser cancelada e desconexões deixam a conversa em estado recuperável",
+      "status": "planned",
+      "evidence": [
+        "Backend/app/gateway.py",
+        "Frontend/src"
+      ],
+      "gates": [
+        "backend.verify",
+        "frontend.verify",
+        "integration.e2e"
+      ]
+    },
+    {
+      "id": "content.text",
+      "requirement": "Renderizar bloco de texto",
+      "status": "implemented",
+      "evidence": [
+        "Backend/app/contracts.py",
+        "Frontend/src"
+      ],
+      "gates": [
+        "harness.validate",
+        "frontend.verify",
+        "integration.e2e"
+      ]
+    },
+    {
+      "id": "content.kpi",
+      "requirement": "Renderizar KPI e grupo de KPIs",
+      "status": "implemented",
+      "evidence": [
+        "Backend/app/contracts.py",
+        "Frontend/src"
+      ],
+      "gates": [
+        "harness.validate",
+        "frontend.verify",
+        "integration.e2e"
+      ]
+    },
+    {
+      "id": "content.table-chart",
+      "requirement": "Renderizar tabela e gráfico com resumo acessível",
+      "status": "implemented",
+      "evidence": [
+        "Backend/app/contracts.py",
+        "Frontend/src"
+      ],
+      "gates": [
+        "harness.validate",
+        "frontend.verify",
+        "integration.e2e",
+        "frontend.ux-review"
+      ]
+    },
+    {
+      "id": "errors.recoverable",
+      "requirement": "Falhas são apresentadas com mensagem compreensível e possibilidade de recuperação",
+      "status": "planned",
+      "evidence": [
+        "Backend/app/contracts.py",
+        "Frontend/src"
+      ],
+      "gates": [
+        "backend.verify",
+        "frontend.verify",
+        "integration.e2e"
+      ]
+    },
+    {
+      "id": "security.credentials-and-logs",
+      "requirement": "Credenciais ficam no backend e logs não registram prompts/respostas privados por padrão",
+      "status": "policy-defined",
+      "evidence": [
+        "Backend/.env.example",
+        "harness/config/quality-gates.json",
+        "harness/config/model-gateway.json"
+      ],
+      "gates": [
+        "harness.validate",
+        "backend.verify",
+        "integration.e2e"
+      ]
+    },
+    {
+      "id": "observability.request-trace",
+      "requirement": "Falhas e requisições podem ser correlacionadas por identificador sem vazar payloads privados",
+      "status": "implemented",
+      "evidence": [
+        "Backend/app/main.py",
+        "Backend/app/observabilidade.py",
+        "Backend/app/model_gateway.py",
+        "Backend/app/persistencia.py",
+        "Backend/tests/test_persistencia.py",
+        "Backend/tests/test_observabilidade_provider.py",
+        "Backend/tests/test_observabilidade_seguranca.py"
+      ],
+      "gates": [
+        "backend.verify",
+        "integration.e2e"
+      ]
+    },
+    {
+      "id": "data.synthetic-fixtures",
+      "requirement": "Use synthetic JSON fixtures in development and tests and as the default demonstration source for an extended period; live Grafana MCP data requires explicit authorization and must not be copied into fixtures",
+      "status": "policy-defined",
+      "evidence": [
+        "harness/config/synthetic-data.json",
+        "Backend/fixtures/synthetic/README.md"
+      ],
+      "gates": [
+        "harness.validate",
+        "provider.live-demo"
+      ]
+    },
+    {
+      "id": "ux.accessibility-responsive",
+      "requirement": "Fluxo é revisado por teclado, foco, estados, responsividade e alternativas para gráficos",
+      "status": "policy-defined",
+      "evidence": [
+        "Frontend/e2e/smoke.spec.ts",
+        "harness/workflows/fullstack-feature.json"
+      ],
+      "gates": [
+        "frontend.ux-review",
+        "integration.e2e"
+      ]
+    },
+    {
+      "id": "data.grafana-mcp",
+      "requirement": "Grafana MCP é a fonte empresarial selecionada; acesso backend-only por ferramentas de leitura autorizadas, sem consulta direta ao banco",
+      "status": "planned",
+      "evidence": [
+        "harness/config/project.json",
+        "Backend/harness/config/harness.json"
+      ],
+      "gates": [
+        "harness.validate",
+        "backend.verify",
+        "integration.e2e"
+      ]
+    },
+    {
+      "id": "query.direct-llm-interaction",
+      "requirement": "Encaminhar a solicitação original do gestor diretamente à LLM da Iara, com System Prompt, instrução concatenada, até 40 mensagens da conversa e ferramentas autorizadas; sem chamada LLM de pré-processamento.",
+      "status": "policy-defined",
+      "evidence": [
+        "Backend/harness/rules/backend.model-orchestration.md",
+        "Backend/harness/config/decisions.json"
+      ],
+      "gates": [
+        "backend.verify",
+        "harness.validate"
+      ]
+    },
+    {
+      "id": "query.intent-and-clarification",
+      "requirement": "Interpretar solicitações abertas em linguagem natural e pedir contexto ausente, como período ou produto, antes de buscar dados",
+      "status": "planned",
+      "evidence": [
+        "Backend/app",
+        "Frontend/src/funcionalidades/conversas"
+      ],
+      "gates": [
+        "backend.verify",
+        "frontend.verify",
+        "integration.e2e"
+      ]
+    },
+    {
+      "id": "query.out-of-scope-guidance",
+      "requirement": "Explicar fora de escopo em linguagem simples e convidar o gestor a fazer outra pergunta sem consultar a fonte empresarial",
+      "status": "implemented",
+      "evidence": [
+        "Backend/app",
+        "Frontend/src/funcionalidades/conversas"
+      ],
+      "gates": [
+        "backend.verify",
+        "frontend.verify",
+        "integration.e2e"
+      ]
+    },
+    {
+      "id": "query.relevant-context-window",
+      "requirement": "Enviar até as 40 mensagens de diálogo mais recentes da mesma conversa, contando a solicitação atual composta e excluindo o SystemMessage.",
+      "status": "planned",
+      "evidence": [
+        "Backend/harness/rules/backend.model-orchestration.md",
+        "Backend/app/solicitacoes.py",
+        "Backend/tests/test_solicitacoes.py"
+      ],
+      "gates": [
+        "backend.verify"
+      ]
+    },
+    {
+      "id": "query.llm-mcp-presentation-flow",
+      "requirement": "A LLM recebe diretamente pedido e contexto, escolhe ferramentas backend autorizadas quando necessário e devolve resposta estruturada validada pelo Backend para renderização no contrato atual.",
+      "status": "planned",
+      "evidence": [
+        "Backend/harness/rules/backend.model-orchestration.md",
+        "Backend/app/gateway.py",
+        "Backend/app/contracts.py"
+      ],
+      "gates": [
+        "backend.verify",
+        "integration.e2e"
+      ]
+    },
+    {
+      "id": "request.wait-policy",
+      "requirement": "Aguardar resposta da fonte por no máximo 40 segundos, informar progresso sem consultas repetidas à LLM e permitir cancelamento ou nova tentativa",
+      "status": "planned",
+      "evidence": [
+        "Backend/app",
+        "Frontend/src/funcionalidades/conversas"
+      ],
+      "gates": [
+        "backend.verify",
+        "frontend.verify",
+        "integration.e2e"
+      ]
+    },
+    {
+      "id": "admin.diagnostics-isolated",
+      "requirement": "Permitir diagnóstico do desenvolvedor sem login somente em localhost, sem identidade de gestor nem acesso a conversas, com fila de erros sanitizada",
+      "status": "implemented",
+      "evidence": [
+        "Backend/harness/rules/iara.admin-observability.md",
+        "Frontend/harness/rules/iara.admin-observability.md"
+      ],
+      "gates": [
+        "backend.verify",
+        "frontend.verify",
+        "integration.e2e"
+      ]
+    },
+    {
+      "id": "account.monthly-token-usage",
+      "requirement": "O gestor consulta tokens reportados pela LLM, falhas e cancelamentos no mês atual e nos seis anteriores, sem expor conteúdo da conversa, provider, modelo ou preço. A interface já existe, mas a coleta, persistência e API autenticada do Backend ainda estão pendentes.",
+      "status": "planned",
+      "evidence": [
+        "Frontend/src/funcionalidades/conta/componentes/ModalUsoTokens/ModalUsoTokens.tsx",
+        "Frontend/src/api.ts"
+      ],
+      "gates": [
+        "backend.verify",
+        "frontend.verify"
+      ]
+    },
+    {
+      "id": "frontend.html-content-safety",
+      "requirement": "Renderizar apenas blocos tipados validados; escapar HTML recebido como texto até contrato versionado e renderer isolado com sanitização. Preservar IU/UX existente.",
+      "status": "policy-defined",
+      "evidence": [
+        "Frontend/harness/rules/frontend.structured-content.md",
+        "Frontend/harness/skills/structured-content.md"
+      ],
+      "gates": [
+        "frontend.verify",
+        "harness.validate"
+      ]
+    }
+  ]
+}
