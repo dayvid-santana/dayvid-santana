@@ -120,7 +120,7 @@
         "partial_analytical_values": "Do not render source values before complete ResultadoConsultaInterno validation. Future incremental values require explicit source support, a typed chunk/completeness/provenance contract, per-chunk validation and an approved atomic acceptance policy.",
         "llm_reasoning": "Never expose raw chain-of-thought or private reasoning; use concise operational status messages instead.",
         "public_contract": "Reuse the existing seven SSE v1 events; coordinate and version any future public schema change across Backend and Frontend.",
-        "timeout": "Preserve the total 40-second solicitation deadline; progress notifications do not extend it or trigger additional LLM calls."
+        "timeout": "The total deadline is 120 seconds by default and configurable up to 360 seconds because the approved dedicated Iara endpoint exceeded 40 seconds in a successful response; this supersedes the earlier 40-second limit. Status notifications every 15 seconds do not extend the deadline or trigger additional LLM calls."
       },
       "open": [
         "synthetic-and-real-adapter-integration",
@@ -143,14 +143,12 @@
       ]
     },
     "model": {
-      "status": "selection-pending",
-      "value": "logical-alias-principal-resolved-server-side-to-provider-specific-id",
-      "selection_criterion": "lowest-cost-model-suitable-for-the-demonstration",
+      "status": "decided-for-iara-service",
+      "value": "logical-alias-principal-resolves-to-fixed-catalog-model-iara-grafana",
+      "selection_criterion": "model-id-is-provided-by-the-iara-service-contract",
       "environment_variable": "IARA_DEFAULT_MODEL",
       "logical_alias": "principal",
-      "provider_model_id_environment_variables": {
-        "openai": "IARA_OPENAI_MODEL_ID"
-      },
+      "provider_model_id_environment_variables": {},
       "evidence": [
         "harness/config/project.json",
         "Backend/.env.example",
@@ -158,18 +156,21 @@
         "Backend/app/catalogo_modelos.py"
       ],
       "user_visibility": "hidden-from-gestor",
-      "candidate": "gpt-6-luna",
-      "candidate_status": "pending-quality-and-cost-validation"
+      "candidate": "iara-grafana",
+      "candidate_status": "fixed-in-backend-catalog",
+      "catalog_model_id": "iara-grafana",
+      "configuration_semantics": "logical-catalog-alias"
     },
     "provider": {
-      "status": "decided-for-initial-adapter",
-      "value": "OpenAI",
-      "credential_environment_variable": "OPENAI_API_KEY",
+      "status": "decided-for-iara-endpoint",
+      "value": "Iara, endpoint compatível com Chat Completions",
+      "credential_environment_variable": "IARA_API_KEY",
       "evidence": [
         "harness/config/project.json",
         "Backend/.env.example",
         "README.md"
-      ]
+      ],
+      "base_url_environment_variable": "IARA_BASE_URL"
     },
     "conversation_deletion": {
       "status": "decided-and-implemented",
@@ -262,9 +263,9 @@
       ]
     },
     "langchain": {
-      "status": "approved-for-mvp-openai-adapter-only",
-      "value": "LangChain is used in the Backend Model Gateway for applicable Iara LLM capabilities: message/prompt composition, async calls, streaming, typed structured output, tool calling, callbacks and authorized MCP tools when available. The manager request goes directly to the project-configured Iara LLM without LLM preprocessing. OpenAI is the only MVP LLM provider; Grafana MCP is a future data source and synthetic fixtures remain active. Tools are backend-owned, allowlisted, read-only and bounded. Do not add unrelated LangChain components, unbounded autonomous agents, LangGraph, or response/data cache without a separate product decision.",
-      "scope": "backend-model-gateway-openai-adapter",
+      "status": "approved-for-iara-chat-completions-compatible-endpoint",
+      "value": "LangChain is used inside the Backend Model Gateway through the langchain-openai ChatOpenAI client against Iara’s configured OpenAI-compatible endpoint. The manager request goes directly to the project-configured Iara model without LLM preprocessing or OpenAI tool fields. Iara is the only MVP LLM provider. The current endpoint rejects tools, tool_choice and parallel_tool_calls; a future MCP integration requires a separate compatible contract. Do not add unrelated LangChain components, unbounded autonomous agents, LangGraph, or response/data cache without a separate product decision.",
+      "scope": "backend-model-gateway-iara-adapter",
       "evidence": [
         "Backend/app/model_gateway.py",
         "Backend/pyproject.toml",
@@ -315,10 +316,12 @@
         "other_conversations": false,
         "application_instruction_persisted": false
       },
-      "langchain": "Use relevant LangChain capabilities in the Gateway, including chat messages/prompts, async invocation, streaming, typed structured output, tool calling and callbacks; MCP integration only when authorized and its contract is available. Do not force unrelated features or create unbounded agent loops.",
-      "tools": "Only backend-owned, allowlisted, typed, read-only tools with schema/auth/scope/size/timeout/cancellation/result validation; synthetic fixtures remain the active source until real Grafana MCP access is authorized.",
-      "presentation": "The LLM chooses a useful response form from the validated Iara content contracts; Backend validates and normalizes and Frontend renders using existing UI/UX and supported blocks.",
-      "html": "System Prompt may request constrained HTML only if required by an approved, versioned typed content block and a sanitizing isolated renderer exist. Until then, request existing structured blocks; treat model HTML as text and escape it. No arbitrary HTML, scripts, event handlers, unsafe URLs, model-controlled styling or navigation.",
+      "langchain": "Use LangChain in the Gateway for server-owned chat messages/prompts, async invocation, streaming, typed validation and callbacks. Send no tools, tool_choice or parallel_tool_calls to the current Iara endpoint. A future MCP integration requires an authorized compatible contract. Do not create unbounded agent loops.",
+      "tools": "Disabled in the current Iara endpoint because it rejects OpenAI tool fields. Any future MCP tool integration must be backend-owned, allowlisted, typed, read-only, authorized and bounded, and must be approved under a separate compatible contract.",
+      "presentation": "The LLM places its explanation in the text block using Markdown when useful and returns KPI, KPI group, table and chart data only as typed JSON blocks. Backend validates the blocks; Frontend components generate HTML/SVG using existing UI/UX.",
+      "markdown_rendering": "Markdown in the text block is rendered by the Frontend as semantic elements with raw HTML disabled, unsafe URL protocols blocked and remote images ignored. No public contract change or dangerouslySetInnerHTML.",
+      "html": "The model never sends HTML. Frontend renders existing validated typed blocks as its own HTML/SVG; arbitrary markup, scripts, styles, event handlers, unsafe URLs, model-controlled styling or navigation are never executed.",
+      "source_disclosure": "Never return or cite source identity or technical provenance. Do not expose system/tool/provider, Grafana/MCP, database, source table/view, schema, internal column, query, dashboard, dataset, file, endpoint or execution ID. User-facing analytical tables are allowed only with validated business columns and values, never source schemas or source tables.",
       "accuracy": "Maximize accuracy through authorized source data, provenance, typed validation, explicit uncertainty and fail-closed handling; never promise perfect accuracy or invent values, trends, causes, estimates, or missing fields.",
       "no_private_reasoning": "Do not expose chain-of-thought; progress events describe actual operational stages only.",
       "evidence": [
@@ -326,6 +329,7 @@
         "Backend/harness/rules/backend.model-gateway.md",
         "Backend/harness/rules/backend.grafana-mcp.md",
         "Frontend/harness/rules/frontend.structured-content.md",
+        "Frontend/src/funcionalidades/conversas/componentes/TextoMarkdown/TextoMarkdown.tsx",
         "harness/context/estado-do-projeto.md"
       ]
     }

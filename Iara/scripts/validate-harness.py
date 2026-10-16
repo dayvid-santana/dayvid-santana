@@ -321,7 +321,7 @@ def validate_product_harness() -> None:
         "operational_metrics": decision_items.get("operational_metrics", {}).get("value"),
         "user_token_usage": decision_items.get("user_token_usage", {}).get("value"),
         "data": decision_items.get("data", {}).get("value"),
-        "model": f"{model_decision.get('selection_criterion')}; selection-pending",
+        "model": f"fixed-catalog-model-{model_decision.get('catalog_model_id')}; logical-alias-{model_decision.get('logical_alias')}",
         "provider": provider_decision.get("value"),
         "langchain": decision_items.get("langchain", {}).get("value"),
         "llm_interaction": decision_items.get("llm_interaction", {}).get("value"),
@@ -349,6 +349,14 @@ def validate_product_harness() -> None:
         fail(
             project_path.relative_to(ROOT),
             "status do ID do modelo precisa refletir selecao ou validacao pendente",
+        )
+    if model_decision.get("status") == "decided-for-iara-service" and (
+        status_id_modelo != "fixed-in-catalog"
+        or gateway.get("model_id_catalog_value") != model_decision.get("catalog_model_id")
+    ):
+        fail(
+            project_path.relative_to(ROOT),
+            "modelo fixo da Iara precisa corresponder ao ID registrado no catálogo",
         )
     if model_decision.get("environment_variable") != gateway.get("model_alias_env"):
         fail(decisions_path.relative_to(ROOT), "variavel do alias diverge do Model Gateway")
@@ -383,18 +391,20 @@ def validate_product_harness() -> None:
             "status": model_decision.get("status"),
             "selection_criterion": model_decision.get("selection_criterion"),
             "environment_variable": model_decision.get("environment_variable"),
-            "configuration_semantics": "logical-catalog-alias",
+            "configuration_semantics": model_decision.get("configuration_semantics"),
             "logical_alias": model_decision.get("logical_alias"),
             "provider_model_id_environment_variables": model_decision.get(
                 "provider_model_id_environment_variables"
             ),
-            "user_visibility": "hidden",
+            "user_visibility": model_decision.get("user_visibility"),
             "candidate": model_decision.get("candidate"),
             "candidate_status": model_decision.get("candidate_status"),
+            "catalog_model_id": model_decision.get("catalog_model_id"),
         },
         "provider": {
             "value": provider_decision.get("value"),
             "credential_environment_variable": provider_decision.get("credential_environment_variable"),
+            "base_url_environment_variable": provider_decision.get("base_url_environment_variable"),
         },
         "langchain": decision_items.get("langchain", {}).get("value"),
         "llm_interaction": decision_items.get("llm_interaction", {}).get("value"),
@@ -405,8 +415,28 @@ def validate_product_harness() -> None:
         component_config = load_json(component_config_path) or {}
         local_decisions_path = component_root / "harness/config/decisions.json"
         local_decision_manifest = load_json(local_decisions_path) or {}
-        if local_decision_manifest.get("shared_decisions") != local_decisions:
-            fail(local_decisions_path.relative_to(ROOT), "decisoes locais divergem da fonte compartilhada")
+        component_shared_decisions = local_decision_manifest.get("shared_decisions", {})
+        for decision_name, expected_decision in local_decisions.items():
+            recorded_decision = component_shared_decisions.get(decision_name)
+            if decision_name in {"model", "provider"} and isinstance(recorded_decision, dict):
+                normalized_decision = {
+                    key: recorded_decision.get(key) for key in expected_decision
+                }
+            elif decision_name == "context_contract" and isinstance(recorded_decision, dict):
+                normalized_decision = {
+                    key: value
+                    for key, value in recorded_decision.items()
+                    if key != "evidence"
+                }
+            elif isinstance(recorded_decision, dict):
+                normalized_decision = recorded_decision.get("value")
+            else:
+                normalized_decision = recorded_decision
+            if normalized_decision != expected_decision:
+                fail(
+                    local_decisions_path.relative_to(ROOT),
+                    f"decisao compartilhada divergente: {decision_name}",
+                )
         for relative in local_decision_manifest.get("evidence", []):
             if not (component_root / relative).exists():
                 fail(local_decisions_path.relative_to(ROOT), f"evidencia local inexistente: {relative}")
@@ -517,7 +547,7 @@ def validate_product_harness() -> None:
     except OSError as exc:
         readme_text = ""
         fail(readme_path.relative_to(ROOT), f"README indisponivel: {exc}")
-    required_readme_terms = ["candidato recomendado para a demonstração", "dados sintéticos", "sqlite", "ddl", "sso", "líder técnico"]
+    required_readme_terms = ["IARA_DEFAULT_MODEL", "IARA_BASE_URL", "IARA_API_KEY", "dados sintéticos", "sqlite", "ddl", "sso", "líder técnico"]
     for term in required_readme_terms:
         if term.casefold() not in readme_text:
             fail(readme_path.relative_to(ROOT), f"README precisa registrar decisao/status: {term}")
@@ -1398,11 +1428,11 @@ def main() -> int:
         )
     if (
         network_policy.get("product_runtime", {}).get("local_credential_source")
-        != "Backend/.env:OPENAI_API_KEY"
+        != "Backend/.env:IARA_API_KEY"
     ):
         fail(
             shared_tools_path.relative_to(ROOT),
-            "fonte local da credencial OpenAI precisa ser Backend/.env",
+            "fonte local da credencial da Iara precisa ser Backend/.env",
         )
     component_configs: dict[str, dict[str, Any]] = {}
 
@@ -1548,12 +1578,14 @@ def main() -> int:
         "local_env_file",
         "model_alias_env",
         "provider_model_id_env",
+        "provider_base_url_env",
     ):
         backend_key = {
             "provider_credential_env": "credential_env",
             "local_env_file": "local_env_file",
             "model_alias_env": "default_model_env",
             "provider_model_id_env": "provider_model_id_env",
+            "provider_base_url_env": "base_url_env",
         }[key]
         if gateway.get(key) != backend_gateway.get(backend_key):
             fail(
@@ -1613,16 +1645,17 @@ def main() -> int:
         or backend_data_source.get("application_business_metric_calculation") is not False
     ):
         fail(project_path.relative_to(ROOT), "Backend deve consultar somente Grafana MCP, sem acesso direto ao banco ou cálculo próprio de métricas")
-    if demo.get("required_for_product_acceptance") is not True or demo.get("provider") != "OpenAI":
+    if demo.get("required_for_product_acceptance") is not True or demo.get("provider") != "Iara":
         fail(
             project_path.relative_to(ROOT),
-            "aceite do produto requer demonstracao opt-in com o provider OpenAI inicial",
+            "aceite do produto requer demonstracao opt-in com o provider Iara",
         )
     if (
         demo.get("model_alias_source") != gateway.get("model_alias_env")
         or demo.get("provider_model_id_source")
-        != gateway.get("provider_model_id_env", {}).get("openai")
+        != gateway.get("provider_model_id_source")
         or demo.get("credential_env") != gateway.get("provider_credential_env")
+        or demo.get("base_url_env") != gateway.get("provider_base_url_env")
     ):
         fail(
             project_path.relative_to(ROOT),
@@ -1689,6 +1722,7 @@ def main() -> int:
         env_example_text = env_example.read_text(encoding="utf-8")
         required_environment = [
             gateway.get("provider_credential_env"),
+            gateway.get("provider_base_url_env"),
             gateway.get("model_alias_env"),
             *gateway.get("provider_model_id_env", {}).values(),
         ]
@@ -1722,24 +1756,14 @@ def main() -> int:
                 env_example.relative_to(ROOT),
                 f"{variable} precisa ser placeholder, nunca credencial/modelo concreto",
             )
-    if status_id_modelo == "project-selection-required":
-        openai_model_env = gateway.get("provider_model_id_env", {}).get("openai")
-        if openai_model_env and not env_lines.get(openai_model_env, "").startswith("replace-"):
-            fail(
-                env_example.relative_to(ROOT),
-                "ID OpenAI ainda pendente deve permanecer como placeholder, sem inventar um modelo",
-            )
-    elif status_id_modelo == "candidate-configured-validation-required":
-        openai_model_env = gateway.get("provider_model_id_env", {}).get("openai")
-        modelo_candidato = model_decision.get("candidate")
+    if status_id_modelo == "fixed-in-catalog":
         if (
-            not openai_model_env
-            or not modelo_candidato
-            or env_lines.get(openai_model_env, "").strip() != modelo_candidato
+            model_decision.get("catalog_model_id") != gateway.get("model_id_catalog_value")
+            or gateway.get("provider_model_id_env") != {}
         ):
             fail(
-                env_example.relative_to(ROOT),
-                "ID OpenAI do exemplo precisa corresponder ao candidato registrado para validação",
+                project_path.relative_to(ROOT),
+                "modelo fixo do catálogo precisa corresponder à decisão e não exigir variável externa",
             )
     ignore_expectations = {
         ROOT / ".gitignore": "Backend/.env",

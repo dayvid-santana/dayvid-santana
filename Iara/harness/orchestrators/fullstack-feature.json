@@ -1,0 +1,26 @@
+{
+  "id": "iara.fullstack-feature",
+  "workflow": "iara.fullstack-feature",
+  "execution": "sequential",
+  "steps": [
+    "intake-and-contract",
+    "retrieve-task-context",
+    "backend-implementation",
+    "frontend-implementation",
+    "integrated-smoke",
+    "docker-integrated-smoke",
+    "visual-accessibility-review",
+    "harness-gate",
+    "handoff"
+  ],
+  "failure_policy": "stop-at-failed-gate-fix-and-rerun",
+  "loop_policy_ref": "iara.repair-loop",
+  "loop_entry_steps": [
+    "integrated-smoke",
+    "docker-integrated-smoke",
+    "visual-accessibility-review",
+    "harness-gate",
+    "handoff"
+  ],
+  "delegation": "disabled"
+}

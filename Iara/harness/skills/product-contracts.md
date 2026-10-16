@@ -8,13 +8,13 @@ id: iara.product-contracts
 
 A API Iara é a fronteira pública entre browser, persistência e Model Gateway. A UI conhece IDs, estados e blocos públicos da Iara; não conhece SDKs, nomes internos, headers nem payloads específicos de providers. Serviços analíticos também devem converter os resultados para os mesmos blocos públicos.
 
-A credencial OpenAI é configuração privada do backend (`OPENAI_API_KEY` carregada localmente de `Backend/.env`, ou injetada pelo ambiente seguro em produção). Ela nunca faz parte do contrato HTTP/browser. O modelo é selecionado pela configuração/alias do Gateway, não por um identificador de provider exposto à UI.
+A URL e a credencial da API da Iara são configuração privada do Backend (`IARA_BASE_URL` e `IARA_API_KEY` carregadas localmente de `Backend/.env`, ou injetadas pelo ambiente seguro em produção). Ela nunca faz parte do contrato HTTP/browser. O modelo é selecionado pela configuração/alias do Gateway, não por um identificador de provider exposto à UI.
 
 O gestor não escolhe nem vê provider ou modelo. O Backend pode persistir a identidade usada como metadado interno de histórico e auditoria; ela não faz parte do contrato público consumido pelo Frontend. A solicitação do gestor segue diretamente à LLM da Iara, sem pré-classificação ou reescrita por uma LLM intermediária. O Backend compõe um System Prompt versionado com instrução de aplicação e pedido original e envia até 40 mensagens recentes da conversa (incluindo o pedido atual composto).
 
 Para dados empresariais, a fonte selecionada é o Grafana MCP. O Backend consulta ferramentas de leitura autorizadas e encaminha resultados necessários ao Model Gateway; a LLM interpreta e apresenta esses resultados nos blocos tipados da Iara. Não há acesso direto da aplicação ao banco empresarial nem análise espontânea. A LLM só descreve tendências ou calcula indicadores quando o gestor pedir explicitamente, usando dados retornados pela consulta autorizada; não inventa valores nem causas. Transporte, autenticação, catálogo de ferramentas e acesso ao MCP permanecem pendentes. Desenvolvimento e testes usam fixtures JSON sintéticas; elas também são a fonte padrão da demonstração por período prolongado. Consultas reais exigem autorização explícita.
 
-HTML arbitrário do modelo nunca é injetado na página. Até contrato versionado e sanitização isolada existirem, são aceitos somente os blocos tipados existentes; HTML recebido como texto é escapado.
+HTML arbitrário do modelo nunca é injetado na página. Blocos `text` podem conter Markdown, renderizado pelo Frontend como elementos semânticos com HTML bruto desabilitado e URLs validadas; imagens remotas da resposta não são carregadas. Até contrato tipado/versionado e sanitização isolada existirem, HTML recebido como texto não é interpretado.
 
 ## Conteúdo de mensagem
 

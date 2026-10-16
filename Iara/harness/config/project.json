@@ -18,9 +18,9 @@
     "rate_limiting": "Em produção com provider real, aceitar no máximo 10 novas solicitações por sessão em janela deslizante de 60 segundos; provider fake local é isento. O limite é atômico com idempotência e aceite; replay e reconexão SSE não contam. Excesso recebe 429 rate_limited com Retry-After antes do aceite. DevOps configura proteção complementar na borda.",
     "operational_metrics": "Métricas Prometheus agregadas de volume/latência HTTP e de gerações e falhas por código estável, sem dados ou identificadores de usuários/conversas; endpoint interno protegido por token de pelo menos 32 caracteres, desligado sem token e com acesso de rede restrito por DevOps; valores locais ao processo e agregáveis pelo Prometheus.",
     "data": "Grafana MCP é a fonte empresarial selecionada, mas o acesso real fica adiado para a etapa final do MVP; fixtures JSON sintéticas são a fonte atual e padrão por período prolongado",
-    "model": "lowest-cost-model-suitable-for-the-demonstration; selection-pending",
-    "provider": "OpenAI",
-    "langchain": "LangChain is used in the Backend Model Gateway for applicable Iara LLM capabilities: message/prompt composition, async calls, streaming, typed structured output, tool calling, callbacks and authorized MCP tools when available. The manager request goes directly to the project-configured Iara LLM without LLM preprocessing. OpenAI is the only MVP LLM provider; Grafana MCP is a future data source and synthetic fixtures remain active. Tools are backend-owned, allowlisted, read-only and bounded. Do not add unrelated LangChain components, unbounded autonomous agents, LangGraph, or response/data cache without a separate product decision.",
+    "model": "fixed-catalog-model-iara-grafana; logical-alias-principal",
+    "provider": "Iara, endpoint compatível com Chat Completions",
+    "langchain": "LangChain is used inside the Backend Model Gateway through the langchain-openai ChatOpenAI client against Iara’s configured OpenAI-compatible endpoint. The manager request goes directly to the project-configured Iara model without LLM preprocessing or OpenAI tool fields. Iara is the only MVP LLM provider. The current endpoint rejects tools, tool_choice and parallel_tool_calls; a future MCP integration requires a separate compatible contract. Do not add unrelated LangChain components, unbounded autonomous agents, LangGraph, or response/data cache without a separate product decision.",
     "user_token_usage": "Resumo privado do gestor com mês atual e seis meses anteriores no calendário de Brasília; registro por chamada com UUID do Backend, identidade do usuário, data, estado e somente tokens informados pelo provider; falhas e cancelamentos entram quando houver uso confirmado; uso ausente fica como não confirmado; sem conteúdo de conversa, modelo, provider ou preço. A retenção de chamadas permanece pendente.",
     "llm_interaction": "Send the manager request directly to the project-configured Iara LLM through Model Gateway; no LLM preclassification, rewrite, summary, intent-filter call, or separate presentation-selection call."
   },
@@ -185,16 +185,14 @@
   },
   "model_gateway": {
     "abstraction": "Model Gateway",
-    "initial_provider": "OpenAI",
-    "provider_credential_env": "OPENAI_API_KEY",
+    "initial_provider": "Iara, endpoint compatível com Chat Completions",
+    "provider_credential_env": "IARA_API_KEY",
     "local_env_file": "Backend/.env",
     "model_alias_env": "IARA_DEFAULT_MODEL",
     "default_model_alias": "principal",
-    "provider_model_id_env": {
-      "openai": "IARA_OPENAI_MODEL_ID"
-    },
-    "model_alias_status": "catalog-implemented-project-candidate-validation-required",
-    "model_id_status": "candidate-configured-validation-required",
+    "provider_model_id_env": {},
+    "model_alias_status": "catalog-implemented",
+    "model_id_status": "fixed-in-catalog",
     "invocation_boundary": "backend-only",
     "frontend_contract": "normalized-iara-api",
     "request_context": "up-to-40-most-recent-same-conversation-dialogue-messages-including-current-composed-request; system-message-excluded",
@@ -224,19 +222,23 @@
     "public_error_policy": "normalized-without-provider-payload",
     "demonstration": {
       "required_for_product_acceptance": true,
-      "provider": "OpenAI",
+      "provider": "Iara",
       "model_alias_source": "IARA_DEFAULT_MODEL",
-      "provider_model_id_source": "IARA_OPENAI_MODEL_ID",
-      "credential_env": "OPENAI_API_KEY",
+      "provider_model_id_source": "catalog:principal/iara=iara-grafana",
+      "credential_env": "IARA_API_KEY",
       "data": "synthetic-fixtures-default; live-grafana-mcp-requires-explicit-authorization",
       "must_prove": [
         "streaming",
         "normalized-content",
         "structured-block-rendering"
-      ]
+      ],
+      "base_url_env": "IARA_BASE_URL"
     },
     "model_visibility": "hidden-from-gestor",
-    "persist_model_metadata": "backend-internal-only"
+    "persist_model_metadata": "backend-internal-only",
+    "provider_base_url_env": "IARA_BASE_URL",
+    "model_id_catalog_value": "iara-grafana",
+    "provider_model_id_source": "catalog:principal/iara=iara-grafana"
   },
   "product_scope": {
     "in_scope": [

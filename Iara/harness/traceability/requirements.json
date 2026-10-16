@@ -99,8 +99,8 @@
       ]
     },
     {
-      "id": "gateway.openai-demo",
-      "requirement": "Adapter OpenAI configurado no backend demonstra o modelo escolhido sem expor credenciais",
+      "id": "gateway.iara-demo",
+      "requirement": "Adapter da Iara configurado no Backend demonstra o modelo cadastrado sem expor credenciais",
       "status": "planned",
       "evidence": [
         "Backend/app/gateway.py",
@@ -399,7 +399,7 @@
     },
     {
       "id": "request.wait-policy",
-      "requirement": "Aguardar resposta da fonte por no máximo 40 segundos, informar progresso sem consultas repetidas à LLM e permitir cancelamento ou nova tentativa",
+      "requirement": "Aguardar a resposta por 120 segundos por padrão, configurável entre 1 e 360, informar progresso a cada 15 segundos sem nova chamada à LLM e permitir cancelamento ou nova tentativa",
       "status": "planned",
       "evidence": [
         "Backend/app",

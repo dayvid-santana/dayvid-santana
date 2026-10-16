@@ -378,13 +378,17 @@
       "status": "implemented",
       "scenarios": [
         "Provider falso produz blocos normalizados",
-        "Blocos estruturados inválidos são rejeitados",
-        "Falha de credencial OpenAI e erro da fonte são normalizados sem detalhes privados"
+        "Blocos estruturados inválidos são omitidos quando há texto válido; sem texto, a resposta falha com erro seguro",
+        "Falha da credencial Iara e erro da fonte são normalizados sem detalhes privados"
       ],
       "evidence": [
         {
           "path": "Backend/tests/test_model_gateway.py",
-          "test_name": "test_gateway_rejeita_blocos_invalidos_do_provider"
+          "test_name": "test_gateway_preserva_texto_e_descarta_blocos_visuais_invalidos"
+        },
+        {
+          "path": "Backend/tests/test_model_gateway.py",
+          "test_name": "test_gateway_rejeita_blocos_invalidos_sem_explicacao_textual"
         },
         {
           "path": "Backend/tests/test_gateway.py",
@@ -522,7 +526,7 @@
       "level": "async-state-machine",
       "status": "planned",
       "scenarios": [
-        "Tentativas aguardam no máximo 40 segundos sem polling que gere tokens",
+        "Tentativas usam prazo padrão de 120 segundos e status a cada 15 segundos sem nova chamada que gere tokens",
         "Falha anterior ao limite encerra imediatamente",
         "Retentativa explícita cria tentativa rastreável",
         "Cancelamento remove trabalho pendente",
@@ -899,16 +903,16 @@
       "defer_reason": "A integração com banco de produção e seus detalhes operacionais serão tratados no final, com os requisitos fornecidos por DBA/DevOps."
     },
     {
-      "id": "integration.openai-model-demo-final-stage",
+      "id": "integration.iara-model-demo-final-stage",
       "requirement_ids": [
-        "gateway.openai-demo"
+        "gateway.iara-demo"
       ],
       "suite": "provider.live-demo",
       "level": "external-integration-opt-in",
       "status": "opt-in",
       "scenarios": [
         "Chamada real resolve IARA_DEFAULT_MODEL como alias e usa ID/chave somente no Backend",
-        "Resposta OpenAI é normalizada para o contrato Iara",
+        "Resposta do endpoint da Iara é normalizada para o contrato Iara",
         "Falha real é segura e evidência não contém segredo ou payload bruto"
       ],
       "evidence": [
@@ -936,7 +940,7 @@
         "Dados sintéticos são usados até autorização e contrato do Grafana MCP real"
       ],
       "limits": [
-        "A execução atual usa provider e fonte sintéticos; integração real com Grafana MCP e chamada OpenAI autorizada ficam para a etapa final."
+        "A execução atual usa provider e fonte sintéticos; integração real com Grafana MCP e chamada do endpoint Iara autorizada ficam para a etapa final."
       ]
     },
     {
