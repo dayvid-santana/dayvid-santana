@@ -1,0 +1,179 @@
+{
+  "schema_version": 1,
+  "gates": [
+    {
+      "id": "harness.validate",
+      "runner": "scripts/harness.ps1",
+      "target": "harness",
+      "required": true,
+      "purpose": "Validar estrutura e referências da definição do harness"
+    },
+    {
+      "id": "context.verify",
+      "runner": "scripts/harness.ps1",
+      "target": "context",
+      "required": true,
+      "purpose": "Testar retrieval híbrido, escopos, exclusões, hashes e limite do pacote de contexto"
+    },
+    {
+      "id": "backend.verify",
+      "runner": "scripts/harness.ps1",
+      "target": "backend",
+      "required": true,
+      "purpose": "Ruff, Pytest e cobertura mínima de 80%"
+    },
+    {
+      "id": "frontend.verify",
+      "runner": "scripts/harness.ps1",
+      "target": "frontend",
+      "required": true,
+      "purpose": "Oxlint, TypeScript, Vitest e build de produção"
+    },
+    {
+      "id": "integration.e2e",
+      "runner": "scripts/harness.ps1",
+      "target": "e2e",
+      "required": true,
+      "purpose": "Playwright contra API e frontend iniciados pelo config"
+    },
+    {
+      "id": "docker.development.up",
+      "runner": "scripts/harness.ps1",
+      "target": "docker-up",
+      "required": false,
+      "purpose": "Validar Compose e iniciar Frontend e Backend locais sem publicar a API"
+    },
+    {
+      "id": "docker.integration.e2e",
+      "runner": "scripts/harness.ps1",
+      "target": "docker-e2e",
+      "required": false,
+      "purpose": "Executar smoke Playwright em containers e remover o projeto de teste isolado"
+    },
+    {
+      "id": "docker.development.down",
+      "runner": "scripts/harness.ps1",
+      "target": "docker-down",
+      "required": false,
+      "purpose": "Parar o stack local mantendo o volume SQLite de desenvolvimento"
+    }
+  ],
+  "test_coverage": {
+    "manifest": "harness/testing/coverage.json",
+    "enforced_by": "harness.validate",
+    "every_product_requirement_must_map_to_scenarios": true,
+    "implemented_scenarios_require_existing_test_names": true,
+    "planned_scenarios_must_not_be_reported_as_covered": true,
+    "live_integrations_are_outside_default_suite": true
+  },
+  "security": {
+    "provider_calls_in_default_suite": false,
+    "default_provider_adapter": "fake",
+    "live_provider_calls": "explicit-opt-in",
+    "live_provider_demonstration": "required-opt-in-before-product-acceptance",
+    "provider_credential_source": "Backend/.env:IARA_API_KEY-local-or-deployment-secret",
+    "provider_calls_must_use": "backend-model-gateway",
+    "provider_credentials_in_frontend": false,
+    "validate_structured_response_before_persist_or_render": true,
+    "only_send_context_needed_for_authenticated_user_request": true,
+    "secrets_in_fixtures": false,
+    "provider_payloads_in_public_errors": false,
+    "log_prompts_and_answers_by_default": false,
+    "company_data_source": "Grafana MCP through backend-only authorized read tools",
+    "real_company_data_in_fixtures": false
+  },
+  "decision_consistency": {
+    "manifest": "harness/config/decisions.json",
+    "component_manifests": [
+      "Backend/harness/config/decisions.json",
+      "Frontend/harness/config/decisions.json"
+    ],
+    "enforced_by": "harness.validate",
+    "checks": [
+      "decision-evidence-paths-exist",
+      "model-status-matches-project-and-env-example",
+      "provider-credential-name-matches-backend-config",
+      "readme-records-current-model-data-database-and-auth-decisions"
+    ]
+  },
+  "model_gateway_contract": {
+    "manifest": "harness/config/model-gateway.json",
+    "backend_manifest": "Backend/harness/config/model-gateway.json",
+    "enforced_by": "harness.validate",
+    "checks": [
+      "provider-contract-remains-backend-owned",
+      "implementation-status-is-evidence-backed",
+      "credentials-never-reach-browser",
+      "normalize-and-validate-before-persist-or-render",
+      "fake-provider-is-default-for-automated-suite",
+      "provider-demo-remains-explicit-opt-in"
+    ]
+  },
+  "requirement_traceability": {
+    "manifest": "harness/traceability/requirements.json",
+    "component_manifests": [
+      "Backend/harness/traceability/requirements.json",
+      "Frontend/harness/traceability/requirements.json"
+    ],
+    "enforced_by": "harness.validate",
+    "required_fields": [
+      "id",
+      "requirement",
+      "status",
+      "evidence",
+      "gates"
+    ],
+    "status_must_not_overstate_implementation": true
+  },
+  "ux_review": {
+    "id": "frontend.ux-review",
+    "frontend_manifest": "Frontend/harness/config/quality-gates.json",
+    "kind": "manual-evidence",
+    "required_for": "feature-handoff",
+    "must_verify": [
+      "keyboard-navigation",
+      "visible-focus",
+      "loading-empty-error-and-retry-states",
+      "desktop-and-mobile-layout",
+      "chart-text-alternative",
+      "contrast-and-readable-density"
+    ],
+    "evidence": [
+      "screenshots",
+      "keyboard-walkthrough",
+      "issues-or-none"
+    ]
+  },
+  "synthetic_data_policy": {
+    "manifest": "harness/config/synthetic-data.json",
+    "backend_manifest": "Backend/harness/config/synthetic-data.json",
+    "enforced_by": "harness.validate",
+    "fixture_validation": "json-metadata-and-prohibited-field-names",
+    "human_review_required_for_fictional-values": true
+  },
+  "acceptance_checks": [
+    {
+      "id": "provider.live-demo",
+      "kind": "manual-opt-in",
+      "required_for": "product-acceptance",
+      "provider": "Iara",
+      "model_alias_source": "IARA_DEFAULT_MODEL",
+      "provider_model_id_source": "catalog:principal/iara=iara-grafana",
+      "credential_source": "Backend/.env:IARA_API_KEY-local-or-deployment-secret",
+      "data": "synthetic-fixtures-default; live-grafana-mcp-requires-explicit-authorization",
+      "must_verify": [
+        "streaming-completes-with-canonical-events",
+        "response-normalizes-to-iara-content-blocks",
+        "text-kpi-kpi_group-table-chart-processing-render-from-iara-contract",
+        "provider-failure-produces-safe-recoverable-error"
+      ],
+      "evidence_must_not_include": [
+        "api-key-value",
+        "authorization-header",
+        "raw-provider-payload"
+      ],
+      "source_policy": "Synthetic fixtures are the default for demonstrations even after MCP access; live company data requires separate explicit authorization and must not be recorded as evidence",
+      "base_url_source": "Backend/.env:IARA_BASE_URL-local-or-deployment-configuration"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "id": "iara.integration-coordinator",
+  "role": "iara.coordinator",
+  "prompt": "iara.feature-intake",
+  "skills": ["iara.product-contracts", "iara.delivery-workflow", "iara.context-retrieval"],
+  "tools": ["project.read", "context.retrieve", "context.verify", "backend.verify", "frontend.verify", "integration.e2e", "harness.validate"],
+  "workflows": ["iara.fullstack-feature"],
+  "purpose": "Manter o contrato e a sequência de entrega entre backend e frontend.",
+  "delegation": "disabled"
+}

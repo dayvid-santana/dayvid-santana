@@ -1,0 +1,285 @@
+{
+  "schema_version": 1,
+  "project": {
+    "id": "iara",
+    "name": "Iara",
+    "product": "Oráculo conversacional para consultar dados empresariais via Grafana MCP e apresentar respostas analíticas",
+    "platform": "web",
+    "stage": "mvp-functional-synthetic-foundation"
+  },
+  "decisions": {
+    "language": "new-team-owned-code-and-product-names-in-portuguese; database-identifiers-in-portuguese; preserve-existing-public-contract-identifiers",
+    "database": "SQLite local para desenvolvimento, testes e demo; um único DDL SQLite será entregue ao DBA ao final do MVP; banco de produção fica a cargo do DBA/DevOps",
+    "docker": "Docker Compose conecta Frontend e Backend somente para desenvolvimento local e testes integrados; API privada; SQLite de desenvolvimento persistente; smoke usa provider fake, rede isolada e volume descartavel",
+    "authentication": "Produção: validar credencial/token no SULTS e emitir token de sessão próprio da Iara por usuário seguindo o padrão Faturas; integração SULTS adiada para a etapa final. Desenvolvimento local em loopback usa identidade sintética, sem acesso às conversas de gestores",
+    "security_baseline": "Usar a versão estável atual do OWASP ASVS como checklist verificável para mudanças que afetem segurança; registrar versão, requisitos aplicáveis e evidências de teste/revisão. Isso não representa certificação nem garantia de risco zero.",
+    "message_cache": "O Frontend mantém mensagens somente em memória durante a sessão autenticada; mostra a cópia imediatamente ao retomar e revalida pela API em paralelo, que continua sendo a fonte oficial. Limpar ao sair, invalidar/expirar sessão, excluir conversa e desmontar a área autenticada; não persistir no navegador.",
+    "request_idempotency": "O Backend emite chave aleatória de uso único antes de cada envio e retry explícito; vincula à sessão e ao escopo da operação; guarda somente o hash; a chave expira com a sessão; reenvio técnico com mesma chave e mesmo comando devolve a aceitação existente; comando divergente é rejeitado; retry explícito recebe chave nova",
+    "rate_limiting": "Em produção com provider real, aceitar no máximo 10 novas solicitações por sessão em janela deslizante de 60 segundos; provider fake local é isento. O limite é atômico com idempotência e aceite; replay e reconexão SSE não contam. Excesso recebe 429 rate_limited com Retry-After antes do aceite. DevOps configura proteção complementar na borda.",
+    "operational_metrics": "Métricas Prometheus agregadas de volume/latência HTTP e de gerações e falhas por código estável, sem dados ou identificadores de usuários/conversas; endpoint interno protegido por token de pelo menos 32 caracteres, desligado sem token e com acesso de rede restrito por DevOps; valores locais ao processo e agregáveis pelo Prometheus.",
+    "data": "Grafana MCP é a fonte empresarial selecionada, mas o acesso real fica adiado para a etapa final do MVP; fixtures JSON sintéticas são a fonte atual e padrão por período prolongado",
+    "model": "fixed-catalog-model-iara-grafana; logical-alias-principal",
+    "provider": "Iara, endpoint compatível com Chat Completions",
+    "langchain": "LangChain is used inside the Backend Model Gateway through the langchain-openai ChatOpenAI client against Iara’s configured OpenAI-compatible endpoint. The manager request goes directly to the project-configured Iara model without LLM preprocessing or OpenAI tool fields. Iara is the only MVP LLM provider. The current endpoint rejects tools, tool_choice and parallel_tool_calls; a future MCP integration requires a separate compatible contract. Do not add unrelated LangChain components, unbounded autonomous agents, LangGraph, or response/data cache without a separate product decision.",
+    "user_token_usage": "Resumo privado do gestor com mês atual e seis meses anteriores no calendário de Brasília; registro por chamada com UUID do Backend, identidade do usuário, data, estado e somente tokens informados pelo provider; falhas e cancelamentos entram quando houver uso confirmado; uso ausente fica como não confirmado; sem conteúdo de conversa, modelo, provider ou preço. A retenção de chamadas permanece pendente.",
+    "llm_interaction": "Send the manager request directly to the project-configured Iara LLM through Model Gateway; no LLM preclassification, rewrite, summary, intent-filter call, or separate presentation-selection call."
+  },
+  "implementation": {
+    "backend": {
+      "path": "Backend",
+      "harness": "Backend/harness/config/harness.json"
+    },
+    "frontend": {
+      "path": "Frontend",
+      "harness": "Frontend/harness/config/harness.json"
+    }
+  },
+  "execution": {
+    "mode": "sequential",
+    "delegation": "disabled",
+    "shared_contracts": [
+      "texto",
+      "solicitacao.iniciada",
+      "solicitacao.status",
+      "texto.delta",
+      "bloco.pronto",
+      "solicitacao.concluida",
+      "solicitacao.falhou",
+      "solicitacao.cancelada",
+      "text",
+      "kpi",
+      "kpi_group",
+      "table",
+      "chart",
+      "error",
+      "processing"
+    ]
+  },
+  "context_retrieval": {
+    "default_context_tokens": 6000,
+    "max_context_tokens": 12000,
+    "default_results": 8,
+    "max_results": 20,
+    "max_query_chars": 4000,
+    "max_candidates": 100,
+    "max_related_context_links": 3,
+    "min_candidate_score": 3.0,
+    "max_files_scanned": 5000,
+    "max_file_bytes": 262144,
+    "max_chunk_lines": 80,
+    "continuity": {
+      "canonical_project_state": "harness/context/estado-do-projeto.md",
+      "canonical_active_handoff": "harness/context/retomada-atual.md",
+      "component_mirrors": {
+        "backend": "Backend/harness/context",
+        "frontend": "Frontend/harness/context"
+      },
+      "read_before_task_retrieval": true,
+      "update_after_user_decision": true,
+      "update_before_handoff": true,
+      "mirror_policy": "byte-identical"
+    },
+    "allowed_extensions": [
+      ".css",
+      ".html",
+      ".js",
+      ".jsx",
+      ".md",
+      ".mjs",
+      ".ps1",
+      ".py",
+      ".sh",
+      ".sql",
+      ".toml",
+      ".ts",
+      ".tsx",
+      ".txt",
+      ".yml",
+      ".yaml",
+      ".json"
+    ],
+    "scopes": {
+      "project": [
+        "Backend",
+        "Frontend",
+        "harness",
+        "scripts",
+        "README.md",
+        "AGENTS.md"
+      ],
+      "backend": [
+        "Backend"
+      ],
+      "frontend": [
+        "Frontend"
+      ],
+      "harness": [
+        "harness",
+        "scripts",
+        "README.md",
+        "AGENTS.md"
+      ]
+    },
+    "route_keywords": {
+      "backend": [
+        "backend",
+        "api",
+        "fastapi",
+        "python",
+        "gateway",
+        "provider",
+        "auth",
+        "database",
+        "persistencia",
+        "server"
+      ],
+      "frontend": [
+        "frontend",
+        "ui",
+        "interface",
+        "tela",
+        "componente",
+        "react",
+        "typescript",
+        "css",
+        "visual",
+        "acessibilidade"
+      ],
+      "harness": [
+        "harness",
+        "agent",
+        "workflow",
+        "tool",
+        "prompt",
+        "skill",
+        "orchestrator",
+        "retrieval",
+        "context",
+        "rag",
+        "contexto"
+      ]
+    },
+    "deny_globs": [
+      "**/.env*",
+      "**/.git/**",
+      "**/.ssh/**",
+      "**/.aws/**",
+      "**/.venv/**",
+      "**/venv/**",
+      "**/node_modules/**",
+      "**/dist/**",
+      "**/build/**",
+      "**/__pycache__/**",
+      "**/.pytest_cache/**",
+      "**/.ruff_cache/**",
+      "**/secrets/**",
+      "**/credentials/**",
+      "**/*.key",
+      "**/*.pem",
+      "**/*.p12",
+      "**/*.pfx",
+      "**/*.db",
+      "**/*.sqlite*",
+      "**/*.log"
+    ]
+  },
+  "model_gateway": {
+    "abstraction": "Model Gateway",
+    "initial_provider": "Iara, endpoint compatível com Chat Completions",
+    "provider_credential_env": "IARA_API_KEY",
+    "local_env_file": "Backend/.env",
+    "model_alias_env": "IARA_DEFAULT_MODEL",
+    "default_model_alias": "principal",
+    "provider_model_id_env": {},
+    "model_alias_status": "catalog-implemented",
+    "model_id_status": "fixed-in-catalog",
+    "invocation_boundary": "backend-only",
+    "frontend_contract": "normalized-iara-api",
+    "request_context": "up-to-40-most-recent-same-conversation-dialogue-messages-including-current-composed-request; system-message-excluded",
+    "response_validation": "required-before-persistence-and-rendering",
+    "structured_output_blocks": [
+      "texto",
+      "kpi",
+      "kpi_group",
+      "table",
+      "chart",
+      "error",
+      "processing"
+    ],
+    "streaming_events": [
+      "solicitacao.iniciada",
+      "solicitacao.status",
+      "texto.delta",
+      "bloco.pronto",
+      "solicitacao.concluida",
+      "solicitacao.falhou",
+      "solicitacao.cancelada"
+    ],
+    "streaming_event_schema": "contracts/eventos-sse-v1.schema.json",
+    "internal_query_result_contract": "Backend/app/contrato_consulta.py",
+    "default_test_provider": "fake",
+    "live_provider_test": "explicit-opt-in",
+    "public_error_policy": "normalized-without-provider-payload",
+    "demonstration": {
+      "required_for_product_acceptance": true,
+      "provider": "Iara",
+      "model_alias_source": "IARA_DEFAULT_MODEL",
+      "provider_model_id_source": "catalog:principal/iara=iara-grafana",
+      "credential_env": "IARA_API_KEY",
+      "data": "synthetic-fixtures-default; live-grafana-mcp-requires-explicit-authorization",
+      "must_prove": [
+        "streaming",
+        "normalized-content",
+        "structured-block-rendering"
+      ],
+      "base_url_env": "IARA_BASE_URL"
+    },
+    "model_visibility": "hidden-from-gestor",
+    "persist_model_metadata": "backend-internal-only",
+    "provider_base_url_env": "IARA_BASE_URL",
+    "model_id_catalog_value": "iara-grafana",
+    "provider_model_id_source": "catalog:principal/iara=iara-grafana"
+  },
+  "product_scope": {
+    "in_scope": [
+      "auth e sessao",
+      "historico e retomada de conversas",
+      "Model Gateway desacoplado",
+      "streaming normalizado",
+      "conteudo analitico tipado",
+      "tratamento centralizado de erros",
+      "seguranca de credenciais",
+      "observabilidade sem conteudo privado",
+      "consulta autorizada ao Grafana MCP pelo backend e apresentação dos resultados pela LLM"
+    ],
+    "out_of_scope": [
+      "agentes autonomos complexos",
+      "treinamento ou fine-tuning",
+      "RAG corporativo completo",
+      "billing",
+      "marketplace de modelos",
+      "aplicativo mobile nativo",
+      "acesso direto ao banco empresarial ou análise/cálculo de métricas sem solicitação explícita",
+      "integrações MCP diferentes do Grafana MCP nesta fase"
+    ]
+  },
+  "quality_gates": [
+    "harness.validate",
+    "context.verify",
+    "backend.verify",
+    "frontend.verify",
+    "integration.e2e"
+  ],
+  "company_data_source": {
+    "selected_source": "Grafana MCP",
+    "integration_status": "real-access-deferred-until-final-mvp-stage",
+    "invocation_boundary": "backend-only",
+    "allowed_operations": "explicitly-authorized-read-tools-only",
+    "direct_database_access": false,
+    "application_business_metric_calculation": false,
+    "llm_role": "interpret-and-present-mcp-results-using-iara-content-contracts",
+    "development_fallback": "synthetic-json-fixtures",
+    "source": "Grafana MCP",
+    "demonstration_default": "synthetic-even-after-mcp-access-unless-live-use-is-explicitly-authorized"
+  }
+}

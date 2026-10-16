@@ -1,0 +1,345 @@
+{
+  "schema_version": 1,
+  "source_of_truth": "synchronized-component-harness-manifests",
+  "decisions": {
+    "language": {
+      "status": "decided",
+      "value": "new-team-owned-code-and-product-names-in-portuguese; database-identifiers-in-portuguese; preserve-existing-public-contract-identifiers",
+      "scope": "application-code-ui-and-database-schema",
+      "evidence": [
+        "AGENTS.md"
+      ]
+    },
+    "database": {
+      "status": "decided-for-local-development-and-final-ddl",
+      "value": "SQLite local para desenvolvimento, testes e demo; um único DDL SQLite será entregue ao DBA ao final do MVP; banco de produção fica a cargo do DBA/DevOps",
+      "ddl_delivery": "after-mvp",
+      "evidence": [
+        "Backend/sql/esquema.sql",
+        "README.md"
+      ]
+    },
+    "docker": {
+      "status": "decided-for-local-development-and-integrated-tests",
+      "value": "Docker Compose conecta Frontend e Backend somente para desenvolvimento local e testes integrados; API privada; SQLite de desenvolvimento persistente; smoke usa provider fake, rede isolada e volume descartavel",
+      "production_images": "out-of-scope",
+      "evidence": [
+        "compose.yaml",
+        "compose.dev.yaml",
+        "compose.test.yaml",
+        "scripts/harness.ps1"
+      ]
+    },
+    "authentication": {
+      "status": "strategy-decided-integration-deferred",
+      "value": "Produção: validar credencial/token no SULTS e emitir token de sessão próprio da Iara por usuário seguindo o padrão Faturas; integração SULTS adiada para a etapa final. Desenvolvimento local em loopback usa identidade sintética, sem acesso às conversas de gestores",
+      "owner": "technical-lead",
+      "evidence": [
+        "Backend/app/autenticacao.py",
+        "README.md"
+      ]
+    },
+    "security_baseline": {
+      "status": "decided",
+      "value": "Usar a versão estável atual do OWASP ASVS como checklist verificável para mudanças que afetem segurança; registrar versão, requisitos aplicáveis e evidências de teste/revisão. Isso não representa certificação nem garantia de risco zero.",
+      "scope": "security-sensitive-changes-across-backend-and-frontend",
+      "evidence": [
+        "Backend/harness/rules/iara.security-verification.md",
+        "Backend/harness/skills/security.md"
+      ]
+    },
+    "data": {
+      "status": "source-selected-real-access-deferred",
+      "value": "Grafana MCP é a fonte empresarial selecionada, mas o acesso real fica adiado para a etapa final do MVP; fixtures JSON sintéticas são a fonte atual e padrão por período prolongado",
+      "duration": "synthetic-fixtures-remain-default-for-an-extended-period",
+      "evidence": [
+        "Backend/fixtures/synthetic/vendas.json",
+        "README.md"
+      ],
+      "source": "Grafana MCP",
+      "access_status": "deferred-until-final-mvp-stage"
+    },
+    "context_contract": {
+      "status": "approved-and-internal-schema-defined",
+      "value": "Internal consultation result contract stays backend-only and preserves approved completeness, partial-data, provenance and fail-closed rules",
+      "visibility": "backend-internal-only-no-public-message-v1-change",
+      "groups": {
+        "consulta": [
+          "pergunta_original",
+          "parametros_solicitados",
+          "parametros_enviados",
+          "parametros_confirmados_fonte_optional"
+        ],
+        "resultado": {
+          "data_kind": [
+            "observado",
+            "estimativa",
+            "nao_informado"
+          ],
+          "estimates": "source-must-explicitly-mark-estimativa; never-project-or-infer-estimates",
+          "columns": [
+            "chave",
+            "rotulo",
+            "tipo_valor",
+            "unidade_optional",
+            "moeda_optional"
+          ],
+          "rows": "exactly-the-declared-keys-with-values-compatible-with-column-types"
+        },
+        "completude": {
+          "states": [
+            "completo",
+            "parcial",
+            "sem_dados",
+            "nao_informado"
+          ],
+          "source_signal": [
+            "completo",
+            "parcial",
+            "absent"
+          ],
+          "gaps": "only-when-explicitly-declared-by-source",
+          "complete_requires_explicit_source_confirmation": true,
+          "valid_empty_query": "sem_dados-does-not-prove-company-data-does-not-exist",
+          "rows_without_completeness_signal": "nao_informado",
+          "requested_calculation_with_partial_or_unknown_coverage": "use-returned-data-only-and-state-limitation",
+          "insufficient_data": "do-not-calculate"
+        },
+        "proveniencia": [
+          "fonte_logica",
+          "execucao_id_uuid",
+          "consultado_em_timezone_aware",
+          "versao_adaptador"
+        ]
+      },
+      "malformed_or_contradictory_source_result": "stop-before-returning-to-the-model-or-rendering; do-not-present-data",
+      "streaming_progress": {
+        "status": "typed-progress-path-implemented; real-mcp-integration-deferred; partial-source-data-deferred",
+        "value": "An optional internal source callback accepts typed operational stages and the Gateway maps only known stages to controlled solicitacao.status events; the existing seven-event SSE v1 contract is reused, and normalized final LLM text streams only after full source-result validation.",
+        "mcp_progress": "Optional MCP progress notifications may be mapped to controlled status copy when supported by the connected adapter; they are not partial tool results and must not expose raw notification messages, tool names, arguments, payloads, rows or identifiers.",
+        "partial_analytical_values": "Do not render source values before complete ResultadoConsultaInterno validation. Future incremental values require explicit source support, a typed chunk/completeness/provenance contract, per-chunk validation and an approved atomic acceptance policy.",
+        "llm_reasoning": "Never expose raw chain-of-thought or private reasoning; use concise operational status messages instead.",
+        "public_contract": "Reuse the existing seven SSE v1 events; coordinate and version any future public schema change across Backend and Frontend.",
+        "timeout": "The total deadline is 120 seconds by default and configurable up to 360 seconds because the approved dedicated Iara endpoint exceeded 40 seconds in a successful response; this supersedes the earlier 40-second limit. Status notifications every 15 seconds do not extend the deadline or trigger additional LLM calls."
+      },
+      "open": [
+        "synthetic-and-real-adapter-integration",
+        "real-source-signal-mapping",
+        "raw-payload-retention-policy"
+      ],
+      "evidence": [
+        "Backend/app/contrato_consulta.py",
+        "Backend/app/fontes.py",
+        "Backend/app/model_gateway.py",
+        "Backend/tests/test_contrato_consulta.py",
+        "Backend/tests/test_model_gateway.py",
+        "Backend/harness/rules/backend.grafana-mcp.md",
+        "Backend/harness/rules/backend.model-gateway.md",
+        "Backend/harness/rules/iara.public-contracts.md",
+        "Frontend/harness/skills/api-streaming.md",
+        "Frontend/harness/rules/iara.public-contracts.md",
+        "harness/context/estado-do-projeto.md",
+        "harness/context/retomada-atual.md"
+      ]
+    },
+    "model": {
+      "status": "decided-for-iara-service",
+      "value": "logical-alias-principal-resolves-to-fixed-catalog-model-iara-grafana",
+      "selection_criterion": "model-id-is-provided-by-the-iara-service-contract",
+      "environment_variable": "IARA_DEFAULT_MODEL",
+      "logical_alias": "principal",
+      "provider_model_id_environment_variables": {},
+      "evidence": [
+        "harness/config/project.json",
+        "Backend/.env.example",
+        "README.md",
+        "Backend/app/catalogo_modelos.py"
+      ],
+      "user_visibility": "hidden-from-gestor",
+      "candidate": "iara-grafana",
+      "candidate_status": "fixed-in-backend-catalog",
+      "catalog_model_id": "iara-grafana",
+      "configuration_semantics": "logical-catalog-alias"
+    },
+    "provider": {
+      "status": "decided-for-iara-endpoint",
+      "value": "Iara, endpoint compatível com Chat Completions",
+      "credential_environment_variable": "IARA_API_KEY",
+      "evidence": [
+        "harness/config/project.json",
+        "Backend/.env.example",
+        "README.md"
+      ],
+      "base_url_environment_variable": "IARA_BASE_URL"
+    },
+    "conversation_deletion": {
+      "status": "decided-and-implemented",
+      "value": "Gestor pode excluir uma conversa pelo histórico após confirmação; Backend verifica propriedade, cancela gerações ativas e remove mensagens e solicitações vinculadas em cascata",
+      "confirmation": "explicit-inline-confirmation",
+      "evidence": [
+        "Frontend/src/funcionalidades/conversas/componentes/ListaHistorico/ListaHistorico.tsx",
+        "Backend/app/main.py",
+        "Backend/app/persistencia.py"
+      ]
+    },
+    "conversation_navigation": {
+      "status": "decided-and-implemented",
+      "value": "A entrada pela raiz abre uma conversa nova; conversas persistidas têm caminhos próprios por UUID, sincronizados com o histórico e com voltar/avançar do navegador.",
+      "new_conversation_path": "/conversas/nova",
+      "conversation_path": "/conversas/{uuid}",
+      "authorization": "UUID na URL é identificador, não credencial; a API continua validando sessão e propriedade.",
+      "evidence": [
+        "Frontend/src/pages/Aplicacao.tsx",
+        "Frontend/src/funcionalidades/conversas/PaginaConversa.tsx",
+        "Frontend/src/funcionalidades/conversas/README.md"
+      ]
+    },
+    "message_cache": {
+      "status": "decided-and-implemented",
+      "value": "O Frontend mantém mensagens somente em memória durante a sessão autenticada; mostra a cópia imediatamente ao retomar e revalida pela API em paralelo, que continua sendo a fonte oficial. Limpar ao sair, invalidar/expirar sessão, excluir conversa e desmontar a área autenticada; não persistir no navegador.",
+      "storage": "volatile-memory-only; no localStorage, sessionStorage or IndexedDB",
+      "invalidate_on": [
+        "logout",
+        "invalid-or-expired-session",
+        "conversation-deletion",
+        "authenticated-view-unmount"
+      ],
+      "evidence": [
+        "Frontend/src/funcionalidades/conversas/hooks/useConversa.ts",
+        "Frontend/src/api.ts",
+        "Frontend/src/pages/Aplicacao.tsx",
+        "Frontend/src/funcionalidades/conversas/README.md"
+      ]
+    },
+    "request_idempotency": {
+      "status": "decided-and-implemented",
+      "value": "O Backend emite chave aleatória de uso único antes de cada envio e retry explícito; vincula à sessão e ao escopo da operação; guarda somente o hash; a chave expira com a sessão; reenvio técnico com mesma chave e mesmo comando devolve a aceitação existente; comando divergente é rejeitado; retry explícito recebe chave nova",
+      "initial_conversation_scope": "session-and-new-conversation-operation-then-associated-with-created-conversation",
+      "evidence": [
+        "Backend/app/main.py",
+        "Backend/app/persistencia.py",
+        "Backend/sql/esquema.sql",
+        "Frontend/src/api.ts"
+      ]
+    },
+    "rate_limiting": {
+      "status": "backend-policy-approved-implementation-verified-edge-policy-pending",
+      "value": "Em produção com provider real, aceitar no máximo 10 novas solicitações por sessão em janela deslizante de 60 segundos; provider fake local é isento. O limite é atômico com idempotência e aceite; replay e reconexão SSE não contam. Excesso recebe 429 rate_limited com Retry-After antes do aceite. DevOps configura proteção complementar na borda.",
+      "backend": "10 novas solicitações por sessão por janela deslizante de 60 segundos; provider fake local isento",
+      "not_counted": [
+        "replay idempotente",
+        "reconexão SSE",
+        "emissão de chave idempotente"
+      ],
+      "rejection": "429 rate_limited e Retry-After antes do aceite; não descartar solicitação já aceita",
+      "edge_status": "proteção complementar aprovada; identificador, cota e configuração dependem de DevOps",
+      "evidence": [
+        "Backend/app/erros.py",
+        "Backend/app/main.py",
+        "Backend/app/persistencia.py",
+        "Backend/app/solicitacoes.py",
+        "Backend/sql/esquema.sql",
+        "Backend/tests/test_persistencia.py",
+        "Backend/README.md",
+        "Backend/harness/context/estado-do-projeto.md",
+        "Backend/harness/context/retomada-atual.md"
+      ]
+    },
+    "operational_metrics": {
+      "status": "approved-and-implemented",
+      "value": "Métricas Prometheus agregadas de volume/latência HTTP e de gerações e falhas por código estável, sem dados ou identificadores de usuários/conversas; endpoint interno protegido por token de pelo menos 32 caracteres, desligado sem token e com acesso de rede restrito por DevOps; valores locais ao processo e agregáveis pelo Prometheus.",
+      "audience": "internal-operations-only",
+      "format": "prometheus-text-exposition",
+      "token_environment_variable": "IARA_METRICS_TOKEN",
+      "minimum_token_length": 32,
+      "retention": "process-memory-only; reset-on-restart; scraper-aggregates-instances",
+      "evidence": [
+        "Backend/app/configuracao.py",
+        "Backend/app/main.py",
+        "Backend/app/observabilidade.py",
+        "Backend/tests/test_observabilidade_metricas.py",
+        "Backend/harness/rules/iara.admin-observability.md",
+        "Backend/README.md"
+      ]
+    },
+    "langchain": {
+      "status": "approved-for-iara-chat-completions-compatible-endpoint",
+      "value": "LangChain is used inside the Backend Model Gateway through the langchain-openai ChatOpenAI client against Iara’s configured OpenAI-compatible endpoint. The manager request goes directly to the project-configured Iara model without LLM preprocessing or OpenAI tool fields. Iara is the only MVP LLM provider. The current endpoint rejects tools, tool_choice and parallel_tool_calls; a future MCP integration requires a separate compatible contract. Do not add unrelated LangChain components, unbounded autonomous agents, LangGraph, or response/data cache without a separate product decision.",
+      "scope": "backend-model-gateway-iara-adapter",
+      "evidence": [
+        "Backend/app/model_gateway.py",
+        "Backend/pyproject.toml",
+        "Backend/tests/test_model_gateway.py",
+        "Backend/harness/rules/backend.model-gateway.md",
+        "AGENTS.md"
+      ]
+    },
+    "user_token_usage": {
+      "status": "approved-and-implemented",
+      "value": "Resumo privado do gestor com mês atual e seis meses anteriores no calendário de Brasília; registro por chamada com UUID do Backend, identidade do usuário, data, estado e somente tokens informados pelo provider; falhas e cancelamentos entram quando houver uso confirmado; uso ausente fica como não confirmado; sem conteúdo de conversa, modelo, provider ou preço. A retenção de chamadas permanece pendente.",
+      "months_including_current": 7,
+      "preceding_months": 6,
+      "calendar_timezone": "America/Sao_Paulo",
+      "recording": "one-row-per-provider-call-with-backend-generated-UUID-for-deduplication",
+      "provider_usage": "count-only-reported-total-tokens; absent-usage-remains-unknown",
+      "included_outcomes": [
+        "concluida",
+        "falhou",
+        "cancelada"
+      ],
+      "privacy": "no-conversation-content-model-provider-or-price",
+      "retention": "pending-user-decision; no-record-deletion-policy-added",
+      "evidence": [
+        "Backend/app/model_gateway.py",
+        "Backend/app/persistencia.py",
+        "Backend/app/main.py",
+        "Backend/sql/esquema.sql",
+        "Backend/tests/test_model_gateway.py",
+        "Backend/tests/test_persistencia.py",
+        "Backend/tests/test_fluxo_conversas.py",
+        "Frontend/src/funcionalidades/conta/componentes/ModalUsoTokens/ModalUsoTokens.tsx",
+        "Frontend/src/funcionalidades/conta/componentes/ModalUsoTokens/ModalUsoTokens.test.tsx"
+      ]
+    },
+    "llm_interaction": {
+      "status": "approved-policy-implementation-pending",
+      "value": "Send the manager request directly to the project-configured Iara LLM through Model Gateway; no LLM preclassification, rewrite, summary, intent-filter call, or separate presentation-selection call.",
+      "model_identity": "Project-specific behavior is configured through a server-owned System Prompt and model configuration; this does not authorize training/fine-tuning or creating a foundation model, which remain out of MVP scope.",
+      "system_prompt": "Backend-owned, versioned SystemMessage, composed with each request and never stored as a conversation message or exposed to the browser.",
+      "request_composition": "One HumanMessage combines a concise server-authored task instruction with the manager original request, using explicit delimiters; the exact original request remains intact and is not rewritten by another LLM.",
+      "context_window": {
+        "max_messages": 40,
+        "scope": "most-recent persisted user and assistant dialogue messages from the same conversation, including the current composed HumanMessage",
+        "system_message_counted": false,
+        "effective_prior_messages": 39,
+        "ordering": "chronological",
+        "other_conversations": false,
+        "application_instruction_persisted": false
+      },
+      "langchain": "Use LangChain in the Gateway for server-owned chat messages/prompts, async invocation, streaming, typed validation and callbacks. Send no tools, tool_choice or parallel_tool_calls to the current Iara endpoint. A future MCP integration requires an authorized compatible contract. Do not create unbounded agent loops.",
+      "tools": "Disabled in the current Iara endpoint because it rejects OpenAI tool fields. Any future MCP tool integration must be backend-owned, allowlisted, typed, read-only, authorized and bounded, and must be approved under a separate compatible contract.",
+      "presentation": "The LLM places its explanation in the text block using Markdown when useful and returns KPI, KPI group, table and chart data only as typed JSON blocks. Backend validates the blocks; Frontend components generate HTML/SVG using existing UI/UX.",
+      "markdown_rendering": "Markdown in the text block is rendered by the Frontend as semantic elements with raw HTML disabled, unsafe URL protocols blocked and remote images ignored. No public contract change or dangerouslySetInnerHTML.",
+      "html": "The model never sends HTML. Frontend renders existing validated typed blocks as its own HTML/SVG; arbitrary markup, scripts, styles, event handlers, unsafe URLs, model-controlled styling or navigation are never executed.",
+      "source_disclosure": "Never return or cite source identity or technical provenance. Do not expose system/tool/provider, Grafana/MCP, database, source table/view, schema, internal column, query, dashboard, dataset, file, endpoint or execution ID. User-facing analytical tables are allowed only with validated business columns and values, never source schemas or source tables.",
+      "accuracy": "Maximize accuracy through authorized source data, provenance, typed validation, explicit uncertainty and fail-closed handling; never promise perfect accuracy or invent values, trends, causes, estimates, or missing fields.",
+      "no_private_reasoning": "Do not expose chain-of-thought; progress events describe actual operational stages only.",
+      "evidence": [
+        "Backend/harness/rules/backend.model-orchestration.md",
+        "Backend/harness/rules/backend.model-gateway.md",
+        "Backend/harness/rules/backend.grafana-mcp.md",
+        "Frontend/harness/rules/frontend.structured-content.md",
+        "Frontend/src/funcionalidades/conversas/componentes/TextoMarkdown/TextoMarkdown.tsx",
+        "harness/context/estado-do-projeto.md"
+      ]
+    }
+  },
+  "rule_exceptions": [],
+  "backend_constraints": [
+    "Send the manager original request directly to the project-configured Iara LLM with a server-owned versioned System Prompt, application instruction concatenated with the request, and up to 40 recent dialogue messages including the current request; no LLM preprocessing.",
+    "Send the manager original request directly to the project-configured Iara LLM with a server-owned versioned System Prompt, application instruction concatenated with the request, and up to 40 recent dialogue messages including the current request; no LLM preprocessing."
+  ],
+  "frontend_constraints": [
+    "Preserve o IU/UX atual da Iara; o Frontend apenas renderiza contratos públicos aprovados e não expõe System Prompt, ferramentas, provider ou modelo."
+  ]
+}

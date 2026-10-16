@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "id": "iara.repair-loop",
+  "execution": "agent-guided-declarative",
+  "triggers": [
+    "required-gate-failed",
+    "blocking-review-finding"
+  ],
+  "cycle": [
+    "diagnose-root-cause",
+    "fix",
+    "rerun-impacted-steps-and-dependent-gates",
+    "independent-review-of-updated-diff",
+    "record-evidence"
+  ],
+  "success_when": [
+    "task-acceptance-criteria-met",
+    "all-applicable-required-gates-pass",
+    "no-blocking-findings-remain"
+  ],
+  "pause_when": [
+    "approval-gate-required",
+    "required-project-decision-missing",
+    "acceptance-criteria-ambiguous",
+    "external-dependency-unavailable"
+  ],
+  "retry_limit": {
+    "metric": "consecutive-failures-with-the-same-root-cause",
+    "max": 3,
+    "reset_when": "root-cause-changes-or-impacted-gate-passes"
+  },
+  "on_limit": "pause-with-evidence-and-next-options",
+  "resume_at": "paused-or-failed-step",
+  "completion_discipline": {
+    "active_until": "all-authorized-in-scope-acceptance-criteria-are-met-or-a-specific-external-approval-or-input-blocker-is-recorded",
+    "interruption_or_status_request": "preserve-original-objective-and-resume-after-addressing-the-interruption",
+    "partial_delivery_is_completion": false,
+    "blocked_work": "finish-independent-authorized-work-then-record-evidence-cause-and-next-action",
+    "out_of_scope_or_explicitly_deferred_items": "record-correctly-without-blocking-current-task",
+    "iteration_limit": "pause-with-evidence-never-success"
+  },
+  "guardrails": [
+    "approved-scope-only",
+    "never-skip-required-step-silently",
+    "never-repeat-an-unchanged-attempt",
+    "iteration-limit-is-not-success",
+    "rerun-only-impacted-steps-and-dependent-gates"
+  ],
+  "execution_note": "This policy guides agents and is validated by the Harness; the current runner does not execute repair loops automatically."
+}

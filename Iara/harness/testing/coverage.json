@@ -1,0 +1,1010 @@
+{
+  "schema_version": 1,
+  "purpose": "Rastrear cenarios de teste aos requisitos do produto e distinguir evidencia existente de verificacoes planejadas, manuais, opt-in ou adiadas.",
+  "status_semantics": {
+    "implemented": "Teste automatizado existente e localizavel pela evidencia e pelo nome declarado.",
+    "planned": "Cenario obrigatorio quando a capacidade relacionada for implementada; ainda nao existe teste executavel.",
+    "manual-required": "Revisao humana obrigatoria com evidencia registrada antes do handoff aplicavel.",
+    "opt-in": "Verificacao explicita fora da suite padrao, sem credenciais ou rede em execucoes comuns.",
+    "deferred": "Depende de acesso ou integracao real adiada; nao bloqueia o desenvolvimento com adapters falsos e dados sinteticos."
+  },
+  "suites": [
+    {
+      "id": "harness.validate",
+      "kind": "harness-contract",
+      "default": true
+    },
+    {
+      "id": "context.verify",
+      "kind": "unit-and-security",
+      "default": true
+    },
+    {
+      "id": "backend.verify",
+      "kind": "lint-unit-integration-coverage",
+      "default": true
+    },
+    {
+      "id": "frontend.verify",
+      "kind": "lint-types-unit-build",
+      "default": true
+    },
+    {
+      "id": "integration.e2e",
+      "kind": "browser-integration",
+      "default": true
+    },
+    {
+      "id": "docker.integration.e2e",
+      "kind": "containerized-browser-integration",
+      "default": false
+    },
+    {
+      "id": "frontend.ux-review",
+      "kind": "manual-visual-accessibility",
+      "default": false
+    },
+    {
+      "id": "provider.live-demo",
+      "kind": "explicit-live-provider-opt-in",
+      "default": false
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "backend.health.available",
+      "requirement_ids": [],
+      "suite": "backend.verify",
+      "level": "api-integration",
+      "status": "implemented",
+      "evidence": [
+        {
+          "path": "Backend/tests/test_health.py",
+          "test_name": "test_saude_retorna_estado_estavel_quando_persistencia_esta_pronta"
+        }
+      ]
+    },
+    {
+      "id": "backend.health.storage-unavailable",
+      "requirement_ids": [],
+      "suite": "backend.verify",
+      "level": "api-integration",
+      "status": "implemented",
+      "evidence": [
+        {
+          "path": "Backend/tests/test_health.py",
+          "test_name": "test_saude_indica_indisponibilidade_sem_expor_erro_da_persistencia"
+        }
+      ]
+    },
+    {
+      "id": "backend.content.accepts-supported-blocks",
+      "requirement_ids": [
+        "content.text",
+        "content.kpi",
+        "content.table-chart"
+      ],
+      "suite": "backend.verify",
+      "level": "unit",
+      "status": "implemented",
+      "evidence": [
+        {
+          "path": "Backend/tests/test_contracts.py",
+          "test_name": "test_contratos_de_blocos_de_conteudo_sao_aceitos"
+        }
+      ]
+    },
+    {
+      "id": "backend.content.rejects-unknown-and-extra-fields",
+      "requirement_ids": [],
+      "suite": "backend.verify",
+      "level": "unit",
+      "status": "implemented",
+      "evidence": [
+        {
+          "path": "Backend/tests/test_contracts.py",
+          "test_name": "test_tipo_de_conteudo_desconhecido_e_rejeitado"
+        },
+        {
+          "path": "Backend/tests/test_contracts.py",
+          "test_name": "test_campos_desconhecidos_sao_rejeitados"
+        }
+      ]
+    },
+    {
+      "id": "backend.content.rejects-invalid-values-and-shapes",
+      "requirement_ids": [
+        "content.kpi",
+        "content.table-chart"
+      ],
+      "suite": "backend.verify",
+      "level": "unit",
+      "status": "implemented",
+      "evidence": [
+        {
+          "path": "Backend/tests/test_contracts.py",
+          "test_name": "test_kpi_rejeita_valores_incompativeis_com_o_formato"
+        },
+        {
+          "path": "Backend/tests/test_contracts.py",
+          "test_name": "test_tabela_rejeita_colunas_ou_linhas_invalidas"
+        },
+        {
+          "path": "Backend/tests/test_contracts.py",
+          "test_name": "test_grafico_rejeita_series_ou_dados_invalidos"
+        }
+      ]
+    },
+    {
+      "id": "backend.messages.invalid-state-content",
+      "requirement_ids": [],
+      "suite": "backend.verify",
+      "level": "unit",
+      "status": "implemented",
+      "evidence": [
+        {
+          "path": "Backend/tests/test_contracts.py",
+          "test_name": "test_mensagem_publica_rejeita_estado_incompativel_com_seu_conteudo"
+        }
+      ]
+    },
+    {
+      "id": "backend.gateway.fake-stream-contract",
+      "requirement_ids": [],
+      "suite": "backend.verify",
+      "level": "unit",
+      "status": "implemented",
+      "evidence": [
+        {
+          "path": "Backend/tests/test_gateway.py",
+          "test_name": "test_adaptador_falso_implementa_protocolo_neutro_de_provider"
+        }
+      ]
+    },
+    {
+      "id": "backend.source-progress.safe-status-mapping",
+      "requirement_ids": [
+        "streaming.source-operational-progress"
+      ],
+      "suite": "backend.verify",
+      "level": "unit",
+      "status": "implemented",
+      "scenarios": [
+        "A fonte fake emite etapas tipadas durante a consulta",
+        "O Gateway converte somente etapas permitidas em solicitacao.status",
+        "Etapas repetidas são suprimidas e texto livre/desconhecido não chega ao gestor",
+        "Falha ao publicar status não repete consulta externa"
+      ],
+      "evidence": [
+        {
+          "path": "Backend/tests/test_model_gateway.py",
+          "test_name": "test_gateway_mapeia_progresso_da_fonte_sem_repassar_mensagem_livre"
+        },
+        {
+          "path": "Backend/tests/test_model_gateway.py",
+          "test_name": "test_falha_ao_publicar_progresso_nao_repete_consulta_da_fonte"
+        }
+      ]
+    },
+    {
+      "id": "frontend.home-api-success-and-failure",
+      "requirement_ids": [],
+      "suite": "frontend.verify",
+      "level": "component",
+      "status": "implemented",
+      "evidence": [
+        {
+          "path": "Frontend/src/pages/PaginaInicial.test.tsx",
+          "test_name": "Página inicial da Iara"
+        }
+      ]
+    },
+    {
+      "id": "e2e.api-proxy-and-basic-responsive-overflow",
+      "requirement_ids": [
+        "ux.accessibility-responsive"
+      ],
+      "suite": "integration.e2e",
+      "level": "browser-smoke",
+      "status": "implemented",
+      "evidence": [
+        {
+          "path": "Frontend/e2e/smoke.spec.ts",
+          "test_name": "abre localhost sem login, consulta dados e retoma o histórico persistido"
+        },
+        {
+          "path": "Frontend/e2e/smoke.spec.ts",
+          "test_name": "histórico responsivo abre no celular e permite retomar uma conversa"
+        }
+      ],
+      "limits": [
+        "Smoke de conectividade e overflow nao comprova o fluxo de conversa nem uma auditoria completa de acessibilidade."
+      ]
+    },
+    {
+      "id": "docker.e2e.local-stack-proxy-and-isolated-data",
+      "requirement_ids": [
+        "auth.session"
+      ],
+      "suite": "docker.integration.e2e",
+      "level": "containerized-browser-smoke",
+      "status": "implemented",
+      "evidence": [
+        {
+          "path": "Frontend/e2e/smoke.spec.ts",
+          "test_name": "abre localhost sem login, consulta dados e retoma o histórico persistido"
+        },
+        {
+          "path": "Backend/tests/test_autenticacao_proxy_docker.py",
+          "test_name": "test_sessao_sintetica_aceita_ip_exato_do_proxy_docker"
+        },
+        {
+          "path": "Backend/tests/test_autenticacao_proxy_docker.py",
+          "test_name": "test_sessao_sintetica_rejeita_outro_container_da_rede"
+        },
+        {
+          "path": "Backend/tests/test_autenticacao_proxy_docker.py",
+          "test_name": "test_sessao_sintetica_rejeita_proxy_com_host_nao_local"
+        },
+        {
+          "path": "Backend/tests/test_autenticacao_proxy_docker.py",
+          "test_name": "test_sessao_sintetica_docker_permanece_bloqueada_fora_de_desenvolvimento"
+        }
+      ],
+      "limits": [
+        "A cobertura do container depende de executar o alvo opcional docker-e2e com Docker Compose disponível."
+      ]
+    },
+    {
+      "id": "backend.schema-shared-contract-parity",
+      "requirement_ids": [
+        "content.text",
+        "content.kpi",
+        "content.table-chart",
+        "errors.recoverable"
+      ],
+      "suite": "backend.verify",
+      "level": "contract",
+      "status": "implemented",
+      "scenarios": [
+        "Schema JSON e modelos Pydantic declaram os mesmos blocos públicos e aliases",
+        "A serialização da mensagem mantém as mesmas propriedades e campos obrigatórios do schema compartilhado",
+        "Frontend TypeScript compila contra as mesmas chaves públicas"
+      ],
+      "evidence": [
+        {
+          "path": "Backend/tests/test_contracts.py",
+          "test_name": "test_schema_compartilhado_e_pydantic_preservam_bloco_mensagem_e_aliases"
+        }
+      ]
+    },
+    {
+      "id": "backend.auth-session-and-local-development-boundary",
+      "requirement_ids": [
+        "auth.session"
+      ],
+      "suite": "backend.verify",
+      "level": "unit-and-api-integration",
+      "status": "implemented",
+      "scenarios": [
+        "Sessão sintética somente em loopback de desenvolvimento",
+        "CSRF obrigatório para escrita",
+        "Sessões expiradas ou revogadas são invalidadas",
+        "Diagnóstico local não retorna conversas"
+      ],
+      "evidence": [
+        {
+          "path": "Backend/tests/test_fluxo_conversas.py",
+          "test_name": "test_operacoes_de_escrita_exigem_csrf_e_diagnostico_local_nao_expoe_conversas"
+        },
+        {
+          "path": "Backend/tests/test_fluxo_conversas.py",
+          "test_name": "test_sessao_sintetica_nao_pode_ser_iniciada_fora_de_loopback"
+        },
+        {
+          "path": "Backend/tests/test_fluxo_conversas.py",
+          "test_name": "test_logout_revoga_a_sessao_e_painel_admin_e_restrito_a_loopback"
+        },
+        {
+          "path": "Backend/tests/test_persistencia.py",
+          "test_name": "test_sessao_expirada_ou_revogada_nao_e_reutilizada"
+        }
+      ]
+    },
+    {
+      "id": "backend.auth.conversation-ownership",
+      "requirement_ids": [
+        "auth.conversation-ownership"
+      ],
+      "suite": "backend.verify",
+      "level": "api-integration-security",
+      "status": "implemented",
+      "scenarios": [
+        "Consultas de conversa filtram pelo proprietário",
+        "Identidade sintética de demonstração é distinta de gestores reais"
+      ],
+      "evidence": [
+        {
+          "path": "Backend/tests/test_fluxo_conversas.py",
+          "test_name": "test_conversas_sao_filtradas_por_identidade_e_sessoes_sinteticas_reutilizam_usuario"
+        }
+      ]
+    },
+    {
+      "id": "backend.security.credentials-and-private-logs",
+      "requirement_ids": [
+        "security.credentials-and-logs"
+      ],
+      "suite": "backend.verify",
+      "level": "unit-and-api-integration-security",
+      "status": "planned",
+      "scenarios": [
+        "Chaves e tokens nunca são serializados para o Frontend",
+        "Prompts, respostas, dados do MCP e payloads de provider ficam fora dos logs padrão",
+        "Mensagens públicas não contêm stack trace nem payload bruto",
+        "Testes padrão não fazem chamadas externas"
+      ]
+    },
+    {
+      "id": "backend.persistence.create-reopen-and-recover",
+      "requirement_ids": [
+        "conversation.create",
+        "conversation.persist-and-resume",
+        "observability.request-trace"
+      ],
+      "suite": "backend.verify",
+      "level": "repository-integration",
+      "status": "implemented",
+      "scenarios": [
+        "Mensagens, solicitações e blocos são persistidos e a conversa reabre",
+        "Reinício interrompe solicitação ativa e deixa resposta recuperável"
+      ],
+      "evidence": [
+        {
+          "path": "Backend/tests/test_persistencia.py",
+          "test_name": "test_reinicio_interrompe_solicitacao_e_preserva_mensagem_recuperavel"
+        }
+      ]
+    },
+    {
+      "id": "backend.gateway.adapter-normalization-and-provider-failures",
+      "requirement_ids": [
+        "gateway.provider-isolation",
+        "errors.recoverable",
+        "security.credentials-and-logs"
+      ],
+      "suite": "backend.verify",
+      "level": "unit-and-api-integration",
+      "status": "implemented",
+      "scenarios": [
+        "Provider falso produz blocos normalizados",
+        "Blocos estruturados inválidos são omitidos quando há texto válido; sem texto, a resposta falha com erro seguro",
+        "Falha da credencial Iara e erro da fonte são normalizados sem detalhes privados"
+      ],
+      "evidence": [
+        {
+          "path": "Backend/tests/test_model_gateway.py",
+          "test_name": "test_gateway_preserva_texto_e_descarta_blocos_visuais_invalidos"
+        },
+        {
+          "path": "Backend/tests/test_model_gateway.py",
+          "test_name": "test_gateway_rejeita_blocos_invalidos_sem_explicacao_textual"
+        },
+        {
+          "path": "Backend/tests/test_gateway.py",
+          "test_name": "test_adaptador_falso_implementa_protocolo_neutro_de_provider"
+        }
+      ]
+    },
+    {
+      "id": "backend.streaming.public-events-and-lifecycle",
+      "requirement_ids": [
+        "streaming.canonical-events",
+        "streaming.cancel-and-recovery",
+        "observability.request-trace"
+      ],
+      "suite": "backend.verify",
+      "level": "async-api-integration",
+      "status": "planned",
+      "scenarios": [
+        "Eventos públicos seguem contrato e ordem",
+        "Falha termina a solicitação sem evento de conclusão falso",
+        "Cancelamento remove a solicitação da fila e interrompe a consulta",
+        "Reconexão devolve estado persistido e somente eventos futuros",
+        "Sequência e IDs correlacionam solicitação, conversa e mensagem"
+      ]
+    },
+    {
+      "id": "backend.streaming.persisted-partial-snapshots",
+      "requirement_ids": [
+        "streaming.persisted-partial-snapshots"
+      ],
+      "suite": "backend.verify",
+      "level": "repository-and-async-integration",
+      "status": "implemented",
+      "scenarios": [
+        "Cada delta validado atualiza o snapshot da mesma mensagem antes da emissão SSE",
+        "Leitura da conversa durante geração recupera o texto parcial e o estado de processamento",
+        "Reinício converte a mensagem em incompleta preservando texto sem eventos históricos por delta"
+      ],
+      "evidence": [
+        {
+          "path": "Backend/tests/test_solicitacoes.py",
+          "test_name": "test_delta_atualiza_snapshot_persistido_antes_da_conclusao"
+        },
+        {
+          "path": "Backend/tests/test_persistencia.py",
+          "test_name": "test_reinicio_preserva_delta_parcial_ja_persistido"
+        }
+      ]
+    },
+    {
+      "id": "backend.query.validated-source-completeness",
+      "requirement_ids": [
+        "query.validated-source-completeness"
+      ],
+      "suite": "backend.verify",
+      "level": "contract-and-gateway-integration",
+      "status": "implemented",
+      "scenarios": [
+        "A fonte declara campos ou períodos parciais e o Backend apresenta somente essas lacunas",
+        "Dados sem sinal explícito não são rotulados como completos e recebem aviso de cobertura não confirmada",
+        "Resultado malformado é bloqueado antes da LLM",
+        "Consulta sem linhas informa que a consulta não retornou dados sem afirmar inexistência empresarial",
+        "Proveniência interna não é enviada ao provider nem exposta na resposta pública"
+      ],
+      "evidence": [
+        {
+          "path": "Backend/tests/test_model_gateway.py",
+          "test_name": "test_gateway_informa_parcialidade_e_lacunas_declaradas_pela_fonte"
+        },
+        {
+          "path": "Backend/tests/test_model_gateway.py",
+          "test_name": "test_gateway_avisa_quando_a_fonte_nao_confirma_a_cobertura"
+        },
+        {
+          "path": "Backend/tests/test_model_gateway.py",
+          "test_name": "test_gateway_interrompe_contrato_malformado_antes_de_chamar_provedor"
+        },
+        {
+          "path": "Backend/tests/test_model_gateway.py",
+          "test_name": "test_gateway_nao_chama_llm_quando_consulta_valida_nao_retorna_linhas"
+        }
+      ]
+    },
+    {
+      "id": "backend.streaming.timeout-and-reconnect",
+      "requirement_ids": [
+        "streaming.disconnect-recovery"
+      ],
+      "suite": "backend.verify",
+      "level": "async-state-machine",
+      "status": "implemented",
+      "scenarios": [
+        "Limite total cancela provider pendente e persiste falha recuperável",
+        "Desconectar e reconectar ao stream ativo continua com sequências posteriores sem repetir execução"
+      ],
+      "evidence": [
+        {
+          "path": "Backend/tests/test_solicitacoes.py",
+          "test_name": "test_timeout_total_cancela_gateway_e_persiste_falha_recuperavel"
+        },
+        {
+          "path": "Backend/tests/test_solicitacoes.py",
+          "test_name": "test_reconexao_sse_ativa_continua_depois_do_cursor_sem_repetir_execucao"
+        }
+      ]
+    },
+    {
+      "id": "frontend.streaming.network-reconnect-cursor",
+      "requirement_ids": [
+        "streaming.disconnect-recovery"
+      ],
+      "suite": "frontend.verify",
+      "level": "stream-client-unit",
+      "status": "implemented",
+      "scenarios": [
+        "Queda de transporte SSE abre nova requisição com o último cursor confirmado",
+        "Evento já recebido não é aplicado novamente e o stream termina no evento terminal"
+      ],
+      "evidence": [
+        {
+          "path": "Frontend/src/api.test.ts",
+          "test_name": "retoma após desconexão usando a última sequência e não duplica eventos"
+        }
+      ]
+    },
+    {
+      "id": "backend.request-wait-retry-and-restart",
+      "requirement_ids": [
+        "streaming.cancel-and-recovery",
+        "errors.recoverable",
+        "observability.request-trace",
+        "request.wait-policy"
+      ],
+      "suite": "backend.verify",
+      "level": "async-state-machine",
+      "status": "planned",
+      "scenarios": [
+        "Tentativas usam prazo padrão de 120 segundos e status a cada 15 segundos sem nova chamada que gere tokens",
+        "Falha anterior ao limite encerra imediatamente",
+        "Retentativa explícita cria tentativa rastreável",
+        "Cancelamento remove trabalho pendente",
+        "Reinício não retoma automaticamente solicitação interrompida"
+      ]
+    },
+    {
+      "id": "backend.request-idempotency",
+      "requirement_ids": [
+        "conversation.request-idempotency"
+      ],
+      "suite": "backend.verify",
+      "level": "database-concurrency-api-integration",
+      "status": "implemented",
+      "scenarios": [
+        "Envios concorrentes com a mesma chave criam somente um aceite e um conjunto de mensagens",
+        "Replay idêntico retorna o mesmo envelope sem iniciar outra execução",
+        "Conteúdo, sessão, operação, recurso ou chave divergentes são rejeitados sem detalhes internos",
+        "Chaves expiradas falham fechadas",
+        "Retry explícito usa uma chave nova e replay técnico não cria tentativa duplicada"
+      ],
+      "evidence": [
+        {
+          "path": "Backend/tests/test_persistencia.py",
+          "test_name": "test_replay_concorrente_da_mesma_chave_retorna_unico_envelope"
+        },
+        {
+          "path": "Backend/tests/test_persistencia.py",
+          "test_name": "test_replay_identico_retorna_aceite_original_e_conteudo_divergente_conflita"
+        },
+        {
+          "path": "Backend/tests/test_persistencia.py",
+          "test_name": "test_chave_de_outra_sessao_operacao_ou_recurso_falha_fechado"
+        },
+        {
+          "path": "Backend/tests/test_persistencia.py",
+          "test_name": "test_chave_expirada_nao_aceita_operacao"
+        },
+        {
+          "path": "Backend/tests/test_fluxo_conversas.py",
+          "test_name": "test_fluxo_local_autentica_cria_conversa_streama_e_reabre"
+        },
+        {
+          "path": "Backend/tests/test_solicitacoes.py",
+          "test_name": "test_replay_idempotente_de_retry_explicito_nao_cria_nova_tentativa"
+        }
+      ]
+    },
+    {
+      "id": "backend.synthetic-fixtures-policy",
+      "requirement_ids": [
+        "data.synthetic-fixtures"
+      ],
+      "suite": "backend.verify",
+      "level": "fixture-validation",
+      "status": "planned",
+      "scenarios": [
+        "Fixtures JSON exigem classificação sintética e metadados",
+        "Dados empresariais, credenciais e campos pessoais proibidos são rejeitados",
+        "Suite padrão não acessa rede nem provider real"
+      ]
+    },
+    {
+      "id": "backend.direct-llm-request-and-structured-output",
+      "requirement_ids": [
+        "query.direct-llm-interaction"
+      ],
+      "suite": "backend.verify",
+      "level": "unit-contract-and-safety",
+      "status": "planned",
+      "scenarios": [
+        "A solicitação original vai diretamente ao modelo sem chamada LLM anterior de classificação ou reformulação",
+        "SystemMessage versionado fica fora da contagem de contexto e não é persistido como mensagem",
+        "Instrução de aplicação e pedido original são concatenados em uma HumanMessage com delimitadores",
+        "Resposta tipada respeita os blocos Iara e as regras de dados/completude aprovadas"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "backend.query-interpretation-mcp-and-normalization",
+      "requirement_ids": [
+        "query.intent-and-clarification",
+        "query.out-of-scope-guidance"
+      ],
+      "suite": "backend.verify",
+      "level": "unit-and-api-integration",
+      "status": "planned",
+      "scenarios": [
+        "LLM recebe a pergunta original e pode pedir esclarecimento sem chamada LLM de pré-processamento",
+        "Tool calling seleciona somente ferramentas tipadas autorizadas pelo Backend",
+        "Resultado malformado é bloqueado antes de retornar ao modelo ou ao Frontend",
+        "Blocos estruturados são validados antes de persistir ou transmitir"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "backend.context-window-forty-dialogue-messages",
+      "requirement_ids": [
+        "query.relevant-context-window"
+      ],
+      "suite": "backend.verify",
+      "level": "unit-privacy-and-budget",
+      "status": "planned",
+      "scenarios": [
+        "Envia até 40 mensagens da mesma conversa, incluindo o pedido atual composto",
+        "Com 39 ou mais mensagens anteriores, mantém as 39 mais recentes e o pedido atual",
+        "SystemMessage não entra na contagem nem no histórico persistido",
+        "Não inclui mensagens de outro usuário ou conversa"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "backend.admin-diagnostics-privacy",
+      "requirement_ids": [
+        "security.credentials-and-logs",
+        "observability.request-trace",
+        "admin.diagnostics-isolated"
+      ],
+      "suite": "backend.verify",
+      "level": "api-integration-security",
+      "status": "implemented",
+      "scenarios": [
+        "Painel administrativo local retorna erros e logs sanitizados, sem conversas",
+        "Painel administrativo só responde em loopback e desenvolvimento"
+      ],
+      "evidence": [
+        {
+          "path": "Backend/tests/test_fluxo_conversas.py",
+          "test_name": "test_operacoes_de_escrita_exigem_csrf_e_diagnostico_local_nao_expoe_conversas"
+        },
+        {
+          "path": "Backend/tests/test_fluxo_conversas.py",
+          "test_name": "test_logout_revoga_a_sessao_e_painel_admin_e_restrito_a_loopback"
+        }
+      ]
+    },
+    {
+      "id": "frontend.content-renderers-and-invalid-fallbacks",
+      "requirement_ids": [
+        "content.text",
+        "content.kpi",
+        "content.table-chart"
+      ],
+      "suite": "frontend.verify",
+      "level": "component-and-accessibility",
+      "status": "implemented",
+      "scenarios": [
+        "Renderiza blocos de texto, KPIs, grupos, tabelas e gráficos por contrato",
+        "Gráfico de pizza inclui alternativa tabular acessível",
+        "Conteúdo não é interpretado como HTML arbitrário"
+      ],
+      "evidence": [
+        {
+          "path": "Frontend/src/funcionalidades/conversas/componentes/MensagemConversa/MensagemConversa.test.tsx",
+          "test_name": "renderiza gráfico de pizza e oferece tabela acessível com os valores"
+        },
+        {
+          "path": "Frontend/e2e/smoke.spec.ts",
+          "test_name": "abre localhost sem login, consulta dados e retoma o histórico persistido"
+        }
+      ]
+    },
+    {
+      "id": "frontend.conversation-history-and-resume",
+      "requirement_ids": [
+        "conversation.create",
+        "conversation.persist-and-resume",
+        "model.metadata-private"
+      ],
+      "suite": "frontend.verify",
+      "level": "component-and-browser",
+      "status": "implemented",
+      "scenarios": [
+        "Nova conversa, histórico, seleção e retomada preservam mensagens e blocos",
+        "Estado vazio e carregamento são compreensíveis",
+        "Provider e modelo permanecem ocultos ao gestor"
+      ],
+      "evidence": [
+        {
+          "path": "Frontend/e2e/smoke.spec.ts",
+          "test_name": "abre localhost sem login, consulta dados e retoma o histórico persistido"
+        }
+      ]
+    },
+    {
+      "id": "frontend.streaming-retry-cancel-and-session-errors",
+      "requirement_ids": [
+        "auth.session",
+        "streaming.canonical-events",
+        "streaming.cancel-and-recovery",
+        "errors.recoverable"
+      ],
+      "suite": "frontend.verify",
+      "level": "component-state-machine",
+      "status": "planned",
+      "scenarios": [
+        "Deltas aparecem progressivamente e processamento termina no estado correto",
+        "Falha preserva pergunta e permite tentar novamente",
+        "Cancelar atualiza estado e evita resposta tardia",
+        "Desconexão e sessão expirada têm recuperação compreensível"
+      ]
+    },
+    {
+      "id": "frontend.query-clarification-and-out-of-scope-copy",
+      "requirement_ids": [
+        "query.intent-and-clarification",
+        "query.out-of-scope-guidance"
+      ],
+      "suite": "frontend.verify",
+      "level": "component-accessibility",
+      "status": "implemented",
+      "scenarios": [
+        "Pergunta complementar é apresentada sem apagar o contexto da conversa",
+        "Mensagem fora de escopo é clara, respeitosa e oferece seguir com outra pergunta",
+        "Estados de esclarecimento têm rótulos acessíveis e foco previsível"
+      ],
+      "evidence": [
+        {
+          "path": "Frontend/e2e/smoke.spec.ts",
+          "test_name": "pede o período que falta, usa a resposta como contexto e orienta fora de escopo"
+        }
+      ]
+    },
+    {
+      "id": "frontend.admin-preview-and-error-queue-privacy",
+      "requirement_ids": [
+        "admin.diagnostics-isolated"
+      ],
+      "suite": "frontend.verify",
+      "level": "component-and-browser-security",
+      "status": "implemented",
+      "scenarios": [
+        "Prévia administrativa de telas não cria sessão de gestor",
+        "Logs e fila exibem somente dados sanitizados",
+        "Painel não apresenta nem oferece acesso às conversas dos usuários"
+      ],
+      "evidence": [
+        {
+          "path": "Frontend/e2e/smoke.spec.ts",
+          "test_name": "painel administrativo local mostra diagnósticos sem abrir conversas"
+        }
+      ]
+    },
+    {
+      "id": "frontend.keyboard-responsive-and-visual-review",
+      "requirement_ids": [
+        "ux.accessibility-responsive"
+      ],
+      "suite": "frontend.ux-review",
+      "level": "manual-visual-accessibility",
+      "status": "manual-required",
+      "scenarios": [
+        "Navegação por teclado e foco visível",
+        "Leitor de tela e semântica dos estados",
+        "Desktop e mobile sem perda de função",
+        "Contraste, densidade, movimento reduzido e alternativas de gráfico"
+      ],
+      "evidence_required": [
+        "desktop-and-mobile-screenshots",
+        "keyboard-and-focus-walkthrough",
+        "chart-text-alternative-check",
+        "contrast-density-and-state-review",
+        "issues-or-none"
+      ]
+    },
+    {
+      "id": "e2e.manager-flow-with-fake-identity-and-provider",
+      "requirement_ids": [
+        "auth.session",
+        "conversation.create",
+        "conversation.persist-and-resume",
+        "streaming.canonical-events",
+        "content.text",
+        "content.kpi",
+        "content.table-chart"
+      ],
+      "suite": "integration.e2e",
+      "level": "browser-end-to-end",
+      "status": "implemented",
+      "scenarios": [
+        "Abrir localhost e criar automaticamente uma sessão sintética sem login",
+        "Consultar dados sintéticos com resposta progressiva e blocos analíticos",
+        "Reabrir conversa persistida após recarregar a página"
+      ],
+      "evidence": [
+        {
+          "path": "Frontend/e2e/smoke.spec.ts",
+          "test_name": "abre localhost sem login, consulta dados e retoma o histórico persistido"
+        }
+      ]
+    },
+    {
+      "id": "e2e.open-question-clarification-and-scope-boundary",
+      "requirement_ids": [
+        "query.intent-and-clarification",
+        "query.out-of-scope-guidance"
+      ],
+      "suite": "integration.e2e",
+      "level": "browser-end-to-end",
+      "status": "implemented",
+      "scenarios": [
+        "Pergunta aberta solicita período ausente",
+        "Resposta curta completa a pergunta usando o contexto recente",
+        "Pergunta fora do escopo recebe orientação simples"
+      ],
+      "evidence": [
+        {
+          "path": "Frontend/e2e/smoke.spec.ts",
+          "test_name": "pede o período que falta, usa a resposta como contexto e orienta fora de escopo"
+        }
+      ]
+    },
+    {
+      "id": "e2e.developer-diagnostics-do-not-expose-conversations",
+      "requirement_ids": [
+        "admin.diagnostics-isolated"
+      ],
+      "suite": "integration.e2e",
+      "level": "browser-security",
+      "status": "implemented",
+      "scenarios": [
+        "Acesso local abre diagnóstico sanitizado sem sessão de gestor",
+        "Endpoint de conversas permanece protegido sem sessão"
+      ],
+      "evidence": [
+        {
+          "path": "Frontend/e2e/smoke.spec.ts",
+          "test_name": "painel administrativo local mostra diagnósticos sem abrir conversas"
+        }
+      ]
+    },
+    {
+      "id": "integration.sults-auth-final-stage",
+      "requirement_ids": [
+        "auth.session"
+      ],
+      "suite": "provider.live-demo",
+      "level": "external-integration-opt-in",
+      "status": "deferred",
+      "scenarios": [
+        "Validar credencial diretamente no SULTS antes de emitir sessão Iara individual",
+        "Expiração e indisponibilidade do SULTS são normalizadas"
+      ],
+      "defer_reason": "Acesso real ao SULTS fica para a etapa final do MVP; até lá, testes usam autenticador falso determinístico."
+    },
+    {
+      "id": "integration.grafana-mcp-final-stage",
+      "requirement_ids": [
+        "data.grafana-mcp",
+        "data.synthetic-fixtures"
+      ],
+      "suite": "provider.live-demo",
+      "level": "external-integration-opt-in",
+      "status": "deferred",
+      "scenarios": [
+        "Somente ferramentas autorizadas de leitura são chamadas pelo Backend",
+        "Falha/timeout do MCP gera espera limitada, cancelamento e erro claro",
+        "Nenhum dado real entra em fixture, log ou evidência"
+      ],
+      "defer_reason": "Acesso real ao Grafana MCP fica para a etapa final do MVP; até lá, testes usam fixtures sintéticas e adapter falso."
+    },
+    {
+      "id": "integration.production-database-final-stage",
+      "requirement_ids": [
+        "conversation.persist-and-resume"
+      ],
+      "suite": "provider.live-demo",
+      "level": "external-database-integration",
+      "status": "deferred",
+      "scenarios": [
+        "Confirmar compatibilidade do repositório com o banco e dialeto definidos por DBA/DevOps",
+        "Não assumir SQLite de desenvolvimento como banco de produção"
+      ],
+      "defer_reason": "A integração com banco de produção e seus detalhes operacionais serão tratados no final, com os requisitos fornecidos por DBA/DevOps."
+    },
+    {
+      "id": "integration.iara-model-demo-final-stage",
+      "requirement_ids": [
+        "gateway.iara-demo"
+      ],
+      "suite": "provider.live-demo",
+      "level": "external-integration-opt-in",
+      "status": "opt-in",
+      "scenarios": [
+        "Chamada real resolve IARA_DEFAULT_MODEL como alias e usa ID/chave somente no Backend",
+        "Resposta do endpoint da Iara é normalizada para o contrato Iara",
+        "Falha real é segura e evidência não contém segredo ou payload bruto"
+      ],
+      "evidence": [
+        {
+          "path": "harness/config/quality-gates.json",
+          "test_name": "provider.live-demo"
+        }
+      ],
+      "defer_reason": "Executar somente na demonstração final autorizada; não pertence à suite padrão."
+    },
+    {
+      "id": "backend.llm-mcp-presentation-pipeline",
+      "requirement_ids": [
+        "query.direct-llm-interaction",
+        "query.relevant-context-window",
+        "query.llm-mcp-presentation-flow"
+      ],
+      "suite": "backend.verify",
+      "level": "unit-and-api-integration",
+      "status": "planned",
+      "scenarios": [
+        "O Gateway envia System Prompt, instrução concatenada e janela de até 40 mensagens diretamente à LLM",
+        "Tool calling usa somente ferramentas autorizadas com limite finito, timeout, cancelamento e validação",
+        "Resposta estruturada normalizada é validada antes de persistir ou transmitir",
+        "Dados sintéticos são usados até autorização e contrato do Grafana MCP real"
+      ],
+      "limits": [
+        "A execução atual usa provider e fonte sintéticos; integração real com Grafana MCP e chamada do endpoint Iara autorizada ficam para a etapa final."
+      ]
+    },
+    {
+      "id": "account.monthly-token-usage",
+      "requirement_ids": [
+        "account.monthly-token-usage"
+      ],
+      "suite": "backend.verify",
+      "level": "integration",
+      "status": "planned",
+      "evidence": [],
+      "scenarios": [
+        "Backend coleta uso informado pelo provider sem gravar conteúdo privado",
+        "Resumo autenticado agrega mês atual e seis anteriores por identidade",
+        "Falhas/cancelamentos sem uso confirmado não são tratados como zero"
+      ]
+    },
+    {
+      "id": "frontend.structured-html-safety",
+      "requirement_ids": [
+        "frontend.html-content-safety"
+      ],
+      "suite": "frontend.verify",
+      "level": "unit-contract-and-security",
+      "status": "planned",
+      "scenarios": [
+        "Markup arbitrário recebido como texto é escapado",
+        "Renderer futuro só aceita bloco versionado com sanitização allowlist e isolamento",
+        "Conteúdo rejeitado não altera navegação, estilos ou elementos da aplicação"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "frontend.monthly-token-usage-modal-shell",
+      "requirement_ids": [
+        "account.monthly-token-usage"
+      ],
+      "suite": "frontend.verify",
+      "level": "component",
+      "status": "implemented",
+      "scenarios": [
+        "Exibe mês atual e permite navegar pelos meses anteriores",
+        "Permite nova tentativa quando o endpoint não está disponível"
+      ],
+      "evidence": [
+        {
+          "path": "Frontend/src/funcionalidades/conta/componentes/ModalUsoTokens/ModalUsoTokens.test.tsx",
+          "test_name": "mostra o mês atual, navega pelos anteriores e explicita uso não confirmado"
+        },
+        {
+          "path": "Frontend/src/funcionalidades/conta/componentes/ModalUsoTokens/ModalUsoTokens.test.tsx",
+          "test_name": "permite tentar novamente quando o Backend não está disponível"
+        }
+      ]
+    }
+  ],
+  "coverage_policy": {
+    "every_product_requirement_has_scenario": true,
+    "implemented_requires_existing_test_evidence": true,
+    "planned_does_not_claim_coverage": true,
+    "coverage_percent_is_not_acceptance_by_itself": true,
+    "default_suite_network_access": false,
+    "default_identity": "deterministic-fake",
+    "default_company_data": "synthetic-fixtures",
+    "live_integrations": "explicit-opt-in-and-final-mvp-stage"
+  }
+}

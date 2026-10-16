@@ -1,0 +1,90 @@
+{
+  "id": "iara.fullstack-feature",
+  "when": "Mudanca que atravessa API, persistencia, autenticacao, Model Gateway, streaming ou comportamento consumido pelas duas camadas.",
+  "execution": "sequential",
+  "failure_policy": "stop-fix-and-rerun-impacted-steps",
+  "completion_policy_ref": "iara.task-completion",
+  "condition_semantics": "execute-when-when-matches-required-means-blocking-when-executed",
+  "inputs": ["pedido-e-criterios-de-aceite", "contratos-e-padroes-existentes", "estado-do-projeto", "retomada-atual", "estado-do-repositorio"],
+  "outputs": ["criterios-e-contrato", "pacote-de-contexto-e-fontes", "estado-e-retomada-sincronizados", "backend-evidencias", "frontend-evidencias", "documentacao-de-codigo-backend-e-frontend", "smoke-integrado", "revisao-e-riscos"],
+  "child_workflow_policy": {
+    "execution_order": ["backend.feature", "frontend.feature"],
+    "failure": "stop-before-next-component",
+    "skip_child_integration_gate_when": "parent-runs-integrated-smoke"
+  },
+  "steps": [
+    {
+      "id": "intake-and-contract",
+      "agent": "iara.integration-coordinator",
+      "prompt": "iara.feature-intake",
+      "required": true,
+      "outputs": ["acceptance-criteria", "api-contract-delta", "failure-states"]
+    },
+    {
+      "id": "retrieve-task-context",
+      "tool": "context.retrieve",
+      "required": true,
+      "input": {"query": "task-and-acceptance-criteria", "scope": "auto"},
+      "context_prerequisites": ["harness/context/estado-do-projeto.md", "harness/context/retomada-atual.md", "harness/config/decisions.json"],
+      "outputs": ["durable-project-state", "active-handoff", "bounded-context-package", "source-locations", "source-reasons-and-hashes"]
+    },
+    {
+      "id": "backend-implementation",
+      "agent": "iara.integration-coordinator",
+      "component_workflow": "backend.feature",
+      "required": true,
+      "outputs": ["backend-implementation", "backend-tests", "backend-review"]
+    },
+    {
+      "id": "frontend-implementation",
+      "agent": "iara.integration-coordinator",
+      "component_workflow": "frontend.feature",
+      "required": true,
+      "outputs": ["frontend-flow", "responsive-accessibility-evidence", "loading-empty-error-and-retry-states", "chart-text-alternative", "frontend-review"]
+    },
+    {
+      "id": "integrated-smoke",
+      "tool": "integration.e2e",
+      "required": true,
+      "outputs": ["api-proxy-result", "browser-flow-result", "desktop-mobile-result"]
+    },
+    {
+      "id": "docker-integrated-smoke",
+      "tool": "docker.integration.e2e",
+      "when": "A tarefa altera o ambiente containerizado ou requer verificar a integracao pelo Docker Compose",
+      "required": false,
+      "outputs": ["compose-network-result", "containerized-browser-flow", "isolated-test-data-cleanup"]
+    },
+    {
+      "id": "visual-accessibility-review",
+      "agent": "iara.integration-reviewer",
+      "prompt": "iara.review",
+      "check": "manual-ux-review",
+      "required": true,
+      "outputs": ["desktop-and-mobile-screenshots", "keyboard-and-focus-walkthrough", "chart-text-alternative-check", "contrast-density-and-state-review", "issues-or-none"]
+    },
+    {
+      "id": "harness-gate",
+      "tool": "harness.validate",
+      "required": true
+    },
+    {
+      "id": "handoff",
+      "agent": "iara.integration-reviewer",
+      "prompt": "iara.review",
+      "required": true,
+      "outputs": ["changed-files", "test-evidence", "review-decision", "known-gaps", "context-state-and-handoff-updated"]
+    }
+  ],
+  "completion_criteria": [
+    "Todos os criterios de aceite autorizados e aplicaveis foram atendidos; qualquer bloqueio restante tem causa, evidencia e proxima acao concretas e nao e descrito como conclusao",
+    "Backend e frontend passaram seus gates e revisoes por componente",
+    "Smoke integrado final passou depois de ambas as implementacoes",
+    "Resposta da LLM foi validada em blocos Iara antes de persistencia/renderizacao",
+    "Backend possui docstrings Google e Frontend possui TSDoc nas declaracoes e logicas alteradas, indicando uso, proposito e motivo",
+    "Nenhum segredo ou payload privado foi exposto em browser, erro publico ou log",
+    "Revisao visual e de acessibilidade foi registrada com evidencias",
+    "Revisao full-stack registra decisao e riscos residuais",
+    "Estado duravel e retomada atualizados, sincronizados e sem segredos ou transcricao integral"
+  ]
+}

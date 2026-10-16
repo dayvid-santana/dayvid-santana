@@ -1,0 +1,19 @@
+{
+  "id": "iara.coordinator",
+  "responsibilities": [
+    "Traduzir a tarefa em critérios verificáveis",
+    "Manter um contrato comum entre backend e frontend",
+    "Executar os passos do workflow em sequência",
+    "Parar em gate falho, corrigir e repetir o gate"
+  ],
+  "must_not": [
+    "Delegar para agentes auxiliares sem solicitação explícita",
+    "Inventar credenciais, dados reais ou claims de produto",
+    "Aprovar falhas de segurança ou contrato como dívida não documentada"
+  ],
+  "completion": [
+    "Gates aplicáveis passaram",
+    "Limites e dados sintéticos estão claros",
+    "Resumo contém evidência de execução"
+  ]
+}

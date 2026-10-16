@@ -1,0 +1,195 @@
+{
+  "schema_version": 1,
+  "implementation_status": "implemented-and-live-iara-endpoint-verified",
+  "provider_independent_contract": "Backend/app/gateway.py",
+  "response_block_contracts": "Backend/app/contracts.py",
+  "capabilities": {
+    "provider_protocol": {
+      "status": "implemented",
+      "evidence": [
+        "Backend/app/gateway.py",
+        "Backend/app/model_gateway.py"
+      ]
+    },
+    "fake_adapter": {
+      "status": "implemented",
+      "evidence": [
+        "Backend/app/model_gateway.py",
+        "Backend/tests/test_model_gateway.py"
+      ]
+    },
+    "model_alias_resolution": {
+      "status": "implemented",
+      "logical_alias_env": "IARA_DEFAULT_MODEL",
+      "default_alias": "principal",
+      "provider_model_id_env": {},
+      "backend_only": true,
+      "evidence": [
+        "Backend/app/catalogo_modelos.py",
+        "Backend/tests/test_catalogo_modelos.py"
+      ],
+      "catalog_model_id": "iara-grafana"
+    },
+    "canonical_event_normalization": {
+      "status": "implemented",
+      "evidence": [
+        "Backend/app/solicitacoes.py",
+        "Backend/app/contracts.py"
+      ]
+    },
+    "structured_output_validation": {
+      "status": "implemented",
+      "evidence": [
+        "Backend/app/contracts.py",
+        "Backend/app/model_gateway.py",
+        "Backend/tests/test_model_gateway.py"
+      ]
+    },
+    "timeouts_and_cancellation": {
+      "status": "implemented",
+      "evidence": [
+        "Backend/app/solicitacoes.py",
+        "Backend/tests/test_solicitacoes.py"
+      ]
+    },
+    "safe_error_normalization": {
+      "status": "implemented",
+      "evidence": [
+        "Backend/app/model_gateway.py",
+        "Backend/app/main.py",
+        "Backend/tests/test_model_gateway.py",
+        "Backend/tests/test_observabilidade_seguranca.py"
+      ]
+    },
+    "credential_isolation": {
+      "status": "implemented",
+      "evidence": [
+        "Backend/app/configuracao.py",
+        "Backend/.env.example"
+      ]
+    },
+    "provider_observability": {
+      "status": "implemented",
+      "evidence": [
+        "Backend/app/observabilidade.py",
+        "Backend/app/model_gateway.py",
+        "Backend/app/main.py",
+        "Backend/tests/test_observabilidade_provider.py"
+      ]
+    },
+    "direct_llm_interaction": {
+      "status": "implemented",
+      "contract": "harness/rules/backend.model-orchestration.md",
+      "evidence": [
+        "Backend/app/model_gateway.py",
+        "Backend/app/prompts/system_prompts.md",
+        "Backend/app/solicitacoes.py",
+        "Backend/app/persistencia.py",
+        "Backend/harness/rules/backend.model-orchestration.md",
+        "Backend/harness/rules/backend.model-gateway.md",
+        "Backend/harness/config/decisions.json"
+      ],
+      "implementation": "Iara endpoint and fake runtime adapters receive the original manager request directly; no LLM intent or presentation pre-call is used in the active request path"
+    },
+    "conversation_context_window": {
+      "status": "implemented",
+      "maximum_messages": 40,
+      "includes_current_composed_human_message": true,
+      "excludes_system_message": true,
+      "implementation": "Persistence supplies up to 39 previous messages and the adapter appends the current composed HumanMessage; SystemMessage is separate and excluded from the 40-message count",
+      "evidence": [
+        "Backend/app/solicitacoes.py",
+        "Backend/app/persistencia.py",
+        "Backend/app/model_gateway.py",
+        "Backend/harness/rules/backend.model-orchestration.md",
+        "Backend/harness/config/decisions.json"
+      ]
+    },
+    "safe_structured_html": {
+      "status": "policy-defined",
+      "value": "The model sends no HTML. Existing typed blocks are validated by Backend and rendered as HTML/SVG by Frontend components; arbitrary markup is never executed",
+      "evidence": [
+        "Backend/harness/rules/backend.model-orchestration.md",
+        "Backend/harness/config/decisions.json"
+      ]
+    },
+    "system_prompt_composition": {
+      "status": "implemented",
+      "version": "4",
+      "runtime_integration": "loaded by the Backend adapter from app/prompts/system_prompts.md; only the active version section is sent to the LLM",
+      "requirements": [
+        "server-owned",
+        "versioned",
+        "SystemMessage",
+        "not-persisted-as-conversation-message"
+      ],
+      "evidence": [
+        "Backend/app/prompts/system_prompts.md",
+        "Backend/app/model_gateway.py",
+        "Backend/app/prompts/system_prompts.md",
+        "Backend/harness/rules/backend.model-orchestration.md",
+        "Backend/harness/config/decisions.json"
+      ]
+    },
+    "iara_adapter": {
+      "status": "implemented",
+      "evidence": [
+        "Backend/app/model_gateway.py",
+        "Backend/tests/test_model_gateway.py"
+      ]
+    },
+    "langchain_iara_adapter": {
+      "status": "implemented",
+      "library": "langchain-openai",
+      "scope": "Iara Chat Completions-compatible endpoint; direct manager-request flow without OpenAI tool fields and with structured Iara output",
+      "structured_intent": "No intent-classification call runs in the active request path; the original request goes directly to the model and the final blocks are validated by the Iara Pydantic contract",
+      "response_stream": "ChatOpenAI.astream; text-only-chunk-normalization",
+      "automatic_retries": false,
+      "langchain_response_cache": false,
+      "evidence": [
+        "Backend/app/model_gateway.py",
+        "Backend/pyproject.toml",
+        "Backend/requirements.lock.txt",
+        "Backend/tests/test_model_gateway.py",
+        "Backend/tests/test_observabilidade_seguranca.py"
+      ],
+      "api_style": "chat-completions-preserved",
+      "tool_calling": "Disabled for the current Iara endpoint because it rejects tools, tool_choice and parallel_tool_calls; any future MCP integration requires a separate compatible contract",
+      "system_prompt": "Server-owned version 4 loaded from the active section of app/prompts/system_prompts.md as a separate SystemMessage; text uses safe Markdown, visuals use validated typed blocks, and technical source provenance is never disclosed",
+      "client_settings": {
+        "base_url_env": "IARA_BASE_URL",
+        "api_key_env": "IARA_API_KEY",
+        "model": "iara-grafana",
+        "temperature": null,
+        "use_responses_api": false,
+        "stream_usage": false,
+        "timeout_seconds": 360,
+        "max_retries": 0
+      },
+      "application_request_deadline_seconds": 120,
+      "application_request_deadline_max_seconds": 360,
+      "waiting_status_interval_seconds": 15,
+      "application_request_deadline_maximum_seconds": 360,
+      "progress_status_interval_seconds": 15
+    }
+  },
+  "invariants": [
+    "frontend-never-receives-provider-credentials",
+    "provider-invocation-is-backend-only",
+    "all-provider-outputs-are-normalized-to-iara-contracts",
+    "structured-output-is-validated-before-persistence-or-rendering",
+    "public-errors-never-contain-raw-provider-payloads",
+    "default-automated-suite-uses-fake-adapter-without-network",
+    "only-server-authored-system-messages-can-enter-provider-prompt"
+  ],
+  "provider_configuration": {
+    "provider": "Iara",
+    "provider_env": "IARA_MODEL_PROVIDER=iara",
+    "base_url_env": "IARA_BASE_URL",
+    "credential_env": "IARA_API_KEY",
+    "model_alias_env": "IARA_DEFAULT_MODEL",
+    "catalog_model_id": "iara-grafana",
+    "test_provider": "fake",
+    "live_provider_calls": "explicit-opt-in"
+  }
+}

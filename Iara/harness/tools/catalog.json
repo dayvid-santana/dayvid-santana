@@ -1,0 +1,458 @@
+{
+  "schema_version": 1,
+  "id": "iara.shared-tools",
+  "description": "Ferramentas compartilhadas de leitura e qualidade do Harness. Escrita de produto e testes pertence aos catálogos restritos de Backend e Frontend.",
+  "enforcement": {
+    "status": "declarative",
+    "note": "O runner atual valida referências e executa gates; não implementa autorização granular para cada chamada desta lista. Não trate este catálogo sozinho como sandbox ou controle de acesso."
+  },
+  "policy_resolution": {
+    "unknown_tool": "deny",
+    "unknown_role": "deny",
+    "unknown_command": "deny",
+    "authorization": "intersection_of_runtime_session_and_tool_permissions",
+    "deny_overrides_allow": true,
+    "agent_may_change_policy": false,
+    "policy_binding": "immutable_per_run"
+  },
+  "scopes": {
+    "project": {
+      "root": ".",
+      "relative_to": "trusted_workspace_root"
+    }
+  },
+  "filesystem_policy": {
+    "path_base": "tool_scope",
+    "resolve_and_check_containment": true,
+    "reject_absolute_paths": true,
+    "reject_parent_traversal": true,
+    "follow_symlinks": false,
+    "max_read_bytes": 262144,
+    "deny_globs": [
+      "**/.git/**",
+      "**/.env",
+      "**/.env.*",
+      "**/.venv/**",
+      "**/venv/**",
+      "**/node_modules/**",
+      "**/.ssh/**",
+      "**/.aws/**",
+      "**/secrets/**",
+      "**/credentials/**",
+      "**/*.key",
+      "**/*.pem",
+      "**/*.p12",
+      "**/*.pfx",
+      "**/*.sqlite*",
+      "**/*.db",
+      "**/*.log"
+    ]
+  },
+  "execution_policy": {
+    "command_registry_source": "trusted_quality_gates",
+    "registered_commands_only": true,
+    "agent_supplied_argv": false,
+    "agent_supplied_cwd": false,
+    "agent_supplied_environment": false,
+    "shell": false,
+    "automatic_dependency_installation": false,
+    "max_parallel_commands_per_workspace": 1,
+    "source_changes_after_execution": "invalidate_evidence"
+  },
+  "tools": [
+    {
+      "id": "project.read",
+      "kind": "filesystem-read",
+      "scope": "project",
+      "purpose": "Inspecionar código, contratos, instruções e documentação sem ler arquivos de segredo ou artefatos ignorados.",
+      "allowed_roles": [
+        "iara.coordinator",
+        "iara.reviewer"
+      ],
+      "input_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "start_line",
+          "max_lines"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "start_line": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "max_lines": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 500
+          }
+        }
+      },
+      "text_only": true,
+      "returns": [
+        "path",
+        "content",
+        "line_range",
+        "file_sha256",
+        "truncated"
+      ]
+    },
+    {
+      "id": "harness.validate",
+      "kind": "command",
+      "command_id": "harness.validate",
+      "purpose": "Validar estrutura, IDs, caminhos e referências dos catálogos e workflows do Harness.",
+      "allowed_roles": [
+        "iara.coordinator",
+        "iara.reviewer"
+      ],
+      "input_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {}
+      },
+      "timeout_seconds": 60,
+      "network": "disabled",
+      "returns": [
+        "execution",
+        "harness_validation"
+      ]
+    },
+    {
+      "id": "context.verify",
+      "kind": "command",
+      "command_id": "context.verify",
+      "purpose": "Executar testes determinísticos do subsistema local de contexto.",
+      "allowed_roles": [
+        "iara.coordinator",
+        "iara.reviewer"
+      ],
+      "input_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {}
+      },
+      "timeout_seconds": 120,
+      "network": "disabled",
+      "returns": [
+        "execution",
+        "tests",
+        "retrieval_security",
+        "context_budget"
+      ]
+    },
+    {
+      "id": "context.retrieve",
+      "kind": "context-retrieval",
+      "scope": "project",
+      "handler": "harness.context.retrieve_context",
+      "purpose": "Recuperar trechos locais relevantes, explicáveis e limitados por escopo e orçamento para a tarefa atual.",
+      "allowed_roles": [
+        "iara.coordinator",
+        "iara.reviewer"
+      ],
+      "input_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000
+          },
+          "scope": {
+            "type": "string",
+            "enum": [
+              "auto",
+              "project",
+              "backend",
+              "frontend",
+              "harness"
+            ]
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          },
+          "context_budget_tokens": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 12000
+          },
+          "mandatory_context": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 12000
+            }
+          },
+          "previous_sources": {
+            "type": "array",
+            "maxItems": 20,
+            "items": {
+              "type": "object",
+              "required": [
+                "source",
+                "location",
+                "sha256",
+                "content_sha256",
+                "content"
+              ],
+              "properties": {
+                "source": {
+                  "type": "string",
+                  "maxLength": 512
+                },
+                "location": {
+                  "type": "object"
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "content_sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "content": {
+                  "type": "string",
+                  "maxLength": 36000
+                }
+              }
+            }
+          },
+          "filters": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "path_globs": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 256
+                }
+              }
+            }
+          }
+        }
+      },
+      "network": "disabled",
+      "retrieved_content_trust": "untrusted-data",
+      "retrieval_does_not_grant_permissions": true,
+      "returns": [
+        "sources",
+        "location",
+        "score",
+        "reason",
+        "sha256",
+        "content_sha256",
+        "related_context",
+        "budget",
+        "trace",
+        "invalidated_previous_sources",
+        "related_context_links"
+      ]
+    },
+    {
+      "id": "backend.verify",
+      "kind": "command",
+      "command_id": "backend.verify",
+      "purpose": "Executar lint, testes e cobertura do backend conforme a política versionada do projeto.",
+      "allowed_roles": [
+        "iara.coordinator",
+        "iara.reviewer"
+      ],
+      "input_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {}
+      },
+      "timeout_seconds": 900,
+      "network": "disabled",
+      "returns": [
+        "execution",
+        "lint",
+        "tests",
+        "coverage"
+      ]
+    },
+    {
+      "id": "frontend.verify",
+      "kind": "command",
+      "command_id": "frontend.verify",
+      "purpose": "Executar lint, verificação de tipos, testes unitários e build de produção do frontend.",
+      "allowed_roles": [
+        "iara.coordinator",
+        "iara.reviewer"
+      ],
+      "input_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {}
+      },
+      "timeout_seconds": 900,
+      "network": "disabled",
+      "returns": [
+        "execution",
+        "lint",
+        "typecheck",
+        "tests",
+        "build"
+      ]
+    },
+    {
+      "id": "integration.e2e",
+      "kind": "command",
+      "command_id": "integration.e2e",
+      "purpose": "Executar smoke integrado local via proxy da API e browser Chromium, incluindo viewport desktop/mobile.",
+      "allowed_roles": [
+        "iara.coordinator",
+        "iara.reviewer"
+      ],
+      "input_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {}
+      },
+      "timeout_seconds": 900,
+      "network": "loopback-only",
+      "returns": [
+        "execution",
+        "browser",
+        "assertions",
+        "artifacts"
+      ]
+    },
+    {
+      "id": "docker.development.up",
+      "kind": "command",
+      "command_id": "docker.development.up",
+      "purpose": "Validar e iniciar o stack local isolado do Frontend e Backend pelo Docker Compose.",
+      "allowed_roles": [
+        "iara.coordinator",
+        "iara.reviewer"
+      ],
+      "input_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {}
+      },
+      "timeout_seconds": 1200,
+      "network": "docker-compose-local-only",
+      "returns": [
+        "execution",
+        "compose_status",
+        "local_frontend_url"
+      ]
+    },
+    {
+      "id": "docker.integration.e2e",
+      "kind": "command",
+      "command_id": "docker.integration.e2e",
+      "purpose": "Executar smoke integrado no Compose com provider fake, SQLite isolado e limpeza do projeto E2E.",
+      "allowed_roles": [
+        "iara.coordinator",
+        "iara.reviewer"
+      ],
+      "input_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {}
+      },
+      "timeout_seconds": 1800,
+      "network": "docker-compose-local-only",
+      "returns": [
+        "execution",
+        "browser",
+        "assertions",
+        "isolated_resources_removed"
+      ]
+    },
+    {
+      "id": "docker.development.down",
+      "kind": "command",
+      "command_id": "docker.development.down",
+      "purpose": "Parar os containers locais da Iara sem apagar o volume persistente de desenvolvimento.",
+      "allowed_roles": [
+        "iara.coordinator",
+        "iara.reviewer"
+      ],
+      "input_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {}
+      },
+      "timeout_seconds": 300,
+      "network": "docker-compose-local-only",
+      "returns": [
+        "execution",
+        "containers_stopped",
+        "development_data_preserved"
+      ]
+    }
+  ],
+  "network": {
+    "harness_tools": {
+      "default": "disabled",
+      "loopback_allowed_only_for": [
+        "integration.e2e"
+      ],
+      "docker_compose_local_only_for": [
+        "docker.development.up",
+        "docker.integration.e2e",
+        "docker.development.down"
+      ],
+      "external_provider_calls": "denied",
+      "dependency_installation": "explicit-setup-only"
+    },
+    "product_runtime": {
+      "provider_calls": "backend-model-gateway-only",
+      "configured_provider": "server-side-configuration",
+      "local_credential_source": "Backend/.env:IARA_API_KEY",
+      "model_alias_source": "Backend/.env:IARA_DEFAULT_MODEL",
+      "provider_model_id_source": "Backend catalog: principal -> iara-grafana",
+      "production_credential_source": "deployment-secret-store-or-environment",
+      "credential_transport": "provider-authentication-over-tls-only",
+      "credential_never_expose_to": [
+        "browser",
+        "user-response",
+        "logs",
+        "agent-tools"
+      ],
+      "conversation_data": "send-only-context-required-for-an-authenticated-user-request",
+      "default_tests": "fake-provider-no-network",
+      "live_provider_test": "explicit-opt-in-with-configured-credential",
+      "local_base_url_source": "Backend/.env:IARA_BASE_URL"
+    },
+    "never_send_to_agent_tools_or_logs": [
+      "provider-credentials",
+      "host-secrets",
+      "unrelated-personal-data",
+      "raw-provider-payloads"
+    ],
+    "prompt_and_answer_logging": "disabled-by-default"
+  },
+  "result_contract": {
+    "statuses": [
+      "succeeded",
+      "failed",
+      "denied",
+      "blocked",
+      "timed_out",
+      "cancelled",
+      "conflict"
+    ],
+    "checks_not_executed": "report-with-reason",
+    "simulated_provider_proves_real_integration": false,
+    "tool_output_trust": "untrusted-data"
+  }
+}

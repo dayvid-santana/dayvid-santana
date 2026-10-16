@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "fixture_root": "Backend/fixtures/synthetic",
+  "fixture_format": "json",
+  "required_metadata": {
+    "path": "_metadata",
+    "classification_key": "classification",
+    "classification_value": "synthetic",
+    "purpose_key": "purpose"
+  },
+  "rules": {
+    "real_personal_or_company_data_allowed": false,
+    "credentials_or_secrets_allowed": false,
+    "external_data_fetch_during_default_checks": false,
+    "fixtures_must_be_deterministic": true,
+    "fixtures_must_state_demo_purpose": true,
+    "prohibited_field_name_patterns": [
+      "password",
+      "secret",
+      "token",
+      "api_key",
+      "authorization",
+      "cpf",
+      "cnpj",
+      "email",
+      "phone",
+      "telefone",
+      "endereco",
+      "address",
+      "birth",
+      "nascimento"
+    ]
+  },
+  "purpose": "development-tests-and-default-demonstrations-for-an-extended-period",
+  "company_data_source": {
+    "selected": "Grafana MCP",
+    "access_status": "pending",
+    "fixtures_are_not_a_copy_of_company_data": true
+  },
+  "grafana_mcp_access_status": "selected-source; access-and-tool-authorization-pending"
+}

@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "language": "pt-BR",
+  "message_format": "<tipo>(<escopo>): <descricao> | <tipo>: <descricao>",
+  "description_rules": [
+    "Use descricao curta, especifica, em portugues e iniciada por verbo no infinitivo",
+    "Nao finalize a descricao com ponto",
+    "Uma mensagem descreve uma unidade coerente de mudanca"
+  ],
+  "types": {
+    "feat": "capacidade ou comportamento novo",
+    "fix": "correcao de defeito",
+    "refactor": "reestruturacao sem mudar comportamento esperado",
+    "test": "adicao ou ajuste de verificacoes",
+    "docs": "documentacao, decisoes ou Harness",
+    "style": "formatacao sem alterar comportamento",
+    "build": "dependencias ou configuracao de build",
+    "ci": "automacao de integracao e verificacao",
+    "chore": "manutencao sem mudanca funcional"
+  },
+  "scopes": [
+    "api",
+    "autenticacao",
+    "conversas",
+    "contratos",
+    "gateway",
+    "historico",
+    "interface",
+    "persistencia",
+    "streaming",
+    "administracao",
+    "harness",
+    "e2e"
+  ],
+  "checkpoints": {
+    "user_directed": true,
+    "after_cohesive_change": true,
+    "after_verified_feature_or_bugfix": true,
+    "before_handoff_or_release": true,
+    "suggest_commit_after_task_completion_when_changes_exist": true,
+    "automatic_commit": false
+  },
+  "atomicity": {
+    "one_commit_per_cohesive_checkpoint": true,
+    "split_backend_and_frontend_repositories": true,
+    "contract_change_committed_with_compatible_component_changes": "Use ordered, separately reviewable commits when repositories are independent; record the related commit IDs in the handoff.",
+    "avoid_unrelated_changes_in_one_commit": true
+  },
+  "verification": {
+    "run_relevant_required_gates_before_commit": true,
+    "record_gate_evidence_in_handoff": true,
+    "do_not_amend_or_rewrite_shared_history_without_explicit_request": true
+  },
+  "never_commit": [
+    ".env files or credentials",
+    "SQLite runtime databases or generated test databases",
+    "logs, caches, build output, dependency directories, or temporary E2E artifacts",
+    "real company data or private conversation content"
+  ],
+  "repositories": {
+    "backend": "Backend/",
+    "frontend": "Frontend/",
+    "shared_harness": "The current workspace is inside the C:/projects Git repository; stage only explicit Iara/harness, Iara/scripts, Iara/AGENTS.md, and Iara/README.md paths when recording shared Harness changes"
+  }
+}

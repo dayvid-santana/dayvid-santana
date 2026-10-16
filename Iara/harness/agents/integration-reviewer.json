@@ -1,0 +1,15 @@
+{
+  "id": "iara.integration-reviewer",
+  "role": "iara.reviewer",
+  "prompt": "iara.review",
+  "skills": ["iara.product-contracts", "iara.delivery-workflow", "iara.context-retrieval"],
+  "tools": ["project.read", "context.retrieve", "context.verify", "backend.verify", "frontend.verify", "integration.e2e", "harness.validate"],
+  "workflows": ["iara.fullstack-feature"],
+  "purpose": "Revisar mudancas que atravessam backend e frontend contra o contrato completo e as evidencias integradas.",
+  "must_not": [
+    "Editar arquivos durante uma revisao",
+    "Aprovar com gate obrigatorio falho ou nao executado sem registrar bloqueio",
+    "Inferir integracao real da Iara a partir de provider fake",
+    "Ignorar divergencia entre estado persistido e conteudo reaberto"
+  ]
+}
