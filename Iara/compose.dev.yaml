@@ -1,0 +1,5 @@
+# Publica somente o Vite na interface local da maquina do desenvolvedor.
+services:
+  frontend:
+    ports:
+      - "127.0.0.1:${IARA_FRONTEND_PORT:-5173}:5173"

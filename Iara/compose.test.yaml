@@ -1,0 +1,32 @@
+# Isola as verificacoes integradas do banco persistente da demonstracao local.
+services:
+  backend:
+    environment:
+      APP_ENV: development
+      IARA_MODEL_PROVIDER: fake
+      IARA_DEFAULT_MODEL: principal
+      IARA_DATABASE_PATH: /data/iara-e2e.sqlite3
+      IARA_TRUSTED_LOCAL_PROXY_IPS: 172.31.250.2
+    networks:
+      rede_iara:
+        ipv4_address: 172.31.250.3
+
+  frontend:
+    networks:
+      rede_iara:
+        ipv4_address: 172.31.250.2
+
+  e2e:
+    # Compartilha a rede do Frontend para que o navegador use localhost:5173.
+    # Assim, o teste percorre a mesma regra de acesso local do desenvolvedor.
+    network_mode: service:frontend
+    networks: !reset []
+    environment:
+      IARA_E2E_BASE_URL: http://localhost:5173
+
+networks:
+  rede_iara:
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.31.250.0/29

@@ -1,0 +1,238 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iara.lzinformaticos.local/contracts/message-v1.schema.json",
+  "title": "Mensagem da Iara v1",
+  "description": "Contrato público de uma mensagem de conversa e seus blocos ordenados.",
+  "$ref": "#/$defs/mensagem",
+  "$defs": {
+    "valor": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "number" },
+        { "type": "boolean" },
+        { "type": "null" }
+      ]
+    },
+    "formato": {
+      "type": "string",
+      "enum": ["number", "currency", "percent", "text"]
+    },
+    "texto": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "text"],
+      "properties": {
+        "type": { "const": "text" },
+        "text": { "type": "string", "minLength": 1 }
+      }
+    },
+    "kpi": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "label", "value"],
+      "properties": {
+        "type": { "const": "kpi" },
+        "label": { "type": "string", "minLength": 1 },
+        "value": { "oneOf": [{ "type": "number" }, { "type": "string" }] },
+        "format": { "$ref": "#/$defs/formato", "default": "number" },
+        "currency": { "type": "string", "pattern": "^[A-Z]{3}$", "description": "Código ISO 4217; quando omitido para currency, a interface usa BRL." },
+        "change": { "type": "number", "description": "Variação relativa; 0.083 representa aumento de 8,3%." },
+        "period": { "type": "string" }
+      }
+    },
+    "grupo_kpi": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "items"],
+      "properties": {
+        "type": { "const": "kpi_group" },
+        "title": { "type": "string" },
+        "items": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/kpi" } }
+      }
+    },
+    "coluna_tabela": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key", "label"],
+      "properties": {
+        "key": { "type": "string", "minLength": 1 },
+        "label": { "type": "string", "minLength": 1 },
+        "type": { "$ref": "#/$defs/formato", "default": "text" },
+        "currency": { "type": "string", "pattern": "^[A-Z]{3}$" }
+      }
+    },
+    "tabela": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "columns", "rows"],
+      "properties": {
+        "type": { "const": "table" },
+        "title": { "type": "string" },
+        "columns": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/coluna_tabela" } },
+        "rows": {
+          "type": "array",
+          "items": { "type": "object", "additionalProperties": { "$ref": "#/$defs/valor" } }
+        },
+        "source_label": { "type": "string" }
+      }
+    },
+    "serie_grafico": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key", "label"],
+      "properties": {
+        "key": { "type": "string", "minLength": 1 },
+        "label": { "type": "string", "minLength": 1 },
+        "format": { "type": "string", "enum": ["number", "currency", "percent"], "default": "number" },
+        "currency": { "type": "string", "pattern": "^[A-Z]{3}$" }
+      }
+    },
+    "grafico": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "title", "chart_type", "x", "series", "data"],
+      "properties": {
+        "type": { "const": "chart" },
+        "title": { "type": "string", "minLength": 1 },
+        "chart_type": { "type": "string", "enum": ["line", "bar", "pie"] },
+        "x": { "type": "string", "minLength": 1, "description": "Chave da dimensão/categoria em cada linha de data." },
+        "series": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/serie_grafico" } },
+        "data": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "object", "additionalProperties": { "oneOf": [{ "type": "string" }, { "type": "number" }, { "type": "null" }] } }
+        },
+        "summary": { "type": "string", "minLength": 1, "description": "Descrição acessível do resultado; a UI apresenta alternativa textual mesmo quando ausente." }
+      }
+    },
+    "erro": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "code", "message", "retryable"],
+      "properties": {
+        "type": { "const": "error" },
+        "code": { "type": "string", "enum": ["unauthenticated", "forbidden", "not_found", "validation_error", "rate_limited", "source_unavailable", "model_unavailable", "timeout", "internal_error"] },
+        "message": { "type": "string", "minLength": 1, "description": "Texto em português adequado para o gestor; não inclui detalhes internos." },
+        "retryable": { "type": "boolean" },
+        "request_id": { "type": "string", "description": "Identificador opcional para suporte; não deve ser exibido como detalhe técnico na conversa." }
+      }
+    },
+    "erro_http": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "message", "retryable"],
+      "properties": {
+        "code": { "type": "string", "enum": ["unauthenticated", "forbidden", "not_found", "validation_error", "rate_limited", "source_unavailable", "model_unavailable", "timeout", "internal_error"] },
+        "message": { "type": "string", "minLength": 1 },
+        "retryable": { "type": "boolean" },
+        "request_id": { "type": "string" }
+      }
+    },
+    "processando": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "message"],
+      "properties": {
+        "type": { "const": "processing" },
+        "message": { "type": "string", "minLength": 1 }
+      }
+    },
+    "bloco": {
+      "oneOf": [
+        { "$ref": "#/$defs/texto" },
+        { "$ref": "#/$defs/kpi" },
+        { "$ref": "#/$defs/grupo_kpi" },
+        { "$ref": "#/$defs/tabela" },
+        { "$ref": "#/$defs/grafico" },
+        { "$ref": "#/$defs/erro" },
+        { "$ref": "#/$defs/processando" }
+      ]
+    },
+    "mensagem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "id", "role", "status", "created_at", "content"],
+      "properties": {
+        "schema_version": { "const": 1 },
+        "id": { "type": "string", "format": "uuid" },
+        "role": { "type": "string", "enum": ["user", "assistant"] },
+        "status": { "type": "string", "enum": ["processing", "completed", "failed", "cancelled", "incomplete"] },
+        "created_at": { "type": "string", "format": "date-time" },
+        "content": { "type": "array", "items": { "$ref": "#/$defs/bloco" } }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "role": { "const": "user" } }, "required": ["role"] },
+          "then": {
+            "properties": {
+              "status": { "const": "completed" },
+              "content": { "minItems": 1, "maxItems": 1, "items": { "$ref": "#/$defs/texto" } }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "status": { "const": "processing" } }, "required": ["status"] },
+          "then": {
+            "properties": {
+              "role": { "const": "assistant" },
+              "content": { "contains": { "$ref": "#/$defs/processando" }, "minContains": 1, "maxContains": 1 }
+            },
+            "not": { "properties": { "content": { "contains": { "$ref": "#/$defs/erro" } } } }
+          }
+        },
+        {
+          "if": { "properties": { "status": { "const": "failed" } }, "required": ["status"] },
+          "then": {
+            "properties": {
+              "role": { "const": "assistant" },
+              "content": { "contains": { "$ref": "#/$defs/erro" }, "minContains": 1, "maxContains": 1 }
+            },
+            "not": { "properties": { "content": { "contains": { "$ref": "#/$defs/processando" } } } }
+          }
+        },
+        {
+          "if": { "properties": { "status": { "const": "completed" } }, "required": ["status"] },
+          "then": {
+            "properties": {
+              "content": {
+                "minItems": 1,
+                "items": {
+                  "not": {
+                    "anyOf": [
+                      { "$ref": "#/$defs/erro" },
+                      { "$ref": "#/$defs/processando" }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "status": { "enum": ["cancelled", "incomplete"] } }, "required": ["status"] },
+          "then": {
+            "properties": {
+              "role": { "const": "assistant" },
+              "content": {
+                "items": {
+                  "not": {
+                    "anyOf": [
+                      { "$ref": "#/$defs/erro" },
+                      { "$ref": "#/$defs/processando" }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "envelope_erro": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["error"],
+      "properties": { "error": { "$ref": "#/$defs/erro_http" } }
+    }
+  }
+}
