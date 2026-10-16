@@ -2,6 +2,13 @@
 
 Atualizado em 16/10/2026. O provider ativo do MVP é a API dedicada da Iara, acessada pelo Model Gateway. As decisões duráveis ficam em `harness/context/estado-do-projeto.md`; o roteiro está em `docs/fases-do-projeto.md` no diretório de documentos do projeto.
 
+## Autenticação SULTS
+
+- O esqueleto está implementado: o formulário de produção envia usuário/senha para `POST /api/v1/autenticacao/login`; o Backend delega à porta `PortaAutenticacaoCorporativa`, cria cookie Iara HttpOnly e persiste apenas hashes de sessão/CSRF e UUID pseudônimo estável.
+- A rota falha fechada por padrão. O runtime ainda não injeta adapter SULTS e requer `IARA_AUTH_IDENTITY_KEY`, `IARA_CORPORATE_AUTH_ENABLED=true` fora de development e rate limiting de login pronto; são bloqueios esperados até o Líder Técnico fornecer contrato e ambiente oficial. O fluxo sintético de `localhost` segue sem login.
+- Próximo passo ao retomar autenticação: solicitar ao Líder Técnico método oficial de acesso, endpoint/documentação de teste, formato de sucesso/recusa/indisponibilidade e identidade estável; implementar o adapter sem alterar o contrato HTTP da Iara.
+- Opções e decisões ainda abertas: `harness/context/autenticacao-sults.md`.
+
 ## Frentes em andamento
 
 - O adapter usa `ChatOpenAI` do pacote `langchain-openai` como cliente compatível com Chat Completions. O host chamado é somente `IARA_BASE_URL`; não é a plataforma OpenAI.

@@ -31,11 +31,15 @@
       ]
     },
     "authentication": {
-      "status": "strategy-decided-integration-deferred",
-      "value": "Produção: validar credencial/token no SULTS e emitir token de sessão próprio da Iara por usuário seguindo o padrão Faturas; integração SULTS adiada para a etapa final. Desenvolvimento local em loopback usa identidade sintética, sem acesso às conversas de gestores",
+      "status": "skeleton-implemented-provider-details-pending",
+      "value": "Login corporativo: Frontend envia usuário/senha à API Iara; porta corporativa valida, e Backend emite cookie HttpOnly próprio, CSRF em memória e UUID pseudônimo estável. Adapter real SULTS e IARA_AUTH_IDENTITY_KEY são necessários antes de ativar; endpoints, protocolo e formato SULTS seguem pendentes. Localhost/dev continua com identidade sintética sem conversas de gestores",
       "owner": "technical-lead",
       "evidence": [
         "Backend/app/autenticacao.py",
+        "Backend/app/adaptadores/autenticacao_corporativa.py",
+        "Backend/app/main.py",
+        "Frontend/src/funcionalidades/autenticacao",
+        "harness/context/autenticacao-sults.md",
         "README.md"
       ]
     },
