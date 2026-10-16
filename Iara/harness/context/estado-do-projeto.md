@@ -82,6 +82,12 @@ Na fase 4, o alias interno `principal` resolve no catálogo backend-only para o 
 - Parâmetros de rede: timeout do SDK de 360 segundos, sem retries automáticos; prazo total padrão da solicitação de 120 segundos, configurável entre 1 e 360, com status operacional a cada 15 segundos durante a espera.
 - A interface, os contratos públicos, o histórico, os eventos SSE e a fonte sintética não mudaram.
 
+## Painel administrativo local — 16/10/2026
+
+- A interface administrativa é servida em `/administrativo`; `/admin` continua aceito e `/adiministrativo` é aceito como alias da grafia solicitada. O Frontend só monta o painel quando está em modo de desenvolvimento e o hostname é loopback.
+- A tela reúne o diagnóstico já existente do Backend, a fila de erros, logs técnicos sanitizados, prévias de carregamento/404 e atalhos para abrir nova conversa, testar o formulário de autenticação sintética local e testar a rota 404.
+- O fluxo `?login=teste` usa somente credenciais sintéticas configuradas no Backend e não valida SULTS. A API mantém sua própria proteção de localhost; a área administrativa nunca acessa conversas ou mensagens de gestores.
+
 ## Fontes detalhadas e autoridade
 
 As decisões completas de produto são mantidas pelo usuário em `C:\Users\dayvid.silva\Documents\LZ Informáticos\Iara\duvidas.md`, `docs\contratos-de-mensagem.md`, `docs\modelagem-de-software.md` e `docs\fases-do-projeto.md`. Esses arquivos estão fora do workspace indexado pelo Retrieval; este resumo existe para disponibilizar as decisões necessárias aos Harnesses da raiz, Backend e Frontend.
