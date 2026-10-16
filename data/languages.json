@@ -1,14 +1,14 @@
 {
   "github_username": "dayvid-santana",
-  "generated_at": "2026-10-15T10:54:59.707670Z",
+  "generated_at": "2026-10-16T10:46:41.024659Z",
   "repository_count": 8,
-  "total_bytes": 116711,
+  "total_bytes": 121878,
   "operator_title": "OMEGA-CLASS PYTHON OPERATOR",
   "languages": [
     {
       "name": "Python",
       "byte_count": 70006,
-      "percentage": 59.98,
+      "percentage": 57.44,
       "repository_count": 1,
       "rank_code": "OMEGA",
       "title": "PRIMARY SPECIALIZATION"
@@ -16,7 +16,7 @@
     {
       "name": "Jinja",
       "byte_count": 33227,
-      "percentage": 28.47,
+      "percentage": 27.26,
       "repository_count": 1,
       "rank_code": "ALPHA",
       "title": "CORE PROFICIENCY"
@@ -24,10 +24,18 @@
     {
       "name": "CSS",
       "byte_count": 13478,
-      "percentage": 11.55,
+      "percentage": 11.06,
       "repository_count": 1,
       "rank_code": "BRAVO",
       "title": "OPERATIONAL PROFICIENCY"
+    },
+    {
+      "name": "PowerShell",
+      "byte_count": 5167,
+      "percentage": 4.24,
+      "repository_count": 1,
+      "rank_code": "CHARLIE",
+      "title": "FIELD FAMILIARITY"
     }
   ]
 }
