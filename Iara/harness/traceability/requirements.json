@@ -331,7 +331,7 @@
     },
     {
       "id": "query.direct-llm-interaction",
-      "requirement": "Encaminhar a solicitação original do gestor diretamente à LLM da Iara, com System Prompt, instrução concatenada, até 40 mensagens da conversa e ferramentas autorizadas; sem chamada LLM de pré-processamento.",
+      "requirement": "Encaminhar a solicitação original do gestor diretamente à LLM da Iara, sem System Prompt, com apenas a pergunta original na mensagem atual e até 40 mensagens da conversa; sem chamada LLM de pré-processamento.",
       "status": "policy-defined",
       "evidence": [
         "Backend/harness/rules/backend.model-orchestration.md",
@@ -372,7 +372,7 @@
     },
     {
       "id": "query.relevant-context-window",
-      "requirement": "Enviar até as 40 mensagens de diálogo mais recentes da mesma conversa, contando a solicitação atual composta e excluindo o SystemMessage.",
+      "requirement": "Enviar até as 40 mensagens de diálogo mais recentes da mesma conversa, contando a pergunta original atual e sem enviar SystemMessage.",
       "status": "planned",
       "evidence": [
         "Backend/harness/rules/backend.model-orchestration.md",

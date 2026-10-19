@@ -31,12 +31,14 @@
       ]
     },
     "authentication": {
-      "status": "skeleton-implemented-provider-details-pending",
-      "value": "Login corporativo: Frontend envia usuário/senha à API Iara; porta corporativa valida, e Backend emite cookie HttpOnly próprio, CSRF em memória e UUID pseudônimo estável. Adapter real SULTS e IARA_AUTH_IDENTITY_KEY são necessários antes de ativar; endpoints, protocolo e formato SULTS seguem pendentes. Localhost/dev continua com identidade sintética sem conversas de gestores",
+      "status": "adapter-implemented-live-validation-pending",
+      "value": "Login corporativo: Frontend envia usuário/senha à API Iara; adapter com a biblioteca SULTS usada no Faturas valida no tenant HTTPS fixo e descarta tokens ERP; Backend emite cookie HttpOnly próprio, CSRF em memória e UUID pseudônimo estável. Fora de development exige IARA_CORPORATE_AUTH_ENABLED e IARA_AUTH_IDENTITY_KEY; limite de oito tentativas por login em quinze minutos é compartilhado pelo SQLite. Homologação real e proteção por origem na borda seguem pendentes. Localhost/dev permanece automático e sintético; login fake opt-in não acessa contas corporativas",
       "owner": "technical-lead",
       "evidence": [
         "Backend/app/autenticacao.py",
         "Backend/app/adaptadores/autenticacao_corporativa.py",
+        "Backend/app/adaptadores/autenticacao_sults.py",
+        "Backend/app/adaptadores/limitador_login.py",
         "Backend/app/main.py",
         "Frontend/src/funcionalidades/autenticacao",
         "harness/context/autenticacao-sults.md",
@@ -106,7 +108,7 @@
           "complete_requires_explicit_source_confirmation": true,
           "valid_empty_query": "sem_dados-does-not-prove-company-data-does-not-exist",
           "rows_without_completeness_signal": "nao_informado",
-          "requested_calculation_with_partial_or_unknown_coverage": "use-returned-data-only-and-state-limitation",
+          "requested_calculation_with_partial_or_unknown_coverage": "use-returned-data-only-and-omit-absent-values-without-commentary",
           "insufficient_data": "do-not-calculate"
         },
         "proveniencia": [
@@ -308,12 +310,12 @@
     "llm_interaction": {
       "status": "approved-policy-implementation-pending",
       "value": "Send the manager request directly to the project-configured Iara LLM through Model Gateway; no LLM preclassification, rewrite, summary, intent-filter call, or separate presentation-selection call.",
-      "model_identity": "Project-specific behavior is configured through a server-owned System Prompt and model configuration; this does not authorize training/fine-tuning or creating a foundation model, which remain out of MVP scope.",
-      "system_prompt": "Backend-owned, versioned SystemMessage, composed with each request and never stored as a conversation message or exposed to the browser.",
-      "request_composition": "One HumanMessage combines a concise server-authored task instruction with the manager original request, using explicit delimiters; the exact original request remains intact and is not rewritten by another LLM.",
+      "model_identity": "Project-specific behavior is configured through the model configuration; System Prompt and application-instruction injection are suspended; this does not authorize training/fine-tuning or creating a foundation model, which remain out of MVP scope.",
+      "system_prompt": "Suspended by user decision: no SystemMessage is sent in the active flow; previous versions remain archived and are not loaded.",
+      "request_composition": "The current HumanMessage contains only the manager original request, without application instructions, prefixes, suffixes or delimiters; no other LLM rewrites it.",
       "context_window": {
         "max_messages": 40,
-        "scope": "most-recent persisted user and assistant dialogue messages from the same conversation, including the current composed HumanMessage",
+        "scope": "most-recent persisted user and assistant dialogue messages from the same conversation, including the current unmodified HumanMessage",
         "system_message_counted": false,
         "effective_prior_messages": 39,
         "ordering": "chronological",
@@ -322,11 +324,11 @@
       },
       "langchain": "Use LangChain in the Gateway for server-owned chat messages/prompts, async invocation, streaming, typed validation and callbacks. Send no tools, tool_choice or parallel_tool_calls to the current Iara endpoint. A future MCP integration requires an authorized compatible contract. Do not create unbounded agent loops.",
       "tools": "Disabled in the current Iara endpoint because it rejects OpenAI tool fields. Any future MCP tool integration must be backend-owned, allowlisted, typed, read-only, authorized and bounded, and must be approved under a separate compatible contract.",
-      "presentation": "The LLM places its explanation in the text block using Markdown when useful and returns KPI, KPI group, table and chart data only as typed JSON blocks. Backend validates the blocks; Frontend components generate HTML/SVG using existing UI/UX.",
-      "markdown_rendering": "Markdown in the text block is rendered by the Frontend as semantic elements with raw HTML disabled, unsafe URL protocols blocked and remote images ignored. No public contract change or dangerouslySetInnerHTML.",
-      "html": "The model never sends HTML. Frontend renders existing validated typed blocks as its own HTML/SVG; arbitrary markup, scripts, styles, event handlers, unsafe URLs, model-controlled styling or navigation are never executed.",
-      "source_disclosure": "Never return or cite source identity or technical provenance. Do not expose system/tool/provider, Grafana/MCP, database, source table/view, schema, internal column, query, dashboard, dataset, file, endpoint or execution ID. User-facing analytical tables are allowed only with validated business columns and values, never source schemas or source tables.",
-      "accuracy": "Maximize accuracy through authorized source data, provenance, typed validation, explicit uncertainty and fail-closed handling; never promise perfect accuracy or invent values, trends, causes, estimates, or missing fields.",
+      "presentation": "The LLM places its explanation in Markdown text and visual data after @@IARA_BLOCOS@@. Typed table/chart blocks remain supported; a message-v2 html block accepts static HTML/SVG for KPIs and chart types outside line/bar/pie. Backend reconstructs HTML with an allowlist before SSE and persistence; Frontend renders it in a sandboxed iframe with restrictive CSP and accessible summary. Present only requested values that exist in the returned data. Omit items without values silently; never state that missing values prevent conclusions, list gaps, add completeness caveats, or treat absence as zero. Keep completeness and provenance internal for validation.",
+      "markdown_rendering": "Markdown in the text block is rendered by the Frontend as semantic elements with raw HTML disabled, unsafe URL protocols blocked and remote images ignored. Text remains Markdown-only; visual HTML has a separate versioned block and isolated renderer.",
+      "html": "Static HTML/SVG is accepted only inside a typed html visual block in message schema v2, after Backend allowlist reconstruction. Raw HTML in text, scripts, model-controlled styles, links, external resources and navigation are rejected. Frontend isolates the fragment in a sandboxed iframe with CSP and an external textual summary.",
+      "source_disclosure": "Never narrate data retrieval or mention that information was consulted, searched, found in a query/source, or returned by a consultation. Speak directly and naturally to the manager, as a knowledgeable colleague; answer with business facts, ask directly for missing business details, and do not claim human feelings or private thoughts. Remove source labels, URLs and internal provenance from every public text or visual block.",
+      "accuracy": "Maximize accuracy through authorized returned data, provenance used internally, typed validation and fail-closed handling; never promise perfect accuracy or invent values, trends, causes or estimates. Omit requested items without returned values and never interpret absence as zero.",
       "no_private_reasoning": "Do not expose chain-of-thought; progress events describe actual operational stages only.",
       "evidence": [
         "Backend/harness/rules/backend.model-orchestration.md",
@@ -340,10 +342,29 @@
   },
   "rule_exceptions": [],
   "backend_constraints": [
-    "Send the manager original request directly to the project-configured Iara LLM with a server-owned versioned System Prompt, application instruction concatenated with the request, and up to 40 recent dialogue messages including the current request; no LLM preprocessing.",
-    "Send the manager original request directly to the project-configured Iara LLM with a server-owned versioned System Prompt, application instruction concatenated with the request, and up to 40 recent dialogue messages including the current request; no LLM preprocessing."
+    "Send the manager original request directly to the project-configured Iara LLM without a System Prompt, with only the manager original request as the current HumanMessage, and up to 40 recent dialogue messages including the current request; no LLM preprocessing.",
+    "Send the manager original request directly to the project-configured Iara LLM without a System Prompt, with only the manager original request as the current HumanMessage, and up to 40 recent dialogue messages including the current request; no LLM preprocessing."
   ],
   "frontend_constraints": [
-    "Preserve o IU/UX atual da Iara; o Frontend apenas renderiza contratos públicos aprovados e não expõe System Prompt, ferramentas, provider ou modelo."
-  ]
+    "Preserve o IU/UX atual da Iara; o Frontend apenas renderiza contratos públicos aprovados e não expõe System Prompt, ferramentas, provider ou modelo.",
+    "suppress raw serialized JSON in historical text; render new KPI values through validated chart blocks"
+  ],
+  "llm_interaction": {
+    "presentation": "KPIs numéricos validados são exibidos exclusivamente em gráficos; o Backend converte blocos legados kpi/kpi_group em chart e rejeita JSON bruto no texto antes do SSE. JSON serializado nunca é conteúdo Markdown público.",
+    "raw_json_output": {
+      "text_block": "prose-markdown-only; reject raw objects, arrays, and fenced JSON before text.delta",
+      "validated_kpi_blocks": "normalize-numeric-kpi-and-kpi_group-to-chart-before-persist-or-publish",
+      "historical_frontend_fallback": "suppress serialized JSON in legacy text messages",
+      "public_schema": "preserve-message-v1-types-for-backward-compatibility"
+    },
+    "system_prompt_version": null,
+    "status": "approved-policy-and-output-boundary-implemented",
+    "value": "Send the manager request directly to the project-configured Iara LLM. The text channel is Markdown prose only and rejects serialized JSON; numeric KPI blocks are normalized into validated charts before persistence and streaming.",
+    "evidence": [
+      "Backend/app/prompts/system_prompts.md",
+      "Backend/tests/test_model_gateway.py",
+      "Frontend/src/funcionalidades/conversas/componentes/TextoMarkdown/TextoMarkdown.tsx",
+      "Frontend/src/funcionalidades/conversas/componentes/TextoMarkdown/TextoMarkdown.test.tsx"
+    ]
+  }
 }

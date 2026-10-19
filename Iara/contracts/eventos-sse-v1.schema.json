@@ -1,0 +1,754 @@
+{
+  "$defs": {
+    "BlocoGrafico": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "chart",
+          "default": "chart",
+          "title": "Type",
+          "type": "string"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "chart_type": {
+          "enum": [
+            "line",
+            "bar",
+            "pie"
+          ],
+          "title": "Chart Type",
+          "type": "string"
+        },
+        "x": {
+          "minLength": 1,
+          "title": "X",
+          "type": "string"
+        },
+        "series": {
+          "items": {
+            "$ref": "#/$defs/SerieGrafico"
+          },
+          "minItems": 1,
+          "title": "Series",
+          "type": "array"
+        },
+        "data": {
+          "items": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "type": "object"
+          },
+          "minItems": 1,
+          "title": "Data",
+          "type": "array"
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Summary"
+        }
+      },
+      "required": [
+        "title",
+        "chart_type",
+        "x",
+        "series",
+        "data"
+      ],
+      "title": "BlocoGrafico",
+      "type": "object"
+    },
+    "BlocoKPI": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "kpi",
+          "default": "kpi",
+          "title": "Type",
+          "type": "string"
+        },
+        "label": {
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Value"
+        },
+        "format": {
+          "default": "number",
+          "enum": [
+            "number",
+            "currency",
+            "percent",
+            "text"
+          ],
+          "title": "Format",
+          "type": "string"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z]{3}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currency"
+        },
+        "change": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Change"
+        },
+        "period": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Period"
+        }
+      },
+      "required": [
+        "label",
+        "value"
+      ],
+      "title": "BlocoKPI",
+      "type": "object"
+    },
+    "BlocoTabela": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "table",
+          "default": "table",
+          "title": "Type",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "columns": {
+          "items": {
+            "$ref": "#/$defs/ColunaTabela"
+          },
+          "minItems": 1,
+          "title": "Columns",
+          "type": "array"
+        },
+        "rows": {
+          "items": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "type": "object"
+          },
+          "title": "Rows",
+          "type": "array"
+        },
+        "source_label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Label"
+        }
+      },
+      "required": [
+        "columns",
+        "rows"
+      ],
+      "title": "BlocoTabela",
+      "type": "object"
+    },
+    "ColunaTabela": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        },
+        "label": {
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "type": {
+          "default": "text",
+          "enum": [
+            "number",
+            "currency",
+            "percent",
+            "text"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z]{3}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currency"
+        }
+      },
+      "required": [
+        "key",
+        "label"
+      ],
+      "title": "ColunaTabela",
+      "type": "object"
+    },
+    "EventoBlocoPronto": {
+      "additionalProperties": false,
+      "description": "Entrega um bloco analítico completo depois da validação pelo Backend.",
+      "properties": {
+        "solicitacao_id": {
+          "format": "uuid",
+          "title": "Solicitacao Id",
+          "type": "string"
+        },
+        "conversa_id": {
+          "format": "uuid",
+          "title": "Conversa Id",
+          "type": "string"
+        },
+        "mensagem_id": {
+          "format": "uuid",
+          "title": "Mensagem Id",
+          "type": "string"
+        },
+        "sequencia": {
+          "minimum": 0,
+          "title": "Sequencia",
+          "type": "integer"
+        },
+        "tipo": {
+          "const": "bloco.pronto",
+          "title": "Tipo",
+          "type": "string"
+        },
+        "bloco": {
+          "discriminator": {
+            "mapping": {
+              "chart": "#/$defs/BlocoGrafico",
+              "kpi": "#/$defs/BlocoKPI",
+              "kpi_group": "#/$defs/GrupoKPIs",
+              "table": "#/$defs/BlocoTabela"
+            },
+            "propertyName": "type"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/BlocoKPI"
+            },
+            {
+              "$ref": "#/$defs/GrupoKPIs"
+            },
+            {
+              "$ref": "#/$defs/BlocoTabela"
+            },
+            {
+              "$ref": "#/$defs/BlocoGrafico"
+            }
+          ],
+          "title": "Bloco"
+        }
+      },
+      "required": [
+        "solicitacao_id",
+        "conversa_id",
+        "mensagem_id",
+        "sequencia",
+        "tipo",
+        "bloco"
+      ],
+      "title": "EventoBlocoPronto",
+      "type": "object"
+    },
+    "EventoSolicitacaoCancelada": {
+      "additionalProperties": false,
+      "description": "Confirma que o gestor cancelou a solicitação em andamento.",
+      "properties": {
+        "solicitacao_id": {
+          "format": "uuid",
+          "title": "Solicitacao Id",
+          "type": "string"
+        },
+        "conversa_id": {
+          "format": "uuid",
+          "title": "Conversa Id",
+          "type": "string"
+        },
+        "mensagem_id": {
+          "format": "uuid",
+          "title": "Mensagem Id",
+          "type": "string"
+        },
+        "sequencia": {
+          "minimum": 0,
+          "title": "Sequencia",
+          "type": "integer"
+        },
+        "tipo": {
+          "const": "solicitacao.cancelada",
+          "title": "Tipo",
+          "type": "string"
+        }
+      },
+      "required": [
+        "solicitacao_id",
+        "conversa_id",
+        "mensagem_id",
+        "sequencia",
+        "tipo"
+      ],
+      "title": "EventoSolicitacaoCancelada",
+      "type": "object"
+    },
+    "EventoSolicitacaoConcluida": {
+      "additionalProperties": false,
+      "description": "Marca o encerramento bem-sucedido da resposta.",
+      "properties": {
+        "solicitacao_id": {
+          "format": "uuid",
+          "title": "Solicitacao Id",
+          "type": "string"
+        },
+        "conversa_id": {
+          "format": "uuid",
+          "title": "Conversa Id",
+          "type": "string"
+        },
+        "mensagem_id": {
+          "format": "uuid",
+          "title": "Mensagem Id",
+          "type": "string"
+        },
+        "sequencia": {
+          "minimum": 0,
+          "title": "Sequencia",
+          "type": "integer"
+        },
+        "tipo": {
+          "const": "solicitacao.concluida",
+          "title": "Tipo",
+          "type": "string"
+        }
+      },
+      "required": [
+        "solicitacao_id",
+        "conversa_id",
+        "mensagem_id",
+        "sequencia",
+        "tipo"
+      ],
+      "title": "EventoSolicitacaoConcluida",
+      "type": "object"
+    },
+    "EventoSolicitacaoFalhou": {
+      "additionalProperties": false,
+      "description": "Expõe código estável, orientação clara e possibilidade de nova tentativa.",
+      "properties": {
+        "solicitacao_id": {
+          "format": "uuid",
+          "title": "Solicitacao Id",
+          "type": "string"
+        },
+        "conversa_id": {
+          "format": "uuid",
+          "title": "Conversa Id",
+          "type": "string"
+        },
+        "mensagem_id": {
+          "format": "uuid",
+          "title": "Mensagem Id",
+          "type": "string"
+        },
+        "sequencia": {
+          "minimum": 0,
+          "title": "Sequencia",
+          "type": "integer"
+        },
+        "tipo": {
+          "const": "solicitacao.falhou",
+          "title": "Tipo",
+          "type": "string"
+        },
+        "codigo": {
+          "enum": [
+            "unauthenticated",
+            "forbidden",
+            "not_found",
+            "validation_error",
+            "rate_limited",
+            "source_unavailable",
+            "model_unavailable",
+            "timeout",
+            "internal_error"
+          ],
+          "title": "Codigo",
+          "type": "string"
+        },
+        "mensagem": {
+          "minLength": 1,
+          "title": "Mensagem",
+          "type": "string"
+        },
+        "pode_tentar_novamente": {
+          "title": "Pode Tentar Novamente",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "solicitacao_id",
+        "conversa_id",
+        "mensagem_id",
+        "sequencia",
+        "tipo",
+        "codigo",
+        "mensagem",
+        "pode_tentar_novamente"
+      ],
+      "title": "EventoSolicitacaoFalhou",
+      "type": "object"
+    },
+    "EventoSolicitacaoIniciada": {
+      "additionalProperties": false,
+      "description": "Confirma ao cliente que o Backend iniciou o processamento da solicitação.",
+      "properties": {
+        "solicitacao_id": {
+          "format": "uuid",
+          "title": "Solicitacao Id",
+          "type": "string"
+        },
+        "conversa_id": {
+          "format": "uuid",
+          "title": "Conversa Id",
+          "type": "string"
+        },
+        "mensagem_id": {
+          "format": "uuid",
+          "title": "Mensagem Id",
+          "type": "string"
+        },
+        "sequencia": {
+          "minimum": 0,
+          "title": "Sequencia",
+          "type": "integer"
+        },
+        "tipo": {
+          "const": "solicitacao.iniciada",
+          "title": "Tipo",
+          "type": "string"
+        }
+      },
+      "required": [
+        "solicitacao_id",
+        "conversa_id",
+        "mensagem_id",
+        "sequencia",
+        "tipo"
+      ],
+      "title": "EventoSolicitacaoIniciada",
+      "type": "object"
+    },
+    "EventoSolicitacaoStatus": {
+      "additionalProperties": false,
+      "description": "Apresenta ao gestor uma etapa de processamento em linguagem simples.",
+      "properties": {
+        "solicitacao_id": {
+          "format": "uuid",
+          "title": "Solicitacao Id",
+          "type": "string"
+        },
+        "conversa_id": {
+          "format": "uuid",
+          "title": "Conversa Id",
+          "type": "string"
+        },
+        "mensagem_id": {
+          "format": "uuid",
+          "title": "Mensagem Id",
+          "type": "string"
+        },
+        "sequencia": {
+          "minimum": 0,
+          "title": "Sequencia",
+          "type": "integer"
+        },
+        "tipo": {
+          "const": "solicitacao.status",
+          "title": "Tipo",
+          "type": "string"
+        },
+        "mensagem": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Mensagem",
+          "type": "string"
+        }
+      },
+      "required": [
+        "solicitacao_id",
+        "conversa_id",
+        "mensagem_id",
+        "sequencia",
+        "tipo",
+        "mensagem"
+      ],
+      "title": "EventoSolicitacaoStatus",
+      "type": "object"
+    },
+    "EventoTextoDelta": {
+      "additionalProperties": false,
+      "description": "Entrega um trecho novo de texto da resposta progressiva.",
+      "properties": {
+        "solicitacao_id": {
+          "format": "uuid",
+          "title": "Solicitacao Id",
+          "type": "string"
+        },
+        "conversa_id": {
+          "format": "uuid",
+          "title": "Conversa Id",
+          "type": "string"
+        },
+        "mensagem_id": {
+          "format": "uuid",
+          "title": "Mensagem Id",
+          "type": "string"
+        },
+        "sequencia": {
+          "minimum": 0,
+          "title": "Sequencia",
+          "type": "integer"
+        },
+        "tipo": {
+          "const": "texto.delta",
+          "title": "Tipo",
+          "type": "string"
+        },
+        "texto": {
+          "minLength": 1,
+          "title": "Texto",
+          "type": "string"
+        }
+      },
+      "required": [
+        "solicitacao_id",
+        "conversa_id",
+        "mensagem_id",
+        "sequencia",
+        "tipo",
+        "texto"
+      ],
+      "title": "EventoTextoDelta",
+      "type": "object"
+    },
+    "GrupoKPIs": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "kpi_group",
+          "default": "kpi_group",
+          "title": "Type",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/BlocoKPI"
+          },
+          "minItems": 1,
+          "title": "Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "items"
+      ],
+      "title": "GrupoKPIs",
+      "type": "object"
+    },
+    "SerieGrafico": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        },
+        "label": {
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "format": {
+          "default": "number",
+          "enum": [
+            "number",
+            "currency",
+            "percent"
+          ],
+          "title": "Format",
+          "type": "string"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z]{3}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currency"
+        }
+      },
+      "required": [
+        "key",
+        "label"
+      ],
+      "title": "SerieGrafico",
+      "type": "object"
+    }
+  },
+  "discriminator": {
+    "mapping": {
+      "bloco.pronto": "#/$defs/EventoBlocoPronto",
+      "solicitacao.cancelada": "#/$defs/EventoSolicitacaoCancelada",
+      "solicitacao.concluida": "#/$defs/EventoSolicitacaoConcluida",
+      "solicitacao.falhou": "#/$defs/EventoSolicitacaoFalhou",
+      "solicitacao.iniciada": "#/$defs/EventoSolicitacaoIniciada",
+      "solicitacao.status": "#/$defs/EventoSolicitacaoStatus",
+      "texto.delta": "#/$defs/EventoTextoDelta"
+    },
+    "propertyName": "tipo"
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/EventoSolicitacaoIniciada"
+    },
+    {
+      "$ref": "#/$defs/EventoSolicitacaoStatus"
+    },
+    {
+      "$ref": "#/$defs/EventoTextoDelta"
+    },
+    {
+      "$ref": "#/$defs/EventoBlocoPronto"
+    },
+    {
+      "$ref": "#/$defs/EventoSolicitacaoConcluida"
+    },
+    {
+      "$ref": "#/$defs/EventoSolicitacaoFalhou"
+    },
+    {
+      "$ref": "#/$defs/EventoSolicitacaoCancelada"
+    }
+  ]
+}

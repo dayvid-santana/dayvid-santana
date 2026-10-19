@@ -599,7 +599,7 @@
       "status": "planned",
       "scenarios": [
         "A solicitação original vai diretamente ao modelo sem chamada LLM anterior de classificação ou reformulação",
-        "SystemMessage versionado fica fora da contagem de contexto e não é persistido como mensagem",
+        "Nenhum SystemMessage é enviado; o contexto inclui no máximo 39 mensagens anteriores e o pedido atual",
         "Instrução de aplicação e pedido original são concatenados em uma HumanMessage com delimitadores",
         "Resposta tipada respeita os blocos Iara e as regras de dados/completude aprovadas"
       ],
@@ -633,7 +633,7 @@
       "scenarios": [
         "Envia até 40 mensagens da mesma conversa, incluindo o pedido atual composto",
         "Com 39 ou mais mensagens anteriores, mantém as 39 mais recentes e o pedido atual",
-        "SystemMessage não entra na contagem nem no histórico persistido",
+        "SystemMessage não é enviado nem persistido no histórico",
         "Não inclui mensagens de outro usuário ou conversa"
       ],
       "evidence": []
@@ -934,7 +934,7 @@
       "level": "unit-and-api-integration",
       "status": "planned",
       "scenarios": [
-        "O Gateway envia System Prompt, instrução concatenada e janela de até 40 mensagens diretamente à LLM",
+        "O Gateway envia somente a pergunta original na mensagem atual e uma janela de até 40 mensagens à LLM, sem SystemMessage",
         "Tool calling usa somente ferramentas autorizadas com limite finito, timeout, cancelamento e validação",
         "Resposta estruturada normalizada é validada antes de persistir ou transmitir",
         "Dados sintéticos são usados até autorização e contrato do Grafana MCP real"

@@ -2,11 +2,18 @@
 
 Atualizado em 16/10/2026. O provider ativo do MVP é a API dedicada da Iara, acessada pelo Model Gateway. As decisões duráveis ficam em `harness/context/estado-do-projeto.md`; o roteiro está em `docs/fases-do-projeto.md` no diretório de documentos do projeto.
 
+## HTML visual v2 — 16/10/2026
+
+- Implementado contrato `mensagem-v2.schema.json` e SSE v2: `html` contém `title`, `summary` e fragmento estático. v1 permanece para histórico. O Backend atribui v2 quando a resposta inclui HTML, migra o CHECK do SQLite local sem apagar mensagens e serializa `bloco.pronto` com aliases públicos.
+- O Gateway aceita HTML somente no campo `html` do array após `@@IARA_BLOCOS@@`; a allowlist reconstrói HTML/SVG estático e rejeita scripts, estilos, links, eventos e recursos externos. HTML solto no texto é bloqueado antes do SSE. O Frontend usa iframe sandbox com CSP e resumo acessível.
+- O System Prompt v10 está arquivado e não é enviado. O contrato e a validação do Backend continuam permitindo KPI visual, gráficos estáticos e gráficos tipados. O serviço real ainda não forneceu amostra do envelope HTML/MCP; ajustar somente após receber contrato ou exemplo real, sem relaxar a validação.
+- Verificações focadas: 68 testes Backend de HTML, contratos, SSE, histórico e fluxo de solicitações passaram; 69 testes Frontend de contratos/renderização passaram; Ruff, lint, tipos, build e validação do Harness passaram. Chromium headless confirmou que um SVG com retângulo é renderizado dentro de iframe sandbox com CSP. Gate completo Backend: 160 passaram e 6 falharam na última execução integral; os três testes novos de rejeição de markup passaram depois no recorte focado em expectativas antigas de estimativa/completude/progresso; gate completo Frontend: 134 passaram e 2 falharam em navegação/histórico lateral, falhas já registradas antes desta tarefa. Não declarar gates completos como aprovados.
+
 ## Autenticação SULTS
 
-- O esqueleto está implementado: o formulário de produção envia usuário/senha para `POST /api/v1/autenticacao/login`; o Backend delega à porta `PortaAutenticacaoCorporativa`, cria cookie Iara HttpOnly e persiste apenas hashes de sessão/CSRF e UUID pseudônimo estável.
-- A rota falha fechada por padrão. O runtime ainda não injeta adapter SULTS e requer `IARA_AUTH_IDENTITY_KEY`, `IARA_CORPORATE_AUTH_ENABLED=true` fora de development e rate limiting de login pronto; são bloqueios esperados até o Líder Técnico fornecer contrato e ambiente oficial. O fluxo sintético de `localhost` segue sem login.
-- Próximo passo ao retomar autenticação: solicitar ao Líder Técnico método oficial de acesso, endpoint/documentação de teste, formato de sucesso/recusa/indisponibilidade e identidade estável; implementar o adapter sem alterar o contrato HTTP da Iara.
+- O formulário envia usuário/senha para `POST /api/v1/autenticacao/login`; a porta `PortaAutenticacaoCorporativa` usa o adapter `autenticacao_sults.py` com a biblioteca interna copiada do Faturas. O adapter confirma o login no tenant HTTPS fixo, descarta tokens do ERP e a Iara emite cookie HttpOnly próprio, CSRF e UUID pseudônimo. O Docker inclui a biblioteca e suas dependências.
+- A rota segue fechada por padrão e requer `IARA_AUTH_IDENTITY_KEY` e `IARA_CORPORATE_AUTH_ENABLED=true` fora de development. O Backend limita oito tentativas por login em quinze minutos no SQLite compartilhado. O fluxo sintético de `localhost` e `?login=teste` continuam sem validar SULTS ou acessar conversas corporativas.
+- Verificação em 16/10: 30 testes focados de autenticação, isolamento e conversas passaram; Ruff e Harness passaram; build Docker e import da biblioteca na imagem passaram. O gate completo Backend teve 173 testes aprovados e seis falhas anteriores em expectativas do Model Gateway, sem relação com autenticação. Próximo passo: homologação real com conta autorizada, confirmar identidade imutável no ERP e proteção de tentativas por origem na borda com DevOps.
 - Opções e decisões ainda abertas: `harness/context/autenticacao-sults.md`.
 
 ## Frentes em andamento
@@ -15,10 +22,20 @@ Atualizado em 16/10/2026. O provider ativo do MVP é a API dedicada da Iara, ace
 - A credencial correta é `IARA_API_KEY`, mantida somente no Backend. `IARA_DEFAULT_KEY` não faz parte do contrato de configuração. O `.env` real permanece ignorado pelo Git e seus valores não devem aparecer em logs ou documentação.
 - O catálogo mantém o alias `principal` e resolve o ID fixo `iara-grafana`.
 - A chamada segue `temperature=None`, `use_responses_api=False`, `stream_usage=False`, timeout SDK de 360 segundos e `max_retries=0`.
-- O endpoint atual rejeita `tools`, `tool_choice` e `parallel_tool_calls`; o fluxo ativo envia System Prompt, até 39 mensagens anteriores e a solicitação atual diretamente, sem pré-processamento LLM e sem campos de tool calling.
+- O endpoint atual rejeita `tools`, `tool_choice` e `parallel_tool_calls`; o fluxo ativo envia até 39 mensagens anteriores e a solicitação atual diretamente, sem SystemMessage, sem pré-processamento LLM e sem campos de tool calling.
 - Uma chamada básica e uma chamada completa com o contrato da Iara foram aceitas em 15/10/2026. A resposta completa levou cerca de 77 segundos, então o prazo da aplicação passou de 40 para 120 segundos por padrão, configurável entre 1 e 360.
 - Durante a espera, o Backend publica “A Iara continua preparando a resposta” a cada 15 segundos sem consumir uma nova chamada ou tokens adicionais.
-- Não houve mudança no contrato SSE, no Frontend, nos blocos públicos ou na política de proteção de credenciais.
+- Em 16/10 foi corrigida uma falha de fronteira: JSON enviado pelo modelo sem o delimitador interno era interpretado como texto e podia sair em `texto.delta`. O Backend agora bloqueia objetos/arrays serializados antes de persistir/publicar; KPIs numéricos validados viram gráficos antes de `bloco.pronto`; o Frontend oculta JSON legado já persistido.
+
+## JSON público e KPIs em gráficos — 16/10/2026
+
+- A saída em texto aceita somente prosa Markdown. O Gateway aceita blocos tipados após `@@IARA_BLOCOS@@` e normaliza o fence `iara-visual` v2 observado no endpoint dedicado em `chart` validado. JSON arbitrário e HTML solto em `text` continuam bloqueados.
+- Em 16/10/2026, os pedidos reais de vendas e pizza retornaram Markdown e `iara-visual`, sem HTML/SVG. A pizza foi emitida em `bloco.pronto` e persistida como `chart/pie`; o caminho HTML v2 passou em testes sintéticos, mas depende de amostra real do serviço/MCP para aceite ponta a ponta.
+- O contrato v1 continua compatível, mas o Backend converte `kpi` e `kpi_group` numéricos validados em um ou mais `chart`. Grupos com unidades/moedas diferentes são separados para não comparar escalas incompatíveis; KPIs textuais não viram gráfico.
+- `TextoMarkdown` protege o histórico: se encontrar uma serialização JSON antiga em texto, mostra aviso seguro e não o conteúdo bruto.
+- System Prompt suspenso; versões anteriores arquivadas em `Backend/app/prompts/system_prompts.md`. HTML/SVG estático exige bloco `html` v2, allowlist no Backend, iframe sandbox com CSP e resumo acessível. HTML solto, origem técnica e payload bruto continuam bloqueados.
+- Verificação focada: cinco testes do Backend passaram (bloqueio de JSON bruto, KPI individual/grupo em gráficos, fluxo SSE e renderizações sintéticas); `TextoMarkdown` passou com cinco casos. `scripts/harness.ps1 -Target harness` passou.
+- Gates completos: Backend — Ruff passou; 146 testes passaram, 6 falharam e cobertura total foi 86,64%. As falhas restantes são expectativas de teste antigas sobre estimativas, avisos de completude e textos de progresso, em desacordo com decisões recentes e alterações que já estavam no código. Frontend — lint e TypeScript passaram; 128 testes passaram e 2 falharam em seleção de conversa e classe de layout, fora do componente Markdown desta correção. O teste focado de Markdown passou.
 
 ## Verificação do streaming ponta a ponta — 16/10/2026
 

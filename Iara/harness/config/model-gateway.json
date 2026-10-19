@@ -94,9 +94,9 @@
     "conversation_context_window": {
       "status": "implemented",
       "maximum_messages": 40,
-      "includes_current_composed_human_message": true,
+      "includes_current_user_message": true,
       "excludes_system_message": true,
-      "implementation": "Persistence supplies up to 39 previous messages and the adapter appends the current composed HumanMessage; SystemMessage is separate and excluded from the 40-message count",
+      "implementation": "Persistence supplies up to 39 previous messages and the adapter appends the manager original request as the current HumanMessage; no SystemMessage or application instruction is sent",
       "evidence": [
         "Backend/app/solicitacoes.py",
         "Backend/app/persistencia.py",
@@ -106,22 +106,24 @@
       ]
     },
     "safe_structured_html": {
-      "status": "policy-defined",
-      "value": "The model sends no HTML. Existing typed blocks are validated by Backend and rendered as HTML/SVG by Frontend components; arbitrary markup is never executed",
+      "status": "implemented",
+      "value": "The model may return static HTML/SVG only in the typed html block of message-v2. Backend reconstructs an allowlisted fragment and Frontend isolates it in a sandboxed iframe with CSP and textual summary",
       "evidence": [
+        "contracts/mensagem-v2.schema.json",
+        "Backend/app/html_visual.py",
+        "Frontend/src/funcionalidades/conversas/componentes/VisualizacaoHtml/VisualizacaoHtml.tsx",
         "Backend/harness/rules/backend.model-orchestration.md",
         "Backend/harness/config/decisions.json"
       ]
     },
     "system_prompt_composition": {
-      "status": "implemented",
-      "version": "4",
-      "runtime_integration": "loaded by the Backend adapter from app/prompts/system_prompts.md; only the active version section is sent to the LLM",
+      "status": "suspended",
+      "version": "10 (archived)",
+      "runtime_integration": "No SystemMessage is loaded or sent; previous versions remain archived for future review",
       "requirements": [
-        "server-owned",
-        "versioned",
-        "SystemMessage",
-        "not-persisted-as-conversation-message"
+        "archived-for-reference",
+        "not-loaded",
+        "not-sent"
       ],
       "evidence": [
         "Backend/app/prompts/system_prompts.md",
@@ -155,7 +157,7 @@
       ],
       "api_style": "chat-completions-preserved",
       "tool_calling": "Disabled for the current Iara endpoint because it rejects tools, tool_choice and parallel_tool_calls; any future MCP integration requires a separate compatible contract",
-      "system_prompt": "Server-owned version 4 loaded from the active section of app/prompts/system_prompts.md as a separate SystemMessage; text uses safe Markdown, visuals use validated typed blocks, and technical source provenance is never disclosed",
+      "system_prompt": "System Prompt suspended; text remains Markdown-only, while visual HTML/SVG is accepted only as a validated message-v2 block in an isolated renderer",
       "client_settings": {
         "base_url_env": "IARA_BASE_URL",
         "api_key_env": "IARA_API_KEY",

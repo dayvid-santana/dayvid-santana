@@ -1,0 +1,25 @@
+# Backend runtime/test artifacts
+/Backend/
+Backend/.env
+Backend/.env.*
+!Backend/.env.example
+Backend/.venv/
+Backend/.pytest_cache/
+Backend/.ruff_cache/
+Backend/.devmate/
+Backend/__pycache__/
+Backend/**/__pycache__/
+Backend/*.egg-info/
+Backend/.coverage
+Backend/htmlcov/
+
+# Frontend install/build/browser-test artifacts
+/Frontend/
+Frontend/node_modules/
+Frontend/dist/
+Frontend/test-results/
+Frontend/playwright-report/
+Frontend/.vite/
+
+# Lockfile vazio criado sem manifesto npm na raiz compartilhada.
+/package-lock.json
