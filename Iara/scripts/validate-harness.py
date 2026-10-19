@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """Validate Iara's shared and component harness definitions using stdlib only."""
 
+# Data: 19/10/2026
+# Objetivo: Validar a decisão de preservar integralmente a resposta da API de dados,
+#           sem atrelar os gates do Harness a MCP, formato gráfico ou transformação.
+
 from __future__ import annotations
 
 import json
@@ -328,15 +332,18 @@ def validate_product_harness() -> None:
     }
     if project_decisions != expected_project_decisions:
         fail(project_path.relative_to(ROOT), "decisions do projeto divergem da fonte de verdade decisions.json")
+    # A origem é uma API HTTP direta; este gate protege a fronteira Backend-only e
+    # impede que futuras alterações voltem a exigir o fluxo antigo de ferramentas MCP.
     data_source = project.get("company_data_source", {})
     if (
-        data_source.get("selected_source") != "Grafana MCP"
+        data_source.get("selected_source") != "API de dados"
         or data_source.get("invocation_boundary") != "backend-only"
         or data_source.get("direct_database_access") is not False
-        or data_source.get("application_business_metric_calculation") is not False
+        or data_source.get("response_policy")
+        != "preserve-original-body-byte-for-byte-no-filter-or-transformation"
         or data_source.get("development_fallback") != "synthetic-json-fixtures"
     ):
-        fail(project_path.relative_to(ROOT), "fonte empresarial deve ser Grafana MCP backend-only, sem banco direto ou cálculo próprio, com fixtures sintéticas até acesso")
+        fail(project_path.relative_to(ROOT), "API de dados deve ser backend-only, preservar o corpo original sem filtro e manter fixtures sintéticas até a integração")
     status_id_modelo = gateway.get("model_id_status")
     manifesto_decisoes_modelo = (
         load_json(ROOT / "harness" / "config" / "decisions.json") or {}
@@ -556,7 +563,9 @@ def validate_product_harness() -> None:
     gateway_manifest = load_json(gateway_path) or {}
     if gateway_manifest.get("schema_version") != 1:
         fail(gateway_path.relative_to(ROOT), "schema_version precisa ser 1")
-    statuses = {"planned", "scaffold", "test-only", "policy-defined", "implemented"}
+    # Suspended representa uma decisão deliberada de produto, diferente de uma
+    # capability esquecida ou inválida; por isso é um estado verificável do Harness.
+    statuses = {"planned", "scaffold", "test-only", "policy-defined", "implemented", "suspended"}
     capabilities = gateway_manifest.get("capabilities", {})
     for capability, record in capabilities.items():
         if record.get("status") not in statuses:
@@ -760,8 +769,10 @@ def validate_product_harness() -> None:
     local_synthetic = load_json(local_synthetic_path) or {}
     if local_synthetic.get("fixture_root") != "fixtures/synthetic" or not (ROOT / "Backend" / local_synthetic.get("fixture_root", "")).is_dir():
         fail(local_synthetic_path.relative_to(ROOT), "fixtures precisam estar no Backend/fixtures/synthetic do repositório")
-    if local_synthetic.get("company_data_source", {}).get("selected") != "Grafana MCP" or local_synthetic.get("rules", {}).get("real_personal_or_company_data_allowed") is not False:
-        fail(local_synthetic_path.relative_to(ROOT), "fixtures devem continuar sintéticas e refletir Grafana MCP como fonte selecionada")
+    # Fixtures continuam sintéticas enquanto endpoint, autenticação e contrato da
+    # API não forem entregues; o nome da integração não altera a regra de privacidade.
+    if local_synthetic.get("company_data_source", {}).get("selected") != "API de dados" or local_synthetic.get("rules", {}).get("real_personal_or_company_data_allowed") is not False:
+        fail(local_synthetic_path.relative_to(ROOT), "fixtures devem continuar sintéticas e registrar a API de dados como integração selecionada")
     workspace_synthetic = load_json(ROOT / "harness/config/synthetic-data.json") or {}
     if workspace_synthetic.get("fixture_root") != f"Backend/{local_synthetic.get('fixture_root', '')}":
         fail(local_synthetic_path.relative_to(ROOT), "política local deve corresponder ao caminho de fixtures do workspace")
@@ -1638,13 +1649,16 @@ def main() -> int:
         )
     demo = gateway.get("demonstration", {})
     backend_data_source = component_configs.get("backend", {}).get("company_data_source", {})
+    # A resposta da API de dados é opaca: o gate confirma passthrough do conteúdo,
+    # mantendo autorização e isolamento fora de qualquer normalização do payload.
     if (
-        backend_data_source.get("source") != "Grafana MCP"
+        backend_data_source.get("source") != "API de dados"
         or backend_data_source.get("invocation_boundary") != "backend-only"
         or backend_data_source.get("direct_database_access") is not False
-        or backend_data_source.get("application_business_metric_calculation") is not False
+        or backend_data_source.get("response_policy")
+        != "byte-for-byte-passthrough-including-all-html-and-chart-types"
     ):
-        fail(project_path.relative_to(ROOT), "Backend deve consultar somente Grafana MCP, sem acesso direto ao banco ou cálculo próprio de métricas")
+        fail(project_path.relative_to(ROOT), "Backend deve acessar a API de dados e preservar o payload original sem alteração")
     if demo.get("required_for_product_acceptance") is not True or demo.get("provider") != "Iara":
         fail(
             project_path.relative_to(ROOT),

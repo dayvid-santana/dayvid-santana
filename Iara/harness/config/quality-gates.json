@@ -79,8 +79,9 @@
     "secrets_in_fixtures": false,
     "provider_payloads_in_public_errors": false,
     "log_prompts_and_answers_by_default": false,
-    "company_data_source": "Grafana MCP through backend-only authorized read tools",
-    "real_company_data_in_fixtures": false
+    "real_company_data_in_fixtures": false,
+    "opaque_data_api_payload_preserved_without_content_filtering": true,
+    "data_api_payload_logged": false
   },
   "decision_consistency": {
     "manifest": "harness/config/decisions.json",
@@ -149,7 +150,9 @@
     "backend_manifest": "Backend/harness/config/synthetic-data.json",
     "enforced_by": "harness.validate",
     "fixture_validation": "json-metadata-and-prohibited-field-names",
-    "human_review_required_for_fictional-values": true
+    "human_review_required_for_fictional-values": true,
+    "company_data_source": "API de dados HTTP direta; payload original encaminhado sem transformação; fixtures sintéticas seguem como padrão",
+    "real_data_access_requires_explicit_authorization": true
   },
   "acceptance_checks": [
     {

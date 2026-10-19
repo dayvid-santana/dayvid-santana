@@ -55,19 +55,22 @@
       ]
     },
     "data": {
-      "status": "source-selected-real-access-deferred",
-      "value": "Grafana MCP é a fonte empresarial selecionada, mas o acesso real fica adiado para a etapa final do MVP; fixtures JSON sintéticas são a fonte atual e padrão por período prolongado",
+      "status": "decision-approved-api-contract-pending",
+      "value": "O serviço empresarial é chamado API de dados e usa integração HTTP direta. O Backend preservará e encaminhará o corpo original integralmente, inclusive HTML e todos os tipos de gráfico, sem filtragem ou transformação do conteúdo. O usuário confirmou uma amostra real em Markdown com fence iara-visual/JSON v2 e gráfico pie; os valores empresariais não devem ser copiados. Endpoint, autenticação, content type, contrato exaustivo e streaming ainda estão pendentes; fixtures sintéticas seguem como padrão.",
       "duration": "synthetic-fixtures-remain-default-for-an-extended-period",
       "evidence": [
         "Backend/fixtures/synthetic/vendas.json",
         "README.md"
       ],
-      "source": "Grafana MCP",
-      "access_status": "deferred-until-final-mvp-stage"
+      "source": "API de dados",
+      "access_status": "pending-endpoint-authentication-and-response-contract",
+      "payload_policy": "byte-for-byte-pass-through; no-filter-no-normalization-no-conversion-no-reconstruction-no-content-type-omission",
+      "rendering_security": "isolate-untrusted-content-from-application-dom-without-modifying-payload",
+      "synthetic_fixtures_remain_default": true
     },
     "context_contract": {
-      "status": "approved-and-internal-schema-defined",
-      "value": "Internal consultation result contract stays backend-only and preserves approved completeness, partial-data, provenance and fail-closed rules",
+      "status": "api-data-passthrough-approved-api-contract-pending",
+      "value": "The prior typed analytical result contract applies only to the existing synthetic/LLM path. The separate data API response is opaque and must be preserved byte-for-byte through backend transport and persistence, including arbitrary chart/HTML formats; content is not filtered, normalized, converted, reconstructed or dropped.",
       "visibility": "backend-internal-only-no-public-message-v1-change",
       "groups": {
         "consulta": [
@@ -118,20 +121,17 @@
           "versao_adaptador"
         ]
       },
-      "malformed_or_contradictory_source_result": "stop-before-returning-to-the-model-or-rendering; do-not-present-data",
+      "malformed_or_contradictory_source_result": "Não interpretar nem reescrever conteúdo da resposta opaca. Tratar falhas HTTP/protocolo separadamente e preservar integralmente o corpo de toda resposta bem-sucedida.",
       "streaming_progress": {
-        "status": "typed-progress-path-implemented; real-mcp-integration-deferred; partial-source-data-deferred",
-        "value": "An optional internal source callback accepts typed operational stages and the Gateway maps only known stages to controlled solicitacao.status events; the existing seven-event SSE v1 contract is reused, and normalized final LLM text streams only after full source-result validation.",
-        "mcp_progress": "Optional MCP progress notifications may be mapped to controlled status copy when supported by the connected adapter; they are not partial tool results and must not expose raw notification messages, tool names, arguments, payloads, rows or identifiers.",
-        "partial_analytical_values": "Do not render source values before complete ResultadoConsultaInterno validation. Future incremental values require explicit source support, a typed chunk/completeness/provenance contract, per-chunk validation and an approved atomic acceptance policy.",
-        "llm_reasoning": "Never expose raw chain-of-thought or private reasoning; use concise operational status messages instead.",
-        "public_contract": "Reuse the existing seven SSE v1 events; coordinate and version any future public schema change across Backend and Frontend.",
-        "timeout": "The total deadline is 120 seconds by default and configurable up to 360 seconds because the approved dedicated Iara endpoint exceeded 40 seconds in a successful response; this supersedes the earlier 40-second limit. Status notifications every 15 seconds do not extend the deadline or trigger additional LLM calls."
+        "status": "synthetic-progress-implemented; data-api-streaming-contract-pending",
+        "value": "O progresso da fonte sintética existente permanece separado. Quando suportado pela API de dados, transmitir o corpo original sem filtros; enquadramento/particionamento aguarda o contrato real.",
+        "mcp_progress": "Não aplicável: a integração escolhida é uma API HTTP direta, não MCP."
       },
       "open": [
-        "synthetic-and-real-adapter-integration",
-        "real-source-signal-mapping",
-        "raw-payload-retention-policy"
+        "api-data-endpoint-and-authentication",
+        "api-data-response-content-type-and-contract",
+        "opaque-payload-persistence-and-streaming",
+        "isolated-rendering-fidelity-for-scripts-and-external-resources"
       ],
       "evidence": [
         "Backend/app/contrato_consulta.py",
@@ -139,14 +139,41 @@
         "Backend/app/model_gateway.py",
         "Backend/tests/test_contrato_consulta.py",
         "Backend/tests/test_model_gateway.py",
-        "Backend/harness/rules/backend.grafana-mcp.md",
+        "Backend/harness/rules/backend.data-api.md",
         "Backend/harness/rules/backend.model-gateway.md",
         "Backend/harness/rules/iara.public-contracts.md",
         "Frontend/harness/skills/api-streaming.md",
         "Frontend/harness/rules/iara.public-contracts.md",
         "harness/context/estado-do-projeto.md",
         "harness/context/retomada-atual.md"
-      ]
+      ],
+      "api_data_response": {
+        "content_policy": "preserve-original-response-body-byte-for-byte-including-every-chart-format",
+        "prohibited_content_operations": [
+          "filter",
+          "normalize",
+          "convert",
+          "summarize",
+          "reconstruct",
+          "drop-unknown-types"
+        ],
+        "transport_metadata": [
+          "content-type",
+          "required-response-headers"
+        ],
+        "persistence": "store-and-replay-original-body-without-visual-loss",
+        "rendering": "isolated-from-application-dom; isolation-must-not-rewrite-payload",
+        "pending": [
+          "endpoint",
+          "authentication",
+          "response-contract",
+          "content-types",
+          "scripts-and-external-resource-requirements",
+          "size-and-time-limits"
+        ]
+      },
+      "legacy_typed_contract_scope": "existing-synthetic-and-LLM-output-path-only; must-not-filter-the-separate-data-API-response",
+      "source_selection": "API de dados via HTTP direta; não usar a nomenclatura MCP para esta integração."
     },
     "model": {
       "status": "decided-for-iara-service",
@@ -309,7 +336,7 @@
     },
     "llm_interaction": {
       "status": "approved-policy-implementation-pending",
-      "value": "Send the manager request directly to the project-configured Iara LLM through Model Gateway; no LLM preclassification, rewrite, summary, intent-filter call, or separate presentation-selection call.",
+      "value": "Send the manager request directly to the project-configured Iara LLM without preclassification. The separate API de dados response is preserved and forwarded exactly as received, including every graph and HTML format.",
       "model_identity": "Project-specific behavior is configured through the model configuration; System Prompt and application-instruction injection are suspended; this does not authorize training/fine-tuning or creating a foundation model, which remain out of MVP scope.",
       "system_prompt": "Suspended by user decision: no SystemMessage is sent in the active flow; previous versions remain archived and are not loaded.",
       "request_composition": "The current HumanMessage contains only the manager original request, without application instructions, prefixes, suffixes or delimiters; no other LLM rewrites it.",
@@ -322,35 +349,37 @@
         "other_conversations": false,
         "application_instruction_persisted": false
       },
-      "langchain": "Use LangChain in the Gateway for server-owned chat messages/prompts, async invocation, streaming, typed validation and callbacks. Send no tools, tool_choice or parallel_tool_calls to the current Iara endpoint. A future MCP integration requires an authorized compatible contract. Do not create unbounded agent loops.",
-      "tools": "Disabled in the current Iara endpoint because it rejects OpenAI tool fields. Any future MCP tool integration must be backend-owned, allowlisted, typed, read-only, authorized and bounded, and must be approved under a separate compatible contract.",
-      "presentation": "The LLM places its explanation in Markdown text and visual data after @@IARA_BLOCOS@@. Typed table/chart blocks remain supported; a message-v2 html block accepts static HTML/SVG for KPIs and chart types outside line/bar/pie. Backend reconstructs HTML with an allowlist before SSE and persistence; Frontend renders it in a sandboxed iframe with restrictive CSP and accessible summary. Present only requested values that exist in the returned data. Omit items without values silently; never state that missing values prevent conclusions, list gaps, add completeness caveats, or treat absence as zero. Keep completeness and provenance internal for validation.",
+      "langchain": "Use LangChain in the Gateway for server-owned chat messages/prompts, async invocation, streaming, typed validation and callbacks. Send no tools, tool_choice or parallel_tool_calls to the current Iara endpoint. The API de dados is a separate direct HTTP integration. Do not create unbounded agent loops.",
+      "tools": "The current Iara endpoint rejects tool calling. The API de dados is a separate direct HTTP integration and does not use LangChain tools.",
+      "presentation": "The current LLM-output contract remains separate: Markdown and typed Iara blocks are validated under their existing schema. The API de dados is opaque and its original response body, including HTML and every graph type, is passed through unchanged; do not filter, normalize, convert, reconstruct or ask the LLM to regenerate it.",
       "markdown_rendering": "Markdown in the text block is rendered by the Frontend as semantic elements with raw HTML disabled, unsafe URL protocols blocked and remote images ignored. Text remains Markdown-only; visual HTML has a separate versioned block and isolated renderer.",
-      "html": "Static HTML/SVG is accepted only inside a typed html visual block in message schema v2, after Backend allowlist reconstruction. Raw HTML in text, scripts, model-controlled styles, links, external resources and navigation are rejected. Frontend isolates the fragment in a sandboxed iframe with CSP and an external textual summary.",
+      "html": "The existing HTML allowlist and message-v2 html renderer apply only to LLM-produced blocks. Never apply them to the API de dados payload; preserve that body byte-for-byte and isolate its rendering from the application DOM. Exact handling of scripts and external resources awaits the API contract.",
       "source_disclosure": "Never narrate data retrieval or mention that information was consulted, searched, found in a query/source, or returned by a consultation. Speak directly and naturally to the manager, as a knowledgeable colleague; answer with business facts, ask directly for missing business details, and do not claim human feelings or private thoughts. Remove source labels, URLs and internal provenance from every public text or visual block.",
       "accuracy": "Maximize accuracy through authorized returned data, provenance used internally, typed validation and fail-closed handling; never promise perfect accuracy or invent values, trends, causes or estimates. Omit requested items without returned values and never interpret absence as zero.",
       "no_private_reasoning": "Do not expose chain-of-thought; progress events describe actual operational stages only.",
       "evidence": [
         "Backend/harness/rules/backend.model-orchestration.md",
         "Backend/harness/rules/backend.model-gateway.md",
-        "Backend/harness/rules/backend.grafana-mcp.md",
+        "Backend/harness/rules/backend.data-api.md",
         "Frontend/harness/rules/frontend.structured-content.md",
         "Frontend/src/funcionalidades/conversas/componentes/TextoMarkdown/TextoMarkdown.tsx",
         "harness/context/estado-do-projeto.md"
-      ]
+      ],
+      "api_data_response": "Preservar byte a byte a resposta da API de dados, inclusive HTML e qualquer tipo de gráfico. Não filtrar, normalizar, converter, reconstruir ou pedir à LLM para regerar o conteúdo."
     }
   },
   "rule_exceptions": [],
   "backend_constraints": [
     "Send the manager original request directly to the project-configured Iara LLM without a System Prompt, with only the manager original request as the current HumanMessage, and up to 40 recent dialogue messages including the current request; no LLM preprocessing.",
-    "Send the manager original request directly to the project-configured Iara LLM without a System Prompt, with only the manager original request as the current HumanMessage, and up to 40 recent dialogue messages including the current request; no LLM preprocessing."
+    "Preserve every successful API de dados response byte-for-byte through transport and persistence; do not filter or transform its content or discard chart formats."
   ],
   "frontend_constraints": [
     "Preserve o IU/UX atual da Iara; o Frontend apenas renderiza contratos públicos aprovados e não expõe System Prompt, ferramentas, provider ou modelo.",
-    "suppress raw serialized JSON in historical text; render new KPI values through validated chart blocks"
+    "suppress raw serialized JSON in historical text; render new KPI values through validated chart blocks",
+    "Render API de dados responses from their original payload without normalizing or filtering; isolate HTML from the application DOM."
   ],
   "llm_interaction": {
-    "presentation": "KPIs numéricos validados são exibidos exclusivamente em gráficos; o Backend converte blocos legados kpi/kpi_group em chart e rejeita JSON bruto no texto antes do SSE. JSON serializado nunca é conteúdo Markdown público.",
+    "presentation": "The current LLM-output contract remains separate: Markdown and typed Iara blocks are validated under their existing schema. The API de dados is opaque and its original response body, including HTML and every graph type, is passed through unchanged; do not filter, normalize, convert, reconstruct or ask the LLM to regenerate it.",
     "raw_json_output": {
       "text_block": "prose-markdown-only; reject raw objects, arrays, and fenced JSON before text.delta",
       "validated_kpi_blocks": "normalize-numeric-kpi-and-kpi_group-to-chart-before-persist-or-publish",
@@ -359,12 +388,15 @@
     },
     "system_prompt_version": null,
     "status": "approved-policy-and-output-boundary-implemented",
-    "value": "Send the manager request directly to the project-configured Iara LLM. The text channel is Markdown prose only and rejects serialized JSON; numeric KPI blocks are normalized into validated charts before persistence and streaming.",
+    "value": "Send the manager request directly to the project-configured Iara LLM without preclassification. The separate API de dados response is preserved and forwarded exactly as received, including every graph and HTML format.",
     "evidence": [
       "Backend/app/prompts/system_prompts.md",
       "Backend/tests/test_model_gateway.py",
       "Frontend/src/funcionalidades/conversas/componentes/TextoMarkdown/TextoMarkdown.tsx",
       "Frontend/src/funcionalidades/conversas/componentes/TextoMarkdown/TextoMarkdown.test.tsx"
-    ]
+    ],
+    "api_data_response": "Preservar byte a byte a resposta da API de dados, inclusive HTML e qualquer tipo de gráfico. Não filtrar, normalizar, converter, reconstruir ou pedir à LLM para regerar o conteúdo.",
+    "chart_colors": "Preservar cores hexadecimais opacas validadas quando a fonte enviar cores por série ou categoria; usar tokens categóricos multicoloridos como fallback apenas para gráficos tipados que não sejam resposta bruta da API de dados.",
+    "html": "The existing HTML allowlist and message-v2 html renderer apply only to LLM-produced blocks. Never apply them to the API de dados payload; preserve that body byte-for-byte and isolate its rendering from the application DOM. Exact handling of scripts and external resources awaits the API contract."
   }
 }

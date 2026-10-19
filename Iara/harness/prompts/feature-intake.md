@@ -33,7 +33,7 @@ Transforme a solicitação em uma mudança observável, limitada e verificável 
 
 ## Fora do escopo por padrão
 
-O Grafana MCP é a fonte empresarial selecionada para o MVP; considere sua integração backend-only quando a tarefa a envolver, sem presumir transporte, autenticação ou ferramentas ainda não definidos. Não amplie para outros MCPs, agentes autônomos complexos, treinamento/fine-tuning, RAG corporativo, billing, marketplace ou roteamento avançado. Registre itens adicionais como possível fase futura se houver dependência concreta.
+A fonte empresarial selecionada é chamada API de dados e usa integração HTTP direta; endpoint, autenticação e contrato ainda não foram definidos. Quando a tarefa envolver essa integração, preserve a resposta original byte a byte, inclusive HTML e quaisquer gráficos, sem filtragem ou transformação do conteúdo. Não presuma MCP ou tool calling. Não amplie para agentes autônomos complexos, treinamento/fine-tuning, RAG corporativo, billing, marketplace ou roteamento avançado. Registre itens adicionais como possível fase futura se houver dependência concreta.
 
 ## Saída obrigatória
 

@@ -3,7 +3,7 @@
   "project": {
     "id": "iara",
     "name": "Iara",
-    "product": "Oráculo conversacional para consultar dados empresariais via Grafana MCP e apresentar respostas analíticas",
+    "product": "Oráculo conversacional que encaminha respostas da API de dados e da LLM aos gestores",
     "platform": "web",
     "stage": "mvp-functional-synthetic-foundation"
   },
@@ -18,20 +18,22 @@
     "rate_limiting": "Em produção com provider real, aceitar no máximo 10 novas solicitações por sessão em janela deslizante de 60 segundos; provider fake local é isento. O limite é atômico com idempotência e aceite; replay e reconexão SSE não contam. Excesso recebe 429 rate_limited com Retry-After antes do aceite. DevOps configura proteção complementar na borda.",
     "operational_metrics": "Métricas Prometheus agregadas de volume/latência HTTP e de gerações e falhas por código estável, sem dados ou identificadores de usuários/conversas; endpoint interno protegido por token de pelo menos 32 caracteres, desligado sem token e com acesso de rede restrito por DevOps; valores locais ao processo e agregáveis pelo Prometheus.",
     "user_token_usage": "Resumo privado do gestor com mês atual e seis meses anteriores no calendário de Brasília; registro por chamada com UUID do Backend, identidade do usuário, data, estado e somente tokens informados pelo provider; falhas e cancelamentos entram quando houver uso confirmado; uso ausente fica como não confirmado; sem conteúdo de conversa, modelo, provider ou preço. A retenção de chamadas permanece pendente.",
-    "data": "Grafana MCP é a fonte empresarial selecionada, mas o acesso real fica adiado para a etapa final do MVP; fixtures JSON sintéticas são a fonte atual e padrão por período prolongado",
+    "data": "O serviço empresarial é chamado API de dados e usa integração HTTP direta. O Backend preservará e encaminhará o corpo original integralmente, inclusive HTML e todos os tipos de gráfico, sem filtragem ou transformação do conteúdo. O usuário confirmou uma amostra real em Markdown com fence iara-visual/JSON v2 e gráfico pie; os valores empresariais não devem ser copiados. Endpoint, autenticação, content type, contrato exaustivo e streaming ainda estão pendentes; fixtures sintéticas seguem como padrão.",
     "model": "fixed-catalog-model-iara-grafana; logical-alias-principal",
     "provider": "Iara, endpoint compatível com Chat Completions",
     "langchain": "LangChain is used inside the Backend Model Gateway through the langchain-openai ChatOpenAI client against Iara’s configured OpenAI-compatible endpoint. The manager request goes directly to the project-configured Iara model without LLM preprocessing or OpenAI tool fields. Iara is the only MVP LLM provider. The current endpoint rejects tools, tool_choice and parallel_tool_calls; a future MCP integration requires a separate compatible contract. Do not add unrelated LangChain components, unbounded autonomous agents, LangGraph, or response/data cache without a separate product decision.",
-    "llm_interaction": "Send the manager request directly to the project-configured Iara LLM through Model Gateway; no LLM preclassification, rewrite, summary, intent-filter call, or separate presentation-selection call."
+    "llm_interaction": "Send the manager request directly to the project-configured Iara LLM without preclassification. The separate API de dados response is preserved and forwarded exactly as received, including every graph and HTML format."
   },
   "implementation": {
     "backend": {
       "path": "Backend",
-      "harness": "Backend/harness/config/harness.json"
+      "harness": "Backend/harness/config/harness.json",
+      "data": "synthetic-fixtures-default; direct-http-data-api-live-integration-pending"
     },
     "frontend": {
       "path": "Frontend",
-      "harness": "Frontend/harness/config/harness.json"
+      "harness": "Frontend/harness/config/harness.json",
+      "data_api_response": "opaque-byte-preserving-passthrough-with-isolated-rendering"
     }
   },
   "execution": {
@@ -250,7 +252,7 @@
       "tratamento centralizado de erros",
       "seguranca de credenciais",
       "observabilidade sem conteudo privado",
-      "consulta autorizada ao Grafana MCP pelo backend e apresentação dos resultados pela LLM"
+      "integração backend-only com a API de dados e passthrough integral das respostas, incluindo HTML e gráficos"
     ],
     "out_of_scope": [
       "agentes autonomos complexos",
@@ -260,7 +262,7 @@
       "marketplace de modelos",
       "aplicativo mobile nativo",
       "acesso direto ao banco empresarial ou análise/cálculo de métricas sem solicitação explícita",
-      "integrações MCP diferentes do Grafana MCP nesta fase"
+      "integração com MCP/tool calling nesta fase"
     ]
   },
   "quality_gates": [
@@ -271,15 +273,13 @@
     "integration.e2e"
   ],
   "company_data_source": {
-    "selected_source": "Grafana MCP",
-    "integration_status": "real-access-deferred-until-final-mvp-stage",
+    "selected_source": "API de dados",
+    "integration_status": "pending-endpoint-authentication-and-response-contract",
     "invocation_boundary": "backend-only",
-    "allowed_operations": "explicitly-authorized-read-tools-only",
+    "response_policy": "preserve-original-body-byte-for-byte-no-filter-or-transformation",
+    "supported_payloads": "any-response-format-including-html-and-any-chart-type",
     "direct_database_access": false,
-    "application_business_metric_calculation": false,
-    "llm_role": "interpret-and-present-mcp-results-using-iara-content-contracts",
     "development_fallback": "synthetic-json-fixtures",
-    "source": "Grafana MCP",
-    "demonstration_default": "synthetic-even-after-mcp-access-unless-live-use-is-explicitly-authorized"
+    "demonstration_default": "synthetic-until-live-api-is-explicitly-authorized"
   }
 }

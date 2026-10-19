@@ -1,15 +1,15 @@
 # Estado durável do projeto Iara
 
-Atualizado em 16/10/2026. Este resumo é obrigatório para iniciar ou retomar trabalho. A cópia canônica fica na raiz do projeto em `harness/context/estado-do-projeto.md`; Backend e Frontend mantêm cópias idênticas, verificadas por `harness.validate`.
+Atualizado em 19/10/2026. Este resumo é obrigatório para iniciar ou retomar trabalho. A cópia canônica fica na raiz do projeto em `harness/context/estado-do-projeto.md`; Backend e Frontend mantêm cópias idênticas, verificadas por `harness.validate`.
 
 ## Missão e limites
 
-A Iara é uma aplicação conversacional para gestores. Ela recebe perguntas em linguagem natural, consulta dados por uma fonte autorizada no Backend e usa uma LLM para explicar e apresentar resultados em texto, KPIs, tabelas e gráficos. O objetivo do MVP é uma camada de produto segura, persistente e extensível; a inteligência avançada pode vir depois.
+A Iara é uma aplicação conversacional para gestores. Ela recebe perguntas em linguagem natural, usa a LLM configurada e apresenta também respostas fornecidas por uma API de dados. A API de dados é uma chamada HTTP direta, separada do provider LLM. O objetivo do MVP é uma camada de produto segura, persistente e extensível.
 
-- O Frontend conversa somente com a API da Iara; nunca chama providers, Grafana MCP ou banco empresarial.
+- O Frontend conversa somente com a API da Iara; nunca chama providers, a API de dados ou o banco empresarial diretamente.
 - A API dedicada da Iara é o provider LLM do MVP, por um Model Gateway substituível. O adapter usa `ChatOpenAI` somente como cliente de protocolo OpenAI-compatível dentro do Backend; `IARA_BASE_URL` e `IARA_API_KEY` ficam no ambiente do Backend e provider/modelo permanecem ocultos do gestor.
 - `IARA_DEFAULT_MODEL` contém o alias lógico do catálogo backend-only (`principal`); ele resolve para `modelo-sintetico-v1` no fake ou para o ID fixo `iara-grafana` no adapter da Iara. A URL-base e a chave são privadas; o ID do modelo não é configurável pelo Frontend.
-- Fixtures JSON sintéticas são a fonte padrão de desenvolvimento, testes e demonstração por período prolongado. Grafana MCP real e SULTS real ficam para a etapa final do MVP.
+- Fixtures JSON sintéticas são a fonte padrão de desenvolvimento, testes e demonstração por período prolongado. A integração real da API de dados e SULTS segue pendente.
 - O login corporativo real será validado pelo Backend no SULTS e trocará por uma sessão própria da Iara. Em localhost de desenvolvimento existe uma identidade sintética isolada, sem acesso a conversas de gestores. O padrão continua sem tela de login: o desenvolvedor entra automaticamente na demonstração. Para testar a interface e a emissão de sessão fake, pode abrir `?login=teste` com `IARA_DEV_AUTH_TEST_ENABLED=true` e credenciais sintéticas no `.env`; isso não valida contas no SULTS.
 - O login corporativo está em `POST /api/v1/autenticacao/login`, `Backend/app/portas/autenticacao.py` e `Frontend/src/funcionalidades/autenticacao`. O Backend recebe usuário/senha, valida no SULTS por `Backend/app/adaptadores/autenticacao_sults.py` e pela biblioteca interna copiada do Faturas em `Backend/libs/Sults`, descarta os tokens ERP e emite cookie HttpOnly próprio, CSRF em memória e UUID pseudônimo estável. A rota só pode ser habilitada fora de development com `IARA_CORPORATE_AUTH_ENABLED=true` e `IARA_AUTH_IDENTITY_KEY`; o Backend limita oito tentativas por login em quinze minutos no SQLite compartilhado. A integração ainda precisa de homologação real no tenant autorizado e proteção complementar por origem na borda antes de ser liberada aos gestores. O padrão de sessão do Frontend segue o Faturas, sem expor token SULTS ao navegador.
 - A autenticação local de desenvolvimento continua automática apenas em localhost/loopback e cria uma identidade sintética isolada; a tela corporativa não é usada nesse fluxo e não há acesso local às conversas de gestores.
@@ -30,6 +30,17 @@ A Iara é uma aplicação conversacional para gestores. Ela recebe perguntas em 
 - A persistência do Backend depende de `Protocol` pequenos por responsabilidade em `Backend/app/portas/persistencia.py`; o adapter `BancoSqlite` implementa as portas atuais e mantém as transações, sem expor SQL aos casos de uso.
 - O Backend emite uma chave aleatória de idempotência antes de cada envio ou retry explícito. Ela é vinculada à sessão e à ação/recurso, expira com a sessão e é armazenada somente por hash; repetição técnica do mesmo comando recupera o mesmo aceite, enquanto um retry escolhido pelo gestor usa chave nova.
 - Persistência de execução é uma regra operacional bloqueante: continue cada pedido autorizado até cumprir os critérios aplicáveis; interrupções e respostas de status não encerram o objetivo. Se houver bloqueio legítimo, conclua o trabalho independente, registre causa, evidências e próxima ação e não declare conclusão. Isso não amplia o escopo autorizado nem ignora gates de segurança.
+
+## Decisão atual sobre a resposta da API de dados — 19/10/2026
+
+- O serviço será chamado **API de dados**; a integração conhecida é HTTP direta, não MCP. Não presumir Grafana MCP, ferramentas ou tool calling.
+- Quando conectada, toda resposta bem-sucedida da API de dados deverá ser preservada byte a byte e encaminhada como enviada, incluindo HTML, SVG, JSON e qualquer tipo de gráfico. É proibido filtrar, normalizar, converter, resumir, reconstruir markup ou descartar tipos desconhecidos.
+- O Backend poderá verificar autenticação, autorização, correlação, timeout e limites de transporte, mas essas verificações não alteram o corpo. Persistência e retomada precisam preservar o corpo e o content type necessários para reproduzi-lo.
+- O conteúdo é não confiável para execução: deve ser apresentado numa superfície isolada, sem ser injetado no DOM principal. O isolamento não autoriza modificar o payload. A fidelidade de scripts e recursos externos depende do contrato real ainda pendente.
+- Esta decisão substitui, para a resposta da API de dados, os contratos tipados, a allowlist de HTML e as regras de normalização descritas nas notas históricas abaixo. Elas continuam válidas apenas para o fluxo sintético/saída da LLM enquanto não forem coordenadas para outro escopo.
+- Em 19/10/2026, o usuário confirmou que a amostra textual compartilhada vem diretamente da API de dados. O formato observado é Markdown com um bloco cercado `iara-visual` que contém JSON v2 e uma vista `pie`; isso é uma amostra de formato, não um contrato exaustivo para todas as respostas. A versão chamada “Retorno Final” não fecha as três crases; a versão “Retorno Parcial Preservado” fecha. Não copie os valores empresariais da amostra para código, testes, logs ou Harness.
+- Ainda faltam endpoint, autenticação, content type, encoding, headers, contrato completo, semântica de streaming, requisitos de scripts/recursos externos, limites e timeout. Nenhuma integração de passthrough foi implementada nem validada; fixtures sintéticas continuam sendo o padrão.
+- O caminho atual `Backend/app/normalizacao_visual_iara.py` é um normalizador da resposta da LLM: exige o fechamento do fence, transforma a vista em `chart` tipado e descarta campos fora do contrato. Não o reutilize para a API de dados. A resposta da API precisa seguir por uma fronteira opaca separada; a ausência de fechamento observada não pode causar descarte silencioso do corpo original.
 
 ## Decisões de interação com a LLM — atualizadas em 16/10/2026
 

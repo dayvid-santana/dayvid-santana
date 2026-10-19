@@ -33,9 +33,9 @@
   },
   "purpose": "development-tests-and-default-demonstrations-for-an-extended-period",
   "company_data_source": {
-    "selected": "Grafana MCP",
-    "access_status": "pending",
+    "selected": "API de dados",
+    "access_status": "pending-endpoint-authentication-and-response-contract",
     "fixtures_are_not_a_copy_of_company_data": true
   },
-  "grafana_mcp_access_status": "selected-source; access-and-tool-authorization-pending"
+  "data_api_response_policy": "successful-response-body-is-preserved-byte-for-byte-including-html-and-any-chart-format"
 }

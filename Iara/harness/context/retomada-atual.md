@@ -1,5 +1,19 @@
 # Retomada atual
 
+Atualizado em 19/10/2026. O provider LLM segue sendo a API dedicada da Iara via Model Gateway. A API de dados é uma integração HTTP distinta. O usuário confirmou uma amostra real do corpo retornado: Markdown com um bloco `iara-visual` contendo JSON v2 e gráfico `pie`; a amostra não define todos os formatos.
+
+## API de dados: passthrough integral aprovado — 19/10/2026
+
+- Decisão: encaminhar e persistir sem alterações o corpo original da API de dados, incluindo HTML e todo tipo de gráfico. Não filtrar, normalizar, converter, resumir, reconstruir nem descartar formatos desconhecidos.
+- A apresentação deve isolar HTML do DOM principal sem alterar o conteúdo. A compatibilidade com scripts e recursos externos depende do contrato real; não afirmar fidelidade até verificar.
+- Estado atual: não implementado. O código ainda contém contratos tipados e allowlist HTML do fluxo da LLM; esses mecanismos não provam passthrough da API de dados. A validação do Harness foi executada e passou; não foram executados testes de aplicação.
+- O retorno chamado “Retorno Final” termina sem fechar o bloco de código; a variante “Retorno Parcial Preservado” contém o fechamento. O normalizador atual `Backend/app/normalizacao_visual_iara.py` pertence ao fluxo da LLM, exige o fence de fechamento, converte os dados para `chart` e descarta campos não previstos. Essa transformação explica a omissão do gráfico quando aplicada à amostra final e não deve ser usada na fronteira da API de dados.
+- Bloqueio concreto: ainda falta endpoint, método/autenticação, content type, encoding, headers, contrato exaustivo, semântica de streaming, limites e dependências de scripts/recursos do HTML. O conteúdo empresarial real da amostra não será persistido em arquivos, testes, logs ou evidências.
+- Próximo passo: projetar o adapter HTTP e o caminho de persistência/eventos da API de dados como carga opaca, usando fixture sintética equivalente para verificar que corpo e metadados necessários não são alterados; renderizadores podem interpretar formatos conhecidos à parte, sem substituir nem descartar o corpo original.
+- Não registrar payload empresarial real em logs, fixtures, screenshots ou no Harness. Fixtures sintéticas permanecem o padrão de desenvolvimento e demonstração.
+
+As anotações posteriores abaixo registram checkpoints anteriores e são históricas; onde mencionarem Grafana MCP, validação/allowlist da resposta, conversão de gráficos ou HTML, prevalece a decisão de passthrough acima para a API de dados.
+
 Atualizado em 16/10/2026. O provider ativo do MVP é a API dedicada da Iara, acessada pelo Model Gateway. As decisões duráveis ficam em `harness/context/estado-do-projeto.md`; o roteiro está em `docs/fases-do-projeto.md` no diretório de documentos do projeto.
 
 ## HTML visual v2 — 16/10/2026

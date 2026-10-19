@@ -7,7 +7,7 @@ A Iara é uma aplicação conversacional para gestores. Ela entende a pergunta, 
 - **Frontend:** React, TypeScript, Vite e Tailwind. Conversa com a API Iara e apresenta histórico, respostas progressivas, KPIs, tabelas e gráficos.
 - **Backend:** FastAPI, Pydantic e SQLite local para a demonstração. Controla sessão, conversas, mensagens, erros e comunicação com o Model Gateway.
 - **Model Gateway:** abstrai o modelo usado. O provider falso é o padrão local e de testes; o provider LLM do MVP é o endpoint da Iara, acessado pelo cliente LangChain compatível com Chat Completions no Backend.
-- **Fonte de dados:** fixtures JSON sintéticas no ambiente atual. O adapter do Grafana MCP real será integrado na etapa final do MVP.
+- **Fonte de dados:** fixtures JSON sintéticas no ambiente atual. A API de dados será integrada por HTTP no Backend; sua resposta será repassada exatamente como recebida, inclusive HTML e todos os tipos de gráfico.
 - **Contratos:** mensagem pública v1 para histórico e v2 para visualizações HTML/SVG estáticas, além dos payloads SSE correspondentes, ficam em `contracts/`; consulta e completude internas pertencem ao Backend.
 - **Painel administrativo:** `/admin`, disponível somente em localhost no modo de desenvolvimento. Mostra saúde, logs técnicos sanitizados e a fila de erros, sem acesso às conversas.
 - **Ambiente local:** Docker Compose conecta Frontend e Backend para desenvolvimento e testes integrados; a API fica privada, o SQLite de desenvolvimento persiste em volume, e o smoke usa provider fake e dados isolados.
@@ -16,14 +16,14 @@ A Iara é uma aplicação conversacional para gestores. Ela entende a pergunta, 
 
 Em `localhost`, o Frontend cria automaticamente uma sessão sintética sem pedir login ou clique para entrar. A API restringe esse acesso ao ambiente local, persiste conversas e mensagens, envia eventos SSE, permite cancelar e tentar novamente, e reconstrói os blocos salvos ao reabrir o histórico. Perguntas abertas pedem o detalhe que falta; respostas curtas podem usar o contexto recente da conversa; solicitações fora de escopo recebem uma orientação clara.
 
-O fluxo de demonstração usa dados inventados de vendas do Produto A. Isso serve para exercitar o caminho completo, não define os assuntos empresariais que a Iara poderá responder. O adapter SULTS já usa a biblioteca interna do Faturas, mas a validação no tenant real depende de homologação autorizada. Grafana MCP e banco de produção permanecem para a etapa final do MVP.
+O fluxo de demonstração usa dados inventados de vendas do Produto A. Isso serve para exercitar o caminho completo, não define os assuntos empresariais que a Iara poderá responder. O adapter SULTS já usa a biblioteca interna do Faturas, mas a validação no tenant real depende de homologação autorizada. API de dados e banco de produção permanecem para a etapa final do MVP.
 
 ## Decisões do projeto
 
 - Fora do modo de desenvolvimento, o Backend pode validar usuário e senha pelo SULTS usando a biblioteca interna do Faturas e emitir uma sessão própria da Iara. O fluxo permanece desligado até configurar o segredo, autorizar o ambiente e concluir a homologação com o Líder Técnico; a borda também precisa limitar tentativas por origem.
 - SQLite é usado localmente para desenvolver e validar persistência. A equipe entregará ao DBA um único arquivo DDL ao finalizar o MVP; SQLite local não determina a tecnologia de produção.
 - O provider do MVP é a API da Iara. `IARA_DEFAULT_MODEL` contém o alias lógico `principal`, que resolve no catálogo do Backend para `iara-grafana`; `IARA_BASE_URL` e `IARA_API_KEY` ficam somente no ambiente do Backend. A interface não mostra provider ou modelo ao gestor.
-- O Grafana MCP é a fonte empresarial prevista. Desenvolvimento e demonstrações seguem com fixtures sintéticas por um período prolongado, inclusive depois que o acesso real estiver disponível.
+- A API de dados é o serviço empresarial previsto; a resposta é encaminhada sem filtro nem transformação, inclusive HTML e qualquer gráfico. Desenvolvimento e demonstrações seguem com fixtures sintéticas por um período prolongado, inclusive depois que o acesso real estiver disponível.
 - Nomes de código e banco criados pela equipe ficam em português; os campos públicos já aprovados e protocolos externos mantêm seus nomes oficiais.
 
 As decisões e pendências estão registradas em [harness/config/decisions.json](harness/config/decisions.json); o plano de evolução está registrado em `docs/fases-do-projeto.md` no diretório de documentos do projeto.
