@@ -84,7 +84,8 @@
         "key": { "type": "string", "minLength": 1 },
         "label": { "type": "string", "minLength": 1 },
         "format": { "type": "string", "enum": ["number", "currency", "percent"], "default": "number" },
-        "currency": { "type": "string", "pattern": "^[A-Z]{3}$" }
+        "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+        "color": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$", "description": "Cor hex opaca opcional recebida da fonte para a série." }
       }
     },
     "grafico": {
@@ -102,8 +103,28 @@
           "minItems": 1,
           "items": { "type": "object", "additionalProperties": { "oneOf": [{ "type": "string" }, { "type": "number" }, { "type": "null" }] } }
         },
-        "summary": { "type": "string", "minLength": 1, "description": "Descrição acessível do resultado; a UI apresenta alternativa textual mesmo quando ausente." }
-      }
+        "summary": { "type": "string", "minLength": 1, "description": "Descrição acessível do resultado; a UI apresenta alternativa textual mesmo quando ausente." },
+        "category_colors": {
+          "type": "object",
+          "description": "Cores hex opacas por rótulo de categoria; aceitas em pizza e barra de série única.",
+          "additionalProperties": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" }
+        }
+      },
+      "allOf": [
+        {
+          "if": { "required": ["category_colors"] },
+          "then": {
+            "anyOf": [
+              { "properties": { "chart_type": { "const": "pie" } } },
+              { "properties": { "chart_type": { "const": "bar" }, "series": { "minItems": 1, "maxItems": 1 } } }
+            ]
+          }
+        },
+        {
+          "if": { "properties": { "chart_type": { "const": "pie" } }, "required": ["chart_type"] },
+          "then": { "properties": { "series": { "items": { "not": { "required": ["color"] } } } } }
+        }
+      ]
     },
     "erro": {
       "type": "object",
