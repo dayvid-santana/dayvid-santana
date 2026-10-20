@@ -154,7 +154,7 @@
     },
     {
       "id": "streaming.source-operational-progress",
-      "requirement": "Encaminhar somente etapas tipadas e seguras de progresso da fonte pelos eventos status existentes, sem alterar o contrato SSE ou exibir raciocínio privado.",
+      "requirement": "Na integração futura da fonte, encaminhar progresso tipado por solicitacao.status. No provider LLM ativo, preservar iara.type=routing/commentary.delta em andamento.delta e reasoning_content em raciocinio.delta temporário, sem inferir canais nem misturá-los à resposta persistida.",
       "status": "planned",
       "evidence": [
         "Backend/app/fontes.py",

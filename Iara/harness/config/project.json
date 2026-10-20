@@ -21,14 +21,14 @@
     "data": "O serviço empresarial é chamado API de dados e usa integração HTTP direta. O Backend preservará e encaminhará o corpo original integralmente, inclusive HTML e todos os tipos de gráfico, sem filtragem ou transformação do conteúdo. O usuário confirmou uma amostra real em Markdown com fence iara-visual/JSON v2 e gráfico pie; os valores empresariais não devem ser copiados. Endpoint, autenticação, content type, contrato exaustivo e streaming ainda estão pendentes; fixtures sintéticas seguem como padrão.",
     "model": "fixed-catalog-model-iara-grafana; logical-alias-principal",
     "provider": "Iara, endpoint compatível com Chat Completions",
-    "langchain": "LangChain is used inside the Backend Model Gateway through the langchain-openai ChatOpenAI client against Iara’s configured OpenAI-compatible endpoint. The manager request goes directly to the project-configured Iara model without LLM preprocessing or OpenAI tool fields. Iara is the only MVP LLM provider. The current endpoint rejects tools, tool_choice and parallel_tool_calls; a future MCP integration requires a separate compatible contract. Do not add unrelated LangChain components, unbounded autonomous agents, LangGraph, or response/data cache without a separate product decision.",
+    "langchain": "LangChain is used inside the Backend Model Gateway through the langchain-openai ChatOpenAI client against Iara’s configured OpenAI-compatible endpoint. The manager request goes directly to the project-configured Iara model without LLM preprocessing or OpenAI tool fields. Iara is the only MVP LLM provider. The current endpoint rejects tools, tool_choice and parallel_tool_calls; the approved data API integration is separate direct HTTP and requires its own external contract. Do not add unrelated LangChain components, unbounded autonomous agents, LangGraph, or response/data cache without a separate product decision.",
     "llm_interaction": "Send the manager request directly to the project-configured Iara LLM without preclassification. The separate API de dados response is preserved and forwarded exactly as received, including every graph and HTML format."
   },
   "implementation": {
     "backend": {
       "path": "Backend",
       "harness": "Backend/harness/config/harness.json",
-      "data": "synthetic-fixtures-default; direct-http-data-api-live-integration-pending"
+      "data": "synthetic-fixtures-default; live-data-api-requires-explicit-authorization-and-external-contract"
     },
     "frontend": {
       "path": "Frontend",
@@ -44,6 +44,7 @@
       "solicitacao.iniciada",
       "solicitacao.status",
       "raciocinio.delta",
+      "andamento.delta",
       "texto.delta",
       "bloco.pronto",
       "solicitacao.concluida",
@@ -213,6 +214,7 @@
       "solicitacao.iniciada",
       "solicitacao.status",
       "raciocinio.delta",
+      "andamento.delta",
       "texto.delta",
       "bloco.pronto",
       "solicitacao.concluida",

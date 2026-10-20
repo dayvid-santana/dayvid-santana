@@ -2,12 +2,13 @@
 
 Atualizado em 20/10/2026. O provider LLM segue sendo a API dedicada da Iara via Model Gateway. A API de dados é uma integração HTTP distinta. O usuário confirmou uma amostra real do corpo retornado: Markdown com um bloco `iara-visual` contendo JSON v2 e gráfico `pie`; a amostra não define todos os formatos.
 
-## Canal de raciocínio do provider — implementado em 20/10/2026
+## Andamento e reasoning enviados pela API da Iara — corrigido em 20/10/2026
 
-- O Monitor captura `choices[0].delta.reasoning_content` separado de `delta.content`; a Iara replica esse comportamento na integração LangChain com um conversor `ChatIara` que preserva apenas o campo dedicado.
-- O Backend publica `raciocinio.delta` separadamente e a faixa agora o consome quando presente; `texto.progresso`/`delta.content` não alimenta essa faixa. O primeiro trecho de reasoning aparece imediatamente e, no máximo, troca uma vez por segundo, coalescendo os intermediários para o mais recente. A resposta validada continua em `texto.delta`, acumulada na mensagem e filtrada antes da publicação. O trecho exibido não é persistido em histórico, cache, contexto futuro ou logs, nem representa necessariamente todo o raciocínio interno.
-- O canal não é mesclado à resposta Markdown nem salvo em mensagens, cache, logs ou contexto futuro. A janela em memória de replay SSE permite retomar somente enquanto o processo ainda mantém os eventos da solicitação.
-- Uma simulação pela interface em 20/10 recebeu resposta final, mas nenhum `reasoning_content`/`raciocinio.delta`; a faixa operacional permaneceu visível durante a espera. A aplicação não deve fabricar reasoning. A disponibilidade desse campo depende do serviço remoto e do modelo/configuração usados.
+- O Monitor exibe a seção “Andamento e justificativas operacionais” a partir de `iara.type=routing` e `iara.type=commentary.delta`; ela não é o canal `reasoning_content`. A tentativa anterior preservava somente `reasoning_content`, então descartava justamente o conteúdo mostrado no Monitor.
+- O conversor LangChain `ChatIara` agora preserva o envelope transitório `iara`. `routing` e `commentary.delta` são traduzidos para `andamento.delta`; `reasoning_content`, quando enviado, permanece em `raciocinio.delta`. Ambos alimentam a faixa existente, mantendo-se fora de `texto.delta` e da resposta persistida.
+- O Frontend anteriormente removia a justificativa de rota, pontuação e estrutura do texto antes de renderizar. Agora mostra o texto operacional recebido sem essa filtragem, preservando quebras de linha e rótulos. A cadência visual permanece: primeira atualização imediata, no máximo uma troca por segundo, sempre escolhendo o trecho mais recente.
+- Eventos transitórios não são gravados no histórico, cache local, logs nem contexto futuro. Nenhum texto é inventado; o andamento aparece somente quando o endpoint o envia. Isso não afirma que os eventos operacionais sejam raciocínio interno completo do modelo.
+- Verificações concluídas em 20/10: Backend `scripts/harness.ps1 -Target backend` passou com Ruff, 200 testes e 86,52% de cobertura; Frontend `scripts/harness.ps1 -Target frontend` passou lint, TypeScript, 174 testes e build. Os testes direcionados do contrato, adapter, coordenador SSE, hook e indicador também passaram.
 - A mesma simulação teve uma falha transitória inicial do provider e concluiu na tentativa seguinte. O log original identificava somente `APIError`; o adapter agora registra `code` e `type` apenas quando correspondem a valores allowlisted, sem mensagem, corpo, URL ou conteúdo da conversa. A causa da ocorrência passada não pode ser reconstruída retrospectivamente.
 - Verificação em 20/10: `scripts/harness.ps1 -Target backend` passou com Ruff, 193 testes e 86,37% de cobertura. Os testes novos confirmam diagnóstico útil para `APIError` genérico e rejeição de valores remotos não allowlisted. A simulação remota não garante que o endpoint sempre envie reasoning nem que respeite uma solicitação de dados sintéticos; não trate esses comportamentos como garantidos pelo código local.
 - Verificação em 20/10 após `texto.progresso`: Backend passou Ruff e 196 testes, com 86,42% de cobertura; Frontend passou lint, TypeScript, 172 testes e build. Testes confirmam eventos transitórios individuais e a cadência mínima de um segundo entre trocas visíveis, mantendo separada a resposta final filtrada.
@@ -118,7 +119,7 @@ Atualizado em 16/10/2026. O provider ativo do MVP é a API dedicada da Iara, ace
 
 1. Preservar `IARA_MODEL_PROVIDER=iara`, `IARA_DEFAULT_MODEL=principal`, `IARA_BASE_URL`, `IARA_API_KEY` e o prazo adequado no ambiente privado do Backend.
 2. Ao alterar a integração, repetir o gate Backend e um smoke opt-in pelo fluxo público sem imprimir conteúdo ou credenciais.
-3. Não reintroduzir campos de tool calling até existir contrato compatível e decisão específica para a integração MCP.
+3. Nota histórica: não reintroduzir tool calling com base nas antigas propostas de integração MCP. A decisão atual é que a API de dados será um serviço HTTP separado, cujo contrato ainda está pendente.
 
 ## Referências
 
