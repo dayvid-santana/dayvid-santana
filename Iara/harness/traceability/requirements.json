@@ -142,13 +142,11 @@
     {
       "id": "query.validated-source-completeness",
       "requirement": "Validar o resultado interno da fonte antes de enviar à LLM e informar parcialidade, lacunas ou ausência de dados somente conforme sinais confirmados pela fonte.",
-      "status": "implemented",
+      "status": "planned",
       "evidence": [
         "Backend/app/contrato_consulta.py",
-        "Backend/app/fontes.py",
-        "Backend/app/model_gateway.py",
         "Backend/tests/test_contrato_consulta.py",
-        "Backend/tests/test_model_gateway.py"
+        "Backend/harness/context/estado-do-projeto.md"
       ],
       "gates": [
         "backend.verify"
@@ -157,13 +155,10 @@
     {
       "id": "streaming.source-operational-progress",
       "requirement": "Encaminhar somente etapas tipadas e seguras de progresso da fonte pelos eventos status existentes, sem alterar o contrato SSE ou exibir raciocínio privado.",
-      "status": "implemented",
+      "status": "planned",
       "evidence": [
         "Backend/app/fontes.py",
-        "Backend/app/model_gateway.py",
-        "Backend/tests/test_model_gateway.py",
-        "Frontend/src/api.ts",
-        "Frontend/src/funcionalidades/conversas/hooks/useConversa.ts"
+        "Backend/harness/context/estado-do-projeto.md"
       ],
       "gates": [
         "backend.verify",
@@ -427,27 +422,40 @@
     },
     {
       "id": "account.monthly-token-usage",
-      "requirement": "O gestor consulta tokens reportados pela LLM, falhas e cancelamentos no mês atual e nos seis anteriores, sem expor conteúdo da conversa, provider, modelo ou preço. A interface já existe, mas a coleta, persistência e API autenticada do Backend ainda estão pendentes.",
-      "status": "planned",
+      "requirement": "O painel de tokens mensais foi removido por decisão de produto em 19/10/2026; nenhuma tela ou chamada de uso é requisito ativo.",
+      "status": "policy-defined",
       "evidence": [
-        "Frontend/src/funcionalidades/conta/componentes/ModalUsoTokens/ModalUsoTokens.tsx",
-        "Frontend/src/api.ts"
+        "harness/context/estado-do-projeto.md"
       ],
       "gates": [
-        "backend.verify",
-        "frontend.verify"
+        "harness.validate"
       ]
     },
     {
       "id": "frontend.html-content-safety",
-      "requirement": "Renderizar apenas blocos tipados validados; escapar HTML recebido como texto até contrato versionado e renderer isolado com sanitização. Preservar IU/UX existente.",
-      "status": "policy-defined",
+      "requirement": "A saída LLM `html` permanece validada pela allowlist; o bloco API `api_html` mantém sua string original e só é exibido em serviço de origem separada com sandbox e CSP por recurso, sem acesso à aplicação. Não prometer compatibilidade universal.",
+      "status": "implemented",
       "evidence": [
-        "Frontend/harness/rules/frontend.structured-content.md",
-        "Frontend/harness/skills/structured-content.md"
+        "Frontend/renderizador-html/servidor.mjs",
+        "Frontend/renderizador-html/README.md",
+        "Frontend/e2e/renderer-html.spec.ts",
+        "Frontend/src/funcionalidades/conversas/componentes/VisualizacaoHtmlApiDados/VisualizacaoHtmlApiDados.test.tsx"
       ],
       "gates": [
         "frontend.verify",
+        "harness.validate"
+      ]
+    },
+    {
+      "id": "api-html.streaming-history-preservation",
+      "requirement": "O envelope sintético `iara-visuals` conserva o documento HTML no bloco api_html durante streaming, persistência SQLite e reabertura do histórico.",
+      "status": "implemented",
+      "evidence": [
+        "Backend/tests/test_model_gateway.py",
+        "Backend/tests/test_html_visual.py"
+      ],
+      "gates": [
+        "backend.verify",
         "harness.validate"
       ]
     }

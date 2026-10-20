@@ -157,7 +157,7 @@
       "evidence": [
         {
           "path": "Backend/tests/test_gateway.py",
-          "test_name": "test_adaptador_falso_implementa_protocolo_neutro_de_provider"
+          "test_name": "test_adaptador_fake_implementa_interacao_direta_sem_filtro"
         }
       ]
     },
@@ -168,23 +168,12 @@
       ],
       "suite": "backend.verify",
       "level": "unit",
-      "status": "implemented",
+      "status": "planned",
       "scenarios": [
-        "A fonte fake emite etapas tipadas durante a consulta",
-        "O Gateway converte somente etapas permitidas em solicitacao.status",
-        "Etapas repetidas são suprimidas e texto livre/desconhecido não chega ao gestor",
-        "Falha ao publicar status não repete consulta externa"
+        "Quando a integração com uma fonte for aprovada, progresso tipado vira status seguro sem texto técnico livre",
+        "Falha ao publicar status não repete uma chamada à fonte"
       ],
-      "evidence": [
-        {
-          "path": "Backend/tests/test_model_gateway.py",
-          "test_name": "test_gateway_mapeia_progresso_da_fonte_sem_repassar_mensagem_livre"
-        },
-        {
-          "path": "Backend/tests/test_model_gateway.py",
-          "test_name": "test_falha_ao_publicar_progresso_nao_repete_consulta_da_fonte"
-        }
-      ]
+      "evidence": []
     },
     {
       "id": "frontend.home-api-success-and-failure",
@@ -377,11 +366,15 @@
       "level": "unit-and-api-integration",
       "status": "implemented",
       "scenarios": [
-        "Provider falso produz blocos normalizados",
+        "Provider fake emite texto fixo sem interpretar a pergunta",
         "Blocos estruturados inválidos são omitidos quando há texto válido; sem texto, a resposta falha com erro seguro",
-        "Falha da credencial Iara e erro da fonte são normalizados sem detalhes privados"
+        "Falhas do adapter Iara são normalizadas sem detalhes privados"
       ],
       "evidence": [
+        {
+          "path": "Backend/tests/test_gateway.py",
+          "test_name": "test_adaptador_fake_implementa_interacao_direta_sem_filtro"
+        },
         {
           "path": "Backend/tests/test_model_gateway.py",
           "test_name": "test_gateway_preserva_texto_e_descarta_blocos_visuais_invalidos"
@@ -391,8 +384,12 @@
           "test_name": "test_gateway_rejeita_blocos_invalidos_sem_explicacao_textual"
         },
         {
-          "path": "Backend/tests/test_gateway.py",
-          "test_name": "test_adaptador_falso_implementa_protocolo_neutro_de_provider"
+          "path": "Backend/tests/test_model_gateway.py",
+          "test_name": "test_modelo_iara_sem_credencial_nao_faz_chamada"
+        },
+        {
+          "path": "Backend/tests/test_model_gateway.py",
+          "test_name": "test_adapter_langchain_normaliza_erro_http_sem_expor_corpo_ou_chave"
         }
       ]
     },
@@ -445,32 +442,13 @@
       ],
       "suite": "backend.verify",
       "level": "contract-and-gateway-integration",
-      "status": "implemented",
+      "status": "planned",
       "scenarios": [
-        "A fonte declara campos ou períodos parciais e o Backend apresenta somente essas lacunas",
-        "Dados sem sinal explícito não são rotulados como completos e recebem aviso de cobertura não confirmada",
-        "Resultado malformado é bloqueado antes da LLM",
-        "Consulta sem linhas informa que a consulta não retornou dados sem afirmar inexistência empresarial",
-        "Proveniência interna não é enviada ao provider nem exposta na resposta pública"
+        "Uma futura integração com fonte valida completude e lacunas explícitas antes de usar os dados",
+        "Resultados contraditórios ou malformados são interrompidos antes de serem apresentados",
+        "Proveniência técnica não aparece no conteúdo público ao gestor"
       ],
-      "evidence": [
-        {
-          "path": "Backend/tests/test_model_gateway.py",
-          "test_name": "test_gateway_informa_parcialidade_e_lacunas_declaradas_pela_fonte"
-        },
-        {
-          "path": "Backend/tests/test_model_gateway.py",
-          "test_name": "test_gateway_avisa_quando_a_fonte_nao_confirma_a_cobertura"
-        },
-        {
-          "path": "Backend/tests/test_model_gateway.py",
-          "test_name": "test_gateway_interrompe_contrato_malformado_antes_de_chamar_provedor"
-        },
-        {
-          "path": "Backend/tests/test_model_gateway.py",
-          "test_name": "test_gateway_nao_chama_llm_quando_consulta_valida_nao_retorna_linhas"
-        }
-      ]
+      "evidence": []
     },
     {
       "id": "backend.streaming.timeout-and-reconnect",
@@ -596,14 +574,26 @@
       ],
       "suite": "backend.verify",
       "level": "unit-contract-and-safety",
-      "status": "planned",
+      "status": "implemented",
       "scenarios": [
-        "A solicitação original vai diretamente ao modelo sem chamada LLM anterior de classificação ou reformulação",
-        "Nenhum SystemMessage é enviado; o contexto inclui no máximo 39 mensagens anteriores e o pedido atual",
-        "Instrução de aplicação e pedido original são concatenados em uma HumanMessage com delimitadores",
-        "Resposta tipada respeita os blocos Iara e as regras de dados/completude aprovadas"
+        "A pergunta original e até 39 mensagens anteriores seguem diretamente ao modelo, sem pré-classificação",
+        "A chamada atual não envia SystemMessage nem instrução adicional",
+        "A saída visual recebida é validada antes de ser persistida ou transmitida"
       ],
-      "evidence": []
+      "evidence": [
+        {
+          "path": "Backend/tests/test_model_gateway.py",
+          "test_name": "test_interacao_iara_envia_pedido_original_e_contexto_diretamente"
+        },
+        {
+          "path": "Backend/tests/test_model_gateway.py",
+          "test_name": "test_gateway_preserva_texto_e_descarta_blocos_visuais_invalidos"
+        },
+        {
+          "path": "Backend/tests/test_gateway.py",
+          "test_name": "test_adaptador_fake_implementa_interacao_direta_sem_filtro"
+        }
+      ]
     },
     {
       "id": "backend.query-interpretation-mcp-and-normalization",
@@ -615,10 +605,9 @@
       "level": "unit-and-api-integration",
       "status": "planned",
       "scenarios": [
-        "LLM recebe a pergunta original e pode pedir esclarecimento sem chamada LLM de pré-processamento",
-        "Tool calling seleciona somente ferramentas tipadas autorizadas pelo Backend",
-        "Resultado malformado é bloqueado antes de retornar ao modelo ou ao Frontend",
-        "Blocos estruturados são validados antes de persistir ou transmitir"
+        "A LLM dedicada pode pedir esclarecimento a partir da pergunta original sem chamada prévia de classificação",
+        "O adapter ativo não chama ferramentas nem consulta uma fonte separadamente",
+        "Saídas não compatíveis com os contratos são bloqueadas antes da persistência ou transmissão"
       ],
       "evidence": []
     },
@@ -737,17 +726,12 @@
       ],
       "suite": "frontend.verify",
       "level": "component-accessibility",
-      "status": "implemented",
+      "status": "deferred",
+      "defer_reason": "A fixture local do Backend retorna uma resposta sintética fixa; a classificação semântica depende de integração com a API de respostas, fora deste ambiente de teste.",
       "scenarios": [
-        "Pergunta complementar é apresentada sem apagar o contexto da conversa",
-        "Mensagem fora de escopo é clara, respeitosa e oferece seguir com outra pergunta",
-        "Estados de esclarecimento têm rótulos acessíveis e foco previsível"
-      ],
-      "evidence": [
-        {
-          "path": "Frontend/e2e/smoke.spec.ts",
-          "test_name": "pede o período que falta, usa a resposta como contexto e orienta fora de escopo"
-        }
+        "Comportamento semântico de perguntas complementares depende da API de respostas real, indisponível na fixture sintética fixa",
+        "Orientação de escopo pertence ao serviço de respostas e não é simulada pelo Frontend",
+        "Revalidar esses comportamentos quando houver ambiente de integração da API"
       ]
     },
     {
@@ -826,17 +810,11 @@
       ],
       "suite": "integration.e2e",
       "level": "browser-end-to-end",
-      "status": "implemented",
+      "status": "deferred",
+      "defer_reason": "O adapter fake não interpreta intenções nem mantém contexto semântico; validar somente quando a API de respostas estiver disponível em ambiente de integração.",
       "scenarios": [
-        "Pergunta aberta solicita período ausente",
-        "Resposta curta completa a pergunta usando o contexto recente",
-        "Pergunta fora do escopo recebe orientação simples"
-      ],
-      "evidence": [
-        {
-          "path": "Frontend/e2e/smoke.spec.ts",
-          "test_name": "pede o período que falta, usa a resposta como contexto e orienta fora de escopo"
-        }
+        "Esclarecimento semântico exige serviço de respostas real; o provider sintético retorna uma resposta fixa",
+        "Uso de contexto entre mensagens e orientação fora do escopo serão verificados com a API de respostas integrada"
       ]
     },
     {
@@ -934,13 +912,13 @@
       "level": "unit-and-api-integration",
       "status": "planned",
       "scenarios": [
-        "O Gateway envia somente a pergunta original na mensagem atual e uma janela de até 40 mensagens à LLM, sem SystemMessage",
-        "Tool calling usa somente ferramentas autorizadas com limite finito, timeout, cancelamento e validação",
-        "Resposta estruturada normalizada é validada antes de persistir ou transmitir",
-        "Dados sintéticos são usados até autorização e contrato do Grafana MCP real"
+        "O Gateway envia a solicitação original e o contexto aprovado diretamente à LLM, sem SystemMessage",
+        "A LLM dedicada retorna a explicação e os blocos visuais na mesma interação",
+        "Blocos são validados antes de persistir ou transmitir",
+        "Uma futura conexão separada com a API de dados requer contrato e adapter aprovados"
       ],
       "limits": [
-        "A execução atual usa provider e fonte sintéticos; integração real com Grafana MCP e chamada do endpoint Iara autorizada ficam para a etapa final."
+        "A consulta à API de dados e sua integração de produção ainda não fazem parte do fluxo ativo."
       ]
     },
     {
@@ -965,34 +943,65 @@
       ],
       "suite": "frontend.verify",
       "level": "unit-contract-and-security",
-      "status": "planned",
+      "status": "implemented",
       "scenarios": [
-        "Markup arbitrário recebido como texto é escapado",
-        "Renderer futuro só aceita bloco versionado com sanitização allowlist e isolamento",
-        "Conteúdo rejeitado não altera navegação, estilos ou elementos da aplicação"
+        "O HTML API original é servido sem reescrita, injeção ou reserialização",
+        "Scripts inline executam somente com hash CSP e dependência externa exige URL versionada exata",
+        "Destino não aprovado, conexão, armazenamento, DOM da aplicação, navegação superior, pop-up, formulário e download permanecem bloqueados",
+        "Bloqueio produz aviso ao gestor e diagnóstico sem HTML, query ou conteúdo privado"
       ],
-      "evidence": []
+      "evidence": [
+        {
+          "path": "Frontend/renderizador-html/servidor.test.mjs",
+          "test_name": "preserva exatamente o HTML e autoriza inline script apenas pelo hash original"
+        },
+        {
+          "path": "Frontend/renderizador-html/servidor.test.mjs",
+          "test_name": "mantém URL desconhecida no HTML original, mas não a inclui na política de scripts"
+        },
+        {
+          "path": "Frontend/e2e/renderer-html.spec.ts",
+          "test_name": "renderiza HTML ativo original em origem isolada e bloqueia acessos à aplicação"
+        },
+        {
+          "path": "Frontend/src/funcionalidades/conversas/componentes/VisualizacaoHtmlApiDados/VisualizacaoHtmlApiDados.test.tsx",
+          "test_name": "envia o HTML integral ao renderer separado e usa iframe sem same-origin ou permissões extras"
+        }
+      ]
     },
     {
       "id": "frontend.monthly-token-usage-modal-shell",
-      "requirement_ids": [
-        "account.monthly-token-usage"
-      ],
+      "requirement_ids": [],
       "suite": "frontend.verify",
       "level": "component",
-      "status": "implemented",
+      "status": "deferred",
       "scenarios": [
         "Exibe mês atual e permite navegar pelos meses anteriores",
         "Permite nova tentativa quando o endpoint não está disponível"
       ],
+      "evidence": [],
+      "defer_reason": "A interface e os componentes foram removidos conforme decisão de produto; o painel de uso mensal não está no escopo ativo."
+    },
+    {
+      "id": "backend.api-html.streaming-history-preservation",
+      "requirement_ids": [
+        "api-html.streaming-history-preservation"
+      ],
+      "suite": "backend.verify",
+      "level": "backend-streaming-persistence",
+      "status": "implemented",
+      "scenarios": [
+        "O parser do envelope `iara-visuals` preserva o documento HTML original em api_html",
+        "SSE `bloco.pronto`, registro SQLite e consulta de histórico retomada mantêm HTML e dependência sem alteração"
+      ],
       "evidence": [
         {
-          "path": "Frontend/src/funcionalidades/conta/componentes/ModalUsoTokens/ModalUsoTokens.test.tsx",
-          "test_name": "mostra o mês atual, navega pelos anteriores e explicita uso não confirmado"
+          "path": "Backend/tests/test_model_gateway.py",
+          "test_name": "test_gateway_preserva_html_iara_visuals_para_bloco_api_html"
         },
         {
-          "path": "Frontend/src/funcionalidades/conta/componentes/ModalUsoTokens/ModalUsoTokens.test.tsx",
-          "test_name": "permite tentar novamente quando o Backend não está disponível"
+          "path": "Backend/tests/test_html_visual.py",
+          "test_name": "test_api_html_ativo_preserva_corpo_na_persistencia_e_retomada"
         }
       ]
     }

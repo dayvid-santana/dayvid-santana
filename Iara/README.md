@@ -75,7 +75,7 @@ Os testes comuns usam provider falso e dados sintéticos. Chamadas reais de prov
 ## Estrutura
 
 ```text
-Backend/       API, filtro de intenção, Model Gateway, persistência e fonte sintética
+Backend/       API, Model Gateway, persistência e adapters de resposta direta
 Frontend/      aplicação React, features e renderizadores
 contracts/     contratos JSON compartilhados
 harness/       decisões, regras, workflows e cobertura

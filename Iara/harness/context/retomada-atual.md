@@ -1,16 +1,59 @@
 # Retomada atual
 
-Atualizado em 19/10/2026. O provider LLM segue sendo a API dedicada da Iara via Model Gateway. A API de dados é uma integração HTTP distinta. O usuário confirmou uma amostra real do corpo retornado: Markdown com um bloco `iara-visual` contendo JSON v2 e gráfico `pie`; a amostra não define todos os formatos.
+Atualizado em 20/10/2026. O provider LLM segue sendo a API dedicada da Iara via Model Gateway. A API de dados é uma integração HTTP distinta. O usuário confirmou uma amostra real do corpo retornado: Markdown com um bloco `iara-visual` contendo JSON v2 e gráfico `pie`; a amostra não define todos os formatos.
+
+## Canal de raciocínio do provider — implementado em 20/10/2026
+
+- O Monitor captura `choices[0].delta.reasoning_content` separado de `delta.content`; a Iara replica esse comportamento na integração LangChain com um conversor `ChatIara` que preserva apenas o campo dedicado.
+- O Backend publica `raciocinio.delta` no schema SSE v2. O Frontend acumula e exibe esses trechos em painel independente com aviso de que são fornecidos pelo serviço e não necessariamente representam todo o raciocínio interno.
+- O canal não é mesclado à resposta Markdown nem salvo em mensagens, cache, logs ou contexto futuro. A janela em memória de replay SSE permite retomar somente enquanto o processo ainda mantém os eventos da solicitação.
+- As verificações de implementação ainda precisam ser executadas antes de declarar os gates concluídos.
+
+## Investigação de timeout — atualização 20/10/2026
+
+Quatro falhas de 19/10 ocorreram cerca de 120 segundos após o aceite, confirmando o prazo total do Backend. A correção de observabilidade foi aplicada sem alterar esse limite: o log HTTP agora dura até o fim do corpo SSE; os loggers operacionais escrevem `INFO` visível em Docker; Gateway distingue timeout do provider, falha de conexão e prazo do Backend; e registra primeiro evento, primeiro texto, primeiro delta público, conclusão/cancelamento sem conteúdo privado.
+
+Uma reprodução sintética pelo provider real concluiu: primeiro evento 140 ms, primeiro texto do provider 1.908 ms, primeiro delta público 2.098 ms, conclusão 2.111 ms e SSE completo 2.128 ms. Não reproduziu timeout. As quatro falhas antigas continuam sem causa interna retrospectiva porque os marcos não existiam à época; uma nova ocorrência será localizável pelos novos registros. Backend: `scripts/harness.ps1 -Target backend` passou com Ruff, 183 testes e 85,89% de cobertura. Evidências e procedimento estão em [`timeout-e-latencia.md`](timeout-e-latencia.md).
+
+## Estado atual do renderer ativo — 19/10/2026
+
+- A decisão registrada no histórico foi implementada como uma origem/serviço separado para `api_html`. O renderer armazena e serve exatamente a string HTML recebida, sem reescrever URLs nem injetar código. Scripts inline recebem hashes CSP; somente a URL versionada externa ECharts observada na amostra é autorizada. CSS inline permanece permitido; conexões, imagens, fontes, workers, frames aninhados, formulários, pop-ups e downloads ficam bloqueados; o iframe não pode ler a Iara nem navegar a janela superior.
+- CSP envia diagnósticos efêmeros por diretiva/origem, sem HTML, query ou dados privados. A UI avisa sobre recursos bloqueados; o componente exclui o documento ao desmontar e o serviço aplica TTL de 15 minutos. Inventário e limites estão em `Frontend/renderizador-html/README.md`.
+- Verificações desta revisão: renderer Node 7/7; Frontend unitários focados 20/20, lint, typecheck e build passaram; Chromium hermético do renderer 1/1 passou e o teste opcional de integração com ECharts real no jsDelivr passou 2/2 quando habilitado; audit do renderer encontrou 0 vulnerabilidades nas dependências instaladas. Backend `harness.ps1 -Target backend` passou com 179 testes e 85,52% de cobertura; Harness e retrieval/context passaram (17 testes). `harness.ps1 -Target docker-e2e` construiu e iniciou os serviços e o renderer passou, mas o smoke geral ficou 2/7: um snapshot variou 3% e quatro cenários não encontraram as respostas esperadas do provider fake. O `npm run check` completo ficou 138/140: falharam os testes antigos de seleção de conversa durante processamento e classe CSS do histórico. Esses cenários não alteram a evidência isolada do renderer e ficam para triagem própria. Não se afirma compatibilidade com qualquer HTML.
+
+## Histórico: envelope HTML `iara-visuals` — 19/10/2026
+
+- Na primeira implementação, o iframe usava sandbox sem scripts e os dashboards que dependiam de JavaScript apareciam vazios. Esse problema foi resolvido pelo renderer isolado descrito no início deste arquivo; a decisão de execução ativa foi limitada à amostra sintética inspecionada e não habilita compatibilidade irrestrita.
+- A extração do envelope continua cobrindo a resposta atual do Model Gateway; não comprova integração HTTP direta com a API empresarial de dados. Essa integração permanece pendente e não deve ser descrita como concluída.
+- Os números de testes e gates daquele diagnóstico são históricos. Use o bloco “Estado atual do renderer ativo” acima para o status e os resultados vigentes.
+
+## Fluxo direto da LLM — filtro de intenções removido — 19/10/2026
+
+- Removidos `Backend/app/filtro_intencoes.py`, seus testes, o callback de ferramenta e a consulta analítica que não eram usados pelo adapter ativo. O `ModelGateway` encaminha somente a pergunta original e até 39 mensagens anteriores; não há classificação, reescrita nem segunda chamada de modelo.
+- O provider fake entrega sempre a mesma resposta com um gráfico sintético fixo, independente da pergunta, para manter a demonstração visual sem simular compreensão semântica. Ele não representa resposta da API real.
+- O contrato de consulta e o adapter de fonte sintética permanecem como protótipos desconectados do fluxo atual; rastreabilidade de completude e progresso da fonte voltou para `planned`.
+- Verificação: `scripts/harness.ps1 -Target backend` passou com Ruff, 174 testes e 85,40% de cobertura. `scripts/harness.ps1 -Target harness` passou. O Frontend não teve código alterado; nenhuma verificação visual foi necessária.
 
 ## API de dados: passthrough integral aprovado — 19/10/2026
 
 - Decisão: encaminhar e persistir sem alterações o corpo original da API de dados, incluindo HTML e todo tipo de gráfico. Não filtrar, normalizar, converter, resumir, reconstruir nem descartar formatos desconhecidos.
-- A apresentação deve isolar HTML do DOM principal sem alterar o conteúdo. A compatibilidade com scripts e recursos externos depende do contrato real; não afirmar fidelidade até verificar.
-- Estado atual: não implementado. O código ainda contém contratos tipados e allowlist HTML do fluxo da LLM; esses mecanismos não provam passthrough da API de dados. A validação do Harness foi executada e passou; não foram executados testes de aplicação.
+- A apresentação isola HTML do DOM principal sem alterar o conteúdo. Scripts inline usam hashes CSP; a única URL externa autorizada é a dependência versionada inspecionada na amostra sintética. A política não promete compatibilidade universal.
+- Implementação desta etapa: bloco público `api_html` v2 e evento `bloco.pronto` transportam a string HTML sem a allowlist da LLM. `VisualizacaoHtmlApiDados` envia o original ao serviço HTTP `renderizador-html`, numa origem separada, e exibe a URL opaca em iframe sandbox sem `allow-same-origin`; o serviço apaga o documento ao desmontar ou após TTL. O Backend persiste e reabre o HTML original em histórico v2.
+- Estado ponta a ponta: o produtor da API de dados segue não integrado e endpoint, autenticação e contrato do corpo completo permanecem pendentes. A extração sintética após `iara-visuals`, transporte, persistência/retomada e renderização isolada dos recursos documentados foram testados; recursos não aprovados continuam bloqueados e diagnosticados. Não declarar a integração HTTP real como concluída.
+- Verificações executadas nesta revisão: serviço renderer 7 testes Node; Frontend 20 testes unitários focados, Playwright Chromium E2E 1/1, lint, typecheck e build; Backend 25 testes de HTML, contratos e persistência; `npm audit --omit=dev` sem vulnerabilidades. A biblioteca ECharts externa real não é baixada no teste hermético: a URL aprovada é simulada com um script sintético no Chromium.
 - O retorno chamado “Retorno Final” termina sem fechar o bloco de código; a variante “Retorno Parcial Preservado” contém o fechamento. O normalizador atual `Backend/app/normalizacao_visual_iara.py` pertence ao fluxo da LLM, exige o fence de fechamento, converte os dados para `chart` e descarta campos não previstos. Essa transformação explica a omissão do gráfico quando aplicada à amostra final e não deve ser usada na fronteira da API de dados.
 - Bloqueio concreto: ainda falta endpoint, método/autenticação, content type, encoding, headers, contrato exaustivo, semântica de streaming, limites e dependências de scripts/recursos do HTML. O conteúdo empresarial real da amostra não será persistido em arquivos, testes, logs ou evidências.
 - Próximo passo: projetar o adapter HTTP e o caminho de persistência/eventos da API de dados como carga opaca, usando fixture sintética equivalente para verificar que corpo e metadados necessários não são alterados; renderizadores podem interpretar formatos conhecidos à parte, sem substituir nem descartar o corpo original.
 - Não registrar payload empresarial real em logs, fixtures, screenshots ou no Harness. Fixtures sintéticas permanecem o padrão de desenvolvimento e demonstração.
+
+## Falhas observadas nos pedidos de gráficos — 19/10/2026
+
+- Cinco pedidos separados passaram pelo endpoint público da Iara. O pedido de linha concluiu com bloco `chart` estruturado; barras e dispersão excederam o prazo da solicitação; pizza e área concluíram em texto sem bloco visual. O stream público não contém o corpo bruto do provider, então não permite afirmar se os dois últimos foram descritos ou se um visual foi rejeitado internamente.
+- Na saída `iara-visual` da LLM, gráficos tipados continuam limitados a `line`, `bar` e `pie`. Gráficos `area` e `scatter` validados são reconstruídos como SVG estático no bloco HTML v2, com resumo acessível, cores explícitas preservadas e paleta colorida de fallback. O SVG é sanitizado e exibido pelo iframe isolado já existente; não se amplia o contrato tipado.
+- Removidos o filtro de intenções e o caminho legado de consulta/ferramenta no Backend. A interface de adapter aceita somente pergunta e contexto aprovado; o provider fake emite uma resposta fixa de simulação. Os testes correspondentes exercitam a interação direta.
+- A validação de HTML/SVG agora aceita apenas opacidade `fill-opacity` no intervalo 0–1 e alinhamento `text-anchor` entre `start`, `middle` e `end`. Erros de normalização visual registram motivo estático sanitizado e ID de correlação, sem conteúdo da resposta.
+- A API de dados real segue sem integração: endpoint, autenticação e contrato ainda faltam. A regra de passthrough byte a byte permanece inalterada e não pode ser testada pela chamada LLM atual. Não registrar respostas externas nem presumir que o retorno remoto corresponde à fixture local.
+- Verificação focada: Ruff passou; 13 testes Backend e 44 testes Frontend passaram. As suítes completas reportam 6 falhas Backend em testes do fluxo de fonte analítica legado e 2 falhas Frontend em teste de troca de chat e expectativa antiga de classe CSS. O smoke E2E passou em 3/6: dois snapshots tiveram cerca de 3% de diferença e um fluxo de contexto sintético não encontrou o título de bloco esperado. São falhas fora do renderer área/dispersão; investigar separadamente antes de declarar os gates gerais verdes.
 
 As anotações posteriores abaixo registram checkpoints anteriores e são históricas; onde mencionarem Grafana MCP, validação/allowlist da resposta, conversão de gráficos ou HTML, prevalece a decisão de passthrough acima para a API de dados.
 

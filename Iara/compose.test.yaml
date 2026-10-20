@@ -12,9 +12,19 @@ services:
         ipv4_address: 172.31.250.3
 
   frontend:
+    environment:
+      VITE_IARA_HTML_RENDERER_ORIGIN: http://html-renderer:4174
     networks:
       rede_iara:
         ipv4_address: 172.31.250.2
+
+  html-renderer:
+    environment:
+      IARA_RENDERER_PUBLIC_ORIGIN: http://html-renderer:4174
+      IARA_RENDERER_PARENT_ORIGINS: http://localhost:5173,http://frontend:5173
+    networks:
+      rede_iara:
+        ipv4_address: 172.31.250.5
 
   e2e:
     # Compartilha a rede do Frontend para que o navegador use localhost:5173.
@@ -23,6 +33,7 @@ services:
     networks: !reset []
     environment:
       IARA_E2E_BASE_URL: http://localhost:5173
+      IARA_E2E_HTML_RENDERER_URL: http://html-renderer:4174
 
 networks:
   rede_iara:

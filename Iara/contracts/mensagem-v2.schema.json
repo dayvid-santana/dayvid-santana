@@ -460,6 +460,9 @@
         },
         {
           "$ref": "#/$defs/html"
+        },
+        {
+          "$ref": "#/$defs/api_html"
         }
       ]
     },
@@ -717,6 +720,24 @@
           "maxLength": 32768
         }
       }
+    },
+    "api_html": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "html"
+      ],
+      "properties": {
+        "type": {
+          "const": "api_html"
+        },
+        "html": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "description": "HTML integral da API de dados; diferente do bloco HTML estático validado da LLM."
     }
   }
 }

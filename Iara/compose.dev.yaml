@@ -3,3 +3,6 @@ services:
   frontend:
     ports:
       - "127.0.0.1:${IARA_FRONTEND_PORT:-5173}:5173"
+  html-renderer:
+    ports:
+      - "127.0.0.2:${IARA_RENDERER_PORT:-4174}:4174"

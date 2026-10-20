@@ -422,7 +422,9 @@ def validate_product_harness() -> None:
         component_config = load_json(component_config_path) or {}
         local_decisions_path = component_root / "harness/config/decisions.json"
         local_decision_manifest = load_json(local_decisions_path) or {}
-        component_shared_decisions = local_decision_manifest.get("shared_decisions", {})
+        # Component manifests store shared decisions under `decisions`; the older
+        # `shared_decisions` key is not part of the current committed manifest schema.
+        component_shared_decisions = local_decision_manifest.get("decisions", {})
         for decision_name, expected_decision in local_decisions.items():
             recorded_decision = component_shared_decisions.get(decision_name)
             if decision_name in {"model", "provider"} and isinstance(recorded_decision, dict):

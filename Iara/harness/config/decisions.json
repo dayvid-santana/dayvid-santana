@@ -66,12 +66,20 @@
       "access_status": "pending-endpoint-authentication-and-response-contract",
       "payload_policy": "byte-for-byte-pass-through; no-filter-no-normalization-no-conversion-no-reconstruction-no-content-type-omission",
       "rendering_security": "isolate-untrusted-content-from-application-dom-without-modifying-payload",
-      "synthetic_fixtures_remain_default": true
+      "synthetic_fixtures_remain_default": true,
+      "html_rendering": {
+        "status": "api-html-contract-and-iframe-renderer-implemented-api-producer-pending",
+        "message_block": "api_html in message v2 and bloco.pronto SSE",
+        "preservation": "The html string is not normalized or passed through the LLM allowlist",
+        "frontend": "Send the exact original HTML to the temporary separate-origin renderer service, load its opaque document URL in a sandboxed iframe, delete it on unmount or TTL",
+        "sandbox": "Use sandbox allow-scripts without allow-same-origin or additional permissions; hash original inline scripts in CSP and allow only exact reviewed versioned external scripts; block unreviewed resources",
+        "pending": "Data API endpoint/response integration, full transport contract and production limits; renderer support is evidenced only for the documented synthetic HTML sample"
+      }
     },
     "context_contract": {
       "status": "api-data-passthrough-approved-api-contract-pending",
       "value": "The prior typed analytical result contract applies only to the existing synthetic/LLM path. The separate data API response is opaque and must be preserved byte-for-byte through backend transport and persistence, including arbitrary chart/HTML formats; content is not filtered, normalized, converted, reconstructed or dropped.",
-      "visibility": "backend-internal-only-no-public-message-v1-change",
+      "visibility": "Public message v2 and SSE v2 add api_html; the HTML string is preserved separately from the opaque original API response",
       "groups": {
         "consulta": [
           "pergunta_original",
@@ -123,8 +131,8 @@
       },
       "malformed_or_contradictory_source_result": "Não interpretar nem reescrever conteúdo da resposta opaca. Tratar falhas HTTP/protocolo separadamente e preservar integralmente o corpo de toda resposta bem-sucedida.",
       "streaming_progress": {
-        "status": "synthetic-progress-implemented; data-api-streaming-contract-pending",
-        "value": "O progresso da fonte sintética existente permanece separado. Quando suportado pela API de dados, transmitir o corpo original sem filtros; enquadramento/particionamento aguarda o contrato real.",
+        "status": "source-prototype-not-connected; data-api-streaming-contract-pending",
+        "value": "O adapter de fonte sintética permanece apenas como protótipo, sem ligação ao fluxo LLM ativo. O corpo da futura API de dados deve ser transmitido sem filtros; o enquadramento e a retomada aguardam contrato real.",
         "mcp_progress": "Não aplicável: a integração escolhida é uma API HTTP direta, não MCP."
       },
       "open": [
@@ -173,7 +181,15 @@
         ]
       },
       "legacy_typed_contract_scope": "existing-synthetic-and-LLM-output-path-only; must-not-filter-the-separate-data-API-response",
-      "source_selection": "API de dados via HTTP direta; não usar a nomenclatura MCP para esta integração."
+      "source_selection": "API de dados via HTTP direta; não usar a nomenclatura MCP para esta integração.",
+      "api_html": {
+        "status": "api-html-contract-and-iframe-renderer-implemented-api-producer-pending",
+        "message_block": "api_html in message v2 and bloco.pronto SSE",
+        "preservation": "The html string is not normalized or passed through the LLM allowlist",
+        "frontend": "Send the exact original HTML to the temporary separate-origin renderer service, load its opaque document URL in a sandboxed iframe, delete it on unmount or TTL",
+        "sandbox": "Use sandbox allow-scripts without allow-same-origin or additional permissions; hash original inline scripts in CSP and allow only exact reviewed versioned external scripts; block unreviewed resources",
+        "pending": "Data API endpoint/response integration, full transport contract and production limits; renderer support is evidenced only for the documented synthetic HTML sample"
+      }
     },
     "model": {
       "status": "decided-for-iara-service",
@@ -308,8 +324,8 @@
       ]
     },
     "user_token_usage": {
-      "status": "approved-and-implemented",
-      "value": "Resumo privado do gestor com mês atual e seis meses anteriores no calendário de Brasília; registro por chamada com UUID do Backend, identidade do usuário, data, estado e somente tokens informados pelo provider; falhas e cancelamentos entram quando houver uso confirmado; uso ausente fica como não confirmado; sem conteúdo de conversa, modelo, provider ou preço. A retenção de chamadas permanece pendente.",
+      "status": "user-facing-panel-removed",
+      "value": "Em 19/10/2026, o usuário decidiu remover o painel que mostrava tokens reportados pelo serviço e solicitações do período, junto com seus componentes e chamada do Frontend. O nome da identidade permanece no rodapé sem abrir detalhes. Esta decisão remove a interface de consulta; não revoga por si só a coleta operacional ou persistência no Backend.",
       "months_including_current": 7,
       "preceding_months": 6,
       "calendar_timezone": "America/Sao_Paulo",
@@ -323,15 +339,8 @@
       "privacy": "no-conversation-content-model-provider-or-price",
       "retention": "pending-user-decision; no-record-deletion-policy-added",
       "evidence": [
-        "Backend/app/model_gateway.py",
-        "Backend/app/persistencia.py",
-        "Backend/app/main.py",
-        "Backend/sql/esquema.sql",
-        "Backend/tests/test_model_gateway.py",
-        "Backend/tests/test_persistencia.py",
-        "Backend/tests/test_fluxo_conversas.py",
-        "Frontend/src/funcionalidades/conta/componentes/ModalUsoTokens/ModalUsoTokens.tsx",
-        "Frontend/src/funcionalidades/conta/componentes/ModalUsoTokens/ModalUsoTokens.test.tsx"
+        "Frontend/src/funcionalidades/conversas/componentes/ListaHistorico/ListaHistorico.tsx",
+        "Frontend/src/api.ts"
       ]
     },
     "llm_interaction": {
@@ -353,10 +362,10 @@
       "tools": "The current Iara endpoint rejects tool calling. The API de dados is a separate direct HTTP integration and does not use LangChain tools.",
       "presentation": "The current LLM-output contract remains separate: Markdown and typed Iara blocks are validated under their existing schema. The API de dados is opaque and its original response body, including HTML and every graph type, is passed through unchanged; do not filter, normalize, convert, reconstruct or ask the LLM to regenerate it.",
       "markdown_rendering": "Markdown in the text block is rendered by the Frontend as semantic elements with raw HTML disabled, unsafe URL protocols blocked and remote images ignored. Text remains Markdown-only; visual HTML has a separate versioned block and isolated renderer.",
-      "html": "The existing HTML allowlist and message-v2 html renderer apply only to LLM-produced blocks. Never apply them to the API de dados payload; preserve that body byte-for-byte and isolate its rendering from the application DOM. Exact handling of scripts and external resources awaits the API contract.",
+      "html": "The existing html allowlist applies only to LLM-produced blocks. API data HTML uses api_html v2 unchanged in a separate-origin sandboxed renderer. Inline scripts require exact-content CSP hashes; only the reviewed, version-pinned ECharts URL from the synthetic sample is authorized. Other scripts, connections, images, fonts and browser resources remain blocked pending individual review.",
       "source_disclosure": "Never narrate data retrieval or mention that information was consulted, searched, found in a query/source, or returned by a consultation. Speak directly and naturally to the manager, as a knowledgeable colleague; answer with business facts, ask directly for missing business details, and do not claim human feelings or private thoughts. Remove source labels, URLs and internal provenance from every public text or visual block.",
       "accuracy": "Maximize accuracy through authorized returned data, provenance used internally, typed validation and fail-closed handling; never promise perfect accuracy or invent values, trends, causes or estimates. Omit requested items without returned values and never interpret absence as zero.",
-      "no_private_reasoning": "Do not expose chain-of-thought; progress events describe actual operational stages only.",
+      "no_private_reasoning": "Do not infer hidden chain-of-thought from final text or claim complete access to internal reasoning. If the provider explicitly sends a dedicated reasoning_content stream, it may be rendered separately and transiently with a disclaimer; never mix it into final text, conversation history, future context, or logs. Operational status remains a separate Backend-authored channel.",
       "evidence": [
         "Backend/harness/rules/backend.model-orchestration.md",
         "Backend/harness/rules/backend.model-gateway.md",
@@ -365,7 +374,7 @@
         "Frontend/src/funcionalidades/conversas/componentes/TextoMarkdown/TextoMarkdown.tsx",
         "harness/context/estado-do-projeto.md"
       ],
-      "api_data_response": "Preservar byte a byte a resposta da API de dados, inclusive HTML e qualquer tipo de gráfico. Não filtrar, normalizar, converter, reconstruir ou pedir à LLM para regerar o conteúdo."
+      "api_data_response": "Preserve the successful API response body byte-for-byte; the api_html block transports the extracted HTML string without the LLM allowlist. The upstream producer and full raw-body persistence are not connected yet."
     }
   },
   "rule_exceptions": [],
@@ -397,6 +406,6 @@
     ],
     "api_data_response": "Preservar byte a byte a resposta da API de dados, inclusive HTML e qualquer tipo de gráfico. Não filtrar, normalizar, converter, reconstruir ou pedir à LLM para regerar o conteúdo.",
     "chart_colors": "Preservar cores hexadecimais opacas validadas quando a fonte enviar cores por série ou categoria; usar tokens categóricos multicoloridos como fallback apenas para gráficos tipados que não sejam resposta bruta da API de dados.",
-    "html": "The existing HTML allowlist and message-v2 html renderer apply only to LLM-produced blocks. Never apply them to the API de dados payload; preserve that body byte-for-byte and isolate its rendering from the application DOM. Exact handling of scripts and external resources awaits the API contract."
+    "html": "The existing HTML allowlist and message-v2 renderer apply only to LLM-produced blocks. Preserve API data HTML byte-for-byte and render it on a separate origin. The verified synthetic sample uses inline CSS, two inline scripts and the exact versioned ECharts URL; inline scripts are authorized by per-document CSP hashes, and only that exact external script URL is allowlisted. No SRI is added because it would modify the payload. All other resource classes remain blocked until a sample demonstrates the need and its destination/risk is reviewed."
   }
 }

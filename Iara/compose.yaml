@@ -1,5 +1,25 @@
 # Stack de desenvolvimento da Iara. A porta da API fica apenas na rede privada do Compose.
 services:
+  html-renderer:
+    build:
+      context: ./Frontend/renderizador-html
+      dockerfile: Dockerfile
+    environment:
+      PORT: "4174"
+      IARA_RENDERER_PUBLIC_ORIGIN: http://127.0.0.2:4174
+      IARA_RENDERER_PARENT_ORIGINS: http://localhost:5173,http://127.0.0.1:5173
+    expose:
+      - "4174"
+    networks:
+      rede_iara:
+        ipv4_address: 172.30.250.5
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:4174/health').then(resposta => process.exit(resposta.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+
   backend:
     build:
       context: ./Backend
@@ -51,6 +71,7 @@ services:
       target: desenvolvimento
     environment:
       IARA_API_PROXY_TARGET: http://backend:8000
+      VITE_IARA_HTML_RENDERER_ORIGIN: http://127.0.0.2:4174
       IARA_DOCKER_WATCH_POLLING: "true"
       IARA_DOCKER_ALLOWED_HOST: frontend
     command:
@@ -78,6 +99,8 @@ services:
     depends_on:
       backend:
         condition: service_healthy
+      html-renderer:
+        condition: service_healthy
     healthcheck:
       test:
         - CMD
@@ -99,10 +122,13 @@ services:
       IARA_E2E_EXTERNAL_SERVERS: "1"
       IARA_E2E_BASE_URL: http://frontend:5173
       IARA_E2E_API_BASE_URL: http://backend:8000
+      IARA_E2E_HTML_RENDERER_URL: http://html-renderer:4174
     depends_on:
       backend:
         condition: service_healthy
       frontend:
+        condition: service_healthy
+      html-renderer:
         condition: service_healthy
     networks:
       rede_iara:

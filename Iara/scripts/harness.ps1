@@ -32,7 +32,19 @@ function Invoke-Backend {
     Push-Location $backend
     try {
         Invoke-Checked 'Ruff' { & $python -m ruff check app tests }
-        Invoke-Checked 'Pytest com cobertura' { & $python -m pytest --cov=app --cov-report=term-missing --cov-fail-under=80 }
+        # Impede que o .env local redirecione os testes para o provider remoto.
+        # APP_ENV=test também evita que python-dotenv carregue credenciais de desenvolvimento.
+        $ambienteAnterior = $env:APP_ENV
+        $provedorAnterior = $env:IARA_MODEL_PROVIDER
+        try {
+            $env:APP_ENV = 'test'
+            $env:IARA_MODEL_PROVIDER = 'fake'
+            Invoke-Checked 'Pytest com cobertura' { & $python -m pytest --cov=app --cov-report=term-missing --cov-fail-under=80 }
+        }
+        finally {
+            $env:APP_ENV = $ambienteAnterior
+            $env:IARA_MODEL_PROVIDER = $provedorAnterior
+        }
     }
     finally {
         Pop-Location
