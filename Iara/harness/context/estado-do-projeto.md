@@ -1,3 +1,7 @@
+## Atualização prioritária — 20/10/2026
+
+O timeout de rede do SDK e o prazo total da geração LLM estão temporariamente desativados. Status operacional a cada 15 segundos e cancelamento manual permanecem ativos. Valores positivos de IARA_PROVIDER_TIMEOUT_SECONDS ou IARA_REQUEST_TIMEOUT_SECONDS reativam o limite correspondente (1–360 segundos). Esta decisão substitui as referências históricas abaixo a timeouts finitos padrão; o timeout do SULTS e limites de proxy/browser não mudam.
+
 # Estado durável do projeto Iara
 
 Atualizado em 16/10/2026. Este resumo é obrigatório para iniciar ou retomar trabalho. A cópia canônica fica na raiz do projeto em `harness/context/estado-do-projeto.md`; Backend e Frontend mantêm cópias idênticas, verificadas por `harness.validate`.

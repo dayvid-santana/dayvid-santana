@@ -1,3 +1,9 @@
+# Atualização prioritária — 20/10/2026
+
+O timeout de rede do SDK e o prazo total da geração LLM estão temporariamente desativados. Status operacional a cada 15 segundos e cancelamento manual permanecem ativos. Valores positivos de IARA_PROVIDER_TIMEOUT_SECONDS ou IARA_REQUEST_TIMEOUT_SECONDS reativam o limite correspondente (1–360 segundos). Esta decisão substitui as referências históricas abaixo a timeouts finitos padrão; o timeout do SULTS e limites de proxy/browser não mudam.
+
+---
+
 # Retomada atual
 
 Atualizado em 16/10/2026. O provider ativo do MVP é a API dedicada da Iara, acessada pelo Model Gateway. As decisões duráveis ficam em `harness/context/estado-do-projeto.md`; o roteiro está em `docs/fases-do-projeto.md` no diretório de documentos do projeto.

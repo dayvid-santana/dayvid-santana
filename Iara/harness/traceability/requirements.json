@@ -399,7 +399,7 @@
     },
     {
       "id": "request.wait-policy",
-      "requirement": "Aguardar a resposta por 120 segundos por padrão, configurável entre 1 e 360, informar progresso a cada 15 segundos sem nova chamada à LLM e permitir cancelamento ou nova tentativa",
+      "requirement": "Manter sem prazo fixo de geração por decisão temporária; permitir reativar prazos finitos por configuração, informar progresso a cada 15 segundos sem nova chamada à LLM e permitir cancelamento ou nova tentativa",
       "status": "planned",
       "evidence": [
         "Backend/app",

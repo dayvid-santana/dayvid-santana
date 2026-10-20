@@ -334,6 +334,18 @@
       ]
     }
   },
+  "generation_timeout": {
+    "status": "temporarily-disabled",
+    "value": "Disable provider network timeout and backend total-generation deadline for LLM calls while investigating latency/provider failures; keep status updates and user cancellation. Re-enable with IARA_PROVIDER_TIMEOUT_SECONDS and IARA_REQUEST_TIMEOUT_SECONDS when an operational limit is needed. This does not change SULTS authentication timeouts or external proxy/browser limits.",
+    "evidence": [
+      "Backend/app/configuracao.py",
+      "Backend/app/model_gateway.py",
+      "Backend/app/solicitacoes.py",
+      "Backend/.env.example",
+      "Iara/harness/context/estado-do-projeto.md",
+      "Iara/harness/context/retomada-atual.md"
+    ]
+  },
   "rule_exceptions": [],
   "backend_constraints": [
     "Send the manager original request directly to the project-configured Iara LLM with a server-owned versioned System Prompt, application instruction concatenated with the request, and up to 40 recent dialogue messages including the current request; no LLM preprocessing.",

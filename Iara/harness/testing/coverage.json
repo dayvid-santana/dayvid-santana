@@ -526,8 +526,8 @@
       "level": "async-state-machine",
       "status": "planned",
       "scenarios": [
-        "Tentativas usam prazo padrão de 120 segundos e status a cada 15 segundos sem nova chamada que gere tokens",
-        "Falha anterior ao limite encerra imediatamente",
+        "Sem prazo configurado, manter geração ativa com status a cada 15 segundos sem nova chamada que gere tokens",
+        "Prazo total positivo explicitamente configurado encerra a tentativa e persiste falha recuperável",
         "Retentativa explícita cria tentativa rastreável",
         "Cancelamento remove trabalho pendente",
         "Reinício não retoma automaticamente solicitação interrompida"
