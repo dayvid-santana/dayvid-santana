@@ -5,9 +5,12 @@ Atualizado em 20/10/2026. O provider LLM segue sendo a API dedicada da Iara via 
 ## Canal de raciocínio do provider — implementado em 20/10/2026
 
 - O Monitor captura `choices[0].delta.reasoning_content` separado de `delta.content`; a Iara replica esse comportamento na integração LangChain com um conversor `ChatIara` que preserva apenas o campo dedicado.
-- O Backend publica `raciocinio.delta` no schema SSE v2. O Frontend acumula esses trechos dentro da própria faixa visual de processamento; enquanto não há reasoning, a faixa mostra o status operacional. O texto permanece somente no estado volátil da tela, sem spinner após a conclusão.
+- O Backend publica `raciocinio.delta` separadamente e a faixa agora o consome quando presente; `texto.progresso`/`delta.content` não alimenta essa faixa. O primeiro trecho de reasoning aparece imediatamente e, no máximo, troca uma vez por segundo, coalescendo os intermediários para o mais recente. A resposta validada continua em `texto.delta`, acumulada na mensagem e filtrada antes da publicação. O trecho exibido não é persistido em histórico, cache, contexto futuro ou logs, nem representa necessariamente todo o raciocínio interno.
 - O canal não é mesclado à resposta Markdown nem salvo em mensagens, cache, logs ou contexto futuro. A janela em memória de replay SSE permite retomar somente enquanto o processo ainda mantém os eventos da solicitação.
-- As verificações de implementação ainda precisam ser executadas antes de declarar os gates concluídos.
+- Uma simulação pela interface em 20/10 recebeu resposta final, mas nenhum `reasoning_content`/`raciocinio.delta`; a faixa operacional permaneceu visível durante a espera. A aplicação não deve fabricar reasoning. A disponibilidade desse campo depende do serviço remoto e do modelo/configuração usados.
+- A mesma simulação teve uma falha transitória inicial do provider e concluiu na tentativa seguinte. O log original identificava somente `APIError`; o adapter agora registra `code` e `type` apenas quando correspondem a valores allowlisted, sem mensagem, corpo, URL ou conteúdo da conversa. A causa da ocorrência passada não pode ser reconstruída retrospectivamente.
+- Verificação em 20/10: `scripts/harness.ps1 -Target backend` passou com Ruff, 193 testes e 86,37% de cobertura. Os testes novos confirmam diagnóstico útil para `APIError` genérico e rejeição de valores remotos não allowlisted. A simulação remota não garante que o endpoint sempre envie reasoning nem que respeite uma solicitação de dados sintéticos; não trate esses comportamentos como garantidos pelo código local.
+- Verificação em 20/10 após `texto.progresso`: Backend passou Ruff e 196 testes, com 86,42% de cobertura; Frontend passou lint, TypeScript, 172 testes e build. Testes confirmam eventos transitórios individuais e a cadência mínima de um segundo entre trocas visíveis, mantendo separada a resposta final filtrada.
 
 ## Investigação de timeout — atualização 20/10/2026
 
