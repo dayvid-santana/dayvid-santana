@@ -5,7 +5,7 @@ Atualizado em 20/10/2026. O provider LLM segue sendo a API dedicada da Iara via 
 ## Canal de raciocínio do provider — implementado em 20/10/2026
 
 - O Monitor captura `choices[0].delta.reasoning_content` separado de `delta.content`; a Iara replica esse comportamento na integração LangChain com um conversor `ChatIara` que preserva apenas o campo dedicado.
-- O Backend publica `raciocinio.delta` no schema SSE v2. O Frontend acumula e exibe esses trechos em painel independente com aviso de que são fornecidos pelo serviço e não necessariamente representam todo o raciocínio interno.
+- O Backend publica `raciocinio.delta` no schema SSE v2. O Frontend acumula esses trechos dentro da própria faixa visual de processamento; enquanto não há reasoning, a faixa mostra o status operacional. O texto permanece somente no estado volátil da tela, sem spinner após a conclusão.
 - O canal não é mesclado à resposta Markdown nem salvo em mensagens, cache, logs ou contexto futuro. A janela em memória de replay SSE permite retomar somente enquanto o processo ainda mantém os eventos da solicitação.
 - As verificações de implementação ainda precisam ser executadas antes de declarar os gates concluídos.
 
