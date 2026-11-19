@@ -1,6 +1,13 @@
 # Estado durável do projeto Iara
 
-Atualizado em 16/10/2026. Este resumo é obrigatório para iniciar ou retomar trabalho. A cópia canônica fica na raiz do projeto em `harness/context/estado-do-projeto.md`; Backend e Frontend mantêm cópias idênticas, verificadas por `harness.validate`.
+Atualizado em 19/11/2026. Este resumo é obrigatório para iniciar ou retomar trabalho. A cópia canônica fica na raiz do projeto em `harness/context/estado-do-projeto.md`; Backend e Frontend mantêm cópias idênticas, verificadas por `harness.validate`.
+
+## Contratos compartilhados e OLZ-150 — 19/11/2026
+
+- Os schemas públicos v1 e v2 ficam versionados em `contracts/` neste repositório. Em workspaces que mantêm Backend e Frontend em checkouts separados, `scripts/exportarContratos.ps1` copia os quatro schemas validados para a pasta comum `contracts/` do workspace e informa os hashes SHA-256. A cópia é gerada; a fonte a editar é a versão do repositório.
+- `mensagem-v2` mantém `$schema` JSON Schema 2020-12 e define `ErroHttp` e `EnvelopeErro` para HTTP 401, 403, 404 e 422. O HTTP 503 de `/api/v1/health` permanece fora desse envelope.
+- A OLZ-150 e as subtarefas OLZ-157, OLZ-158, OLZ-159 e OLZ-160 constam como finalizadas no Jira. A entrega cria perfis sintéticos locais A/B, verifica isolamento da API e da interface e registra a D-T0 e a regra de autorização nos Harnesses de Backend e Frontend. Não abrange autenticação de usuários reais nem uso fora de desenvolvimento/localhost.
+- A validação registrada inclui testes de isolamento A/B na API e no Playwright, verificação de contratos e 245 testes Frontend. A suíte Backend usa PostgreSQL descartável e precisa de `IARA_TEST_POSTGRES_URL`.
 
 ## Missão e limites
 

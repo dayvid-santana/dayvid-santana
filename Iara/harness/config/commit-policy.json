@@ -3,7 +3,7 @@
   "language": "pt-BR",
   "message_format": "<tipo>(<escopo>): <descricao> | <tipo>: <descricao>",
   "description_rules": [
-    "Use descricao curta, especifica, em portugues e iniciada por verbo no infinitivo",
+    "Use descricao curta, especifica, em portugues, iniciada por letra maiuscula e descrevendo o resultado concluido",
     "Nao finalize a descricao com ponto",
     "Uma mensagem descreve uma unidade coerente de mudanca"
   ],
@@ -60,6 +60,6 @@
   "repositories": {
     "backend": "Backend/",
     "frontend": "Frontend/",
-    "shared_harness": "The current workspace is inside the C:/projects Git repository; stage only explicit Iara/harness, Iara/scripts, Iara/AGENTS.md, and Iara/README.md paths when recording shared Harness changes"
+    "shared_harness": "The current workspace is inside the C:/projects Git repository; stage only explicit Iara/harness, Iara/scripts, Iara/contracts, Iara/AGENTS.md, and Iara/README.md paths when recording shared Harness and contract changes"
   }
 }

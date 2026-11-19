@@ -1,0 +1,1103 @@
+{
+  "$defs": {
+    "BlocoCodigo": {
+      "additionalProperties": false,
+      "description": "Trecho de código legado exibido sem interpretação ou execução no Frontend.\n\nO fluxo atual não detecta nem move código para este bloco. O contrato permanece\npara compatibilidade com mensagens existentes e usa o limite geral da mensagem.",
+      "properties": {
+        "code": {
+          "maxLength": 524288,
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "language": {
+          "maxLength": 32,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_+#.-]{1,32}$",
+          "title": "Language",
+          "type": "string"
+        },
+        "type": {
+          "const": "code",
+          "default": "code",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "language",
+        "code"
+      ],
+      "title": "BlocoCodigo",
+      "type": "object"
+    },
+    "BlocoGrafico": {
+      "additionalProperties": false,
+      "description": "Contrato dos gráficos e das cores fornecidas pela fonte analítica.\n\nCores de categoria são indexadas pelo rótulo do eixo X para manter a mesma\ncor quando a ordenação dos dados mudar. O Frontend fornece uma paleta padrão\npara categorias e séries sem cor explícita.",
+      "properties": {
+        "category_colors": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "pattern": "^#[0-9A-Fa-f]{6}$",
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category Colors"
+        },
+        "chart_type": {
+          "enum": [
+            "line",
+            "bar",
+            "pie"
+          ],
+          "title": "Chart Type",
+          "type": "string"
+        },
+        "data": {
+          "items": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "type": "object"
+          },
+          "minItems": 1,
+          "title": "Data",
+          "type": "array"
+        },
+        "series": {
+          "items": {
+            "$ref": "#/$defs/SerieGrafico"
+          },
+          "minItems": 1,
+          "title": "Series",
+          "type": "array"
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Summary"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "type": {
+          "const": "chart",
+          "default": "chart",
+          "title": "Type",
+          "type": "string"
+        },
+        "x": {
+          "minLength": 1,
+          "title": "X",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "chart_type",
+        "x",
+        "series",
+        "data"
+      ],
+      "title": "BlocoGrafico",
+      "type": "object"
+    },
+    "BlocoHtmlApiDados": {
+      "additionalProperties": false,
+      "description": "HTML original da API de dados, mantido separado das visualizações da LLM.\n\nO Backend valida somente o envelope do contrato. O corpo permanece como foi\nrecebido e deve ser exibido pelo Frontend em um documento isolado, sem passar\npelo validador que reconstrói o HTML estático produzido pela LLM.",
+      "properties": {
+        "html": {
+          "title": "Html",
+          "type": "string"
+        },
+        "type": {
+          "const": "api_html",
+          "default": "api_html",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "html"
+      ],
+      "title": "BlocoHtmlApiDados",
+      "type": "object"
+    },
+    "BlocoHtmlVisual": {
+      "additionalProperties": false,
+      "description": "Bloco visual HTML legado, validado separadamente da carga opaca da API.\n\nO contrato continua disponível para compatibilidade histórica. A resposta\ntextual atual não é convertida para este bloco; `api_html` transporta o HTML\nmarcado por `iara-visuals` sem validação semântica ou reconstrução.",
+      "properties": {
+        "html": {
+          "minLength": 1,
+          "title": "Html",
+          "type": "string"
+        },
+        "summary": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Summary",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "type": {
+          "const": "html",
+          "default": "html",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "summary",
+        "html"
+      ],
+      "title": "BlocoHtmlVisual",
+      "type": "object"
+    },
+    "BlocoKPI": {
+      "additionalProperties": false,
+      "description": "Indicador legado tipado preservado para leitura do contrato público v1.",
+      "properties": {
+        "change": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Change"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z]{3}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currency"
+        },
+        "format": {
+          "default": "number",
+          "enum": [
+            "number",
+            "currency",
+            "percent",
+            "text"
+          ],
+          "title": "Format",
+          "type": "string"
+        },
+        "label": {
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "period": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Period"
+        },
+        "type": {
+          "const": "kpi",
+          "default": "kpi",
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "label",
+        "value"
+      ],
+      "title": "BlocoKPI",
+      "type": "object"
+    },
+    "BlocoTabela": {
+      "additionalProperties": false,
+      "description": "Tabela cuja estrutura é validada antes de persistência ou publicação.",
+      "properties": {
+        "columns": {
+          "items": {
+            "$ref": "#/$defs/ColunaTabela"
+          },
+          "minItems": 1,
+          "title": "Columns",
+          "type": "array"
+        },
+        "rows": {
+          "items": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "type": "object"
+          },
+          "title": "Rows",
+          "type": "array"
+        },
+        "source_label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Label"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "type": {
+          "const": "table",
+          "default": "table",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "columns",
+        "rows"
+      ],
+      "title": "BlocoTabela",
+      "type": "object"
+    },
+    "ColunaTabela": {
+      "additionalProperties": false,
+      "description": "Descreve chave, rótulo e formatação de uma coluna tabular.",
+      "properties": {
+        "currency": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z]{3}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currency"
+        },
+        "key": {
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        },
+        "label": {
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "type": {
+          "default": "text",
+          "enum": [
+            "number",
+            "currency",
+            "percent",
+            "text"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "label"
+      ],
+      "title": "ColunaTabela",
+      "type": "object"
+    },
+    "EventoAndamentoDelta": {
+      "additionalProperties": false,
+      "description": "Entrega atualização operacional routing/commentary do endpoint da Iara.",
+      "properties": {
+        "conversa_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Conversa Id",
+          "type": "string"
+        },
+        "mensagem_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Mensagem Id",
+          "type": "string"
+        },
+        "sequencia": {
+          "minimum": 0,
+          "title": "Sequencia",
+          "type": "integer"
+        },
+        "solicitacao_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Solicitacao Id",
+          "type": "string"
+        },
+        "texto": {
+          "maxLength": 8000,
+          "minLength": 1,
+          "title": "Texto",
+          "type": "string"
+        },
+        "tipo": {
+          "const": "andamento.delta",
+          "title": "Tipo",
+          "type": "string"
+        }
+      },
+      "required": [
+        "solicitacao_id",
+        "conversa_id",
+        "mensagem_id",
+        "sequencia",
+        "tipo",
+        "texto"
+      ],
+      "title": "EventoAndamentoDelta",
+      "type": "object"
+    },
+    "EventoBlocoPronto": {
+      "additionalProperties": false,
+      "description": "Entrega bloco completo validado pelo contrato, inclusive HTML opaco da API de dados.\n\nPara `api_html`, a validação cobre somente o envelope e o tipo textual do campo;\no conteúdo não passa por validação semântica, filtragem ou reconstrução.",
+      "properties": {
+        "bloco": {
+          "discriminator": {
+            "mapping": {
+              "api_html": "#/$defs/BlocoHtmlApiDados",
+              "chart": "#/$defs/BlocoGrafico",
+              "code": "#/$defs/BlocoCodigo",
+              "html": "#/$defs/BlocoHtmlVisual",
+              "kpi": "#/$defs/BlocoKPI",
+              "kpi_group": "#/$defs/GrupoKPIs",
+              "table": "#/$defs/BlocoTabela"
+            },
+            "propertyName": "type"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/BlocoCodigo"
+            },
+            {
+              "$ref": "#/$defs/BlocoKPI"
+            },
+            {
+              "$ref": "#/$defs/GrupoKPIs"
+            },
+            {
+              "$ref": "#/$defs/BlocoTabela"
+            },
+            {
+              "$ref": "#/$defs/BlocoGrafico"
+            },
+            {
+              "$ref": "#/$defs/BlocoHtmlVisual"
+            },
+            {
+              "$ref": "#/$defs/BlocoHtmlApiDados"
+            }
+          ],
+          "title": "Bloco"
+        },
+        "conversa_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Conversa Id",
+          "type": "string"
+        },
+        "mensagem_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Mensagem Id",
+          "type": "string"
+        },
+        "sequencia": {
+          "minimum": 0,
+          "title": "Sequencia",
+          "type": "integer"
+        },
+        "solicitacao_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Solicitacao Id",
+          "type": "string"
+        },
+        "tipo": {
+          "const": "bloco.pronto",
+          "title": "Tipo",
+          "type": "string"
+        }
+      },
+      "required": [
+        "solicitacao_id",
+        "conversa_id",
+        "mensagem_id",
+        "sequencia",
+        "tipo",
+        "bloco"
+      ],
+      "title": "EventoBlocoPronto",
+      "type": "object"
+    },
+    "EventoRaciocinioDelta": {
+      "additionalProperties": false,
+      "description": "Entrega separadamente o campo incremental de raciocínio enviado pelo provider.",
+      "properties": {
+        "conversa_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Conversa Id",
+          "type": "string"
+        },
+        "mensagem_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Mensagem Id",
+          "type": "string"
+        },
+        "sequencia": {
+          "minimum": 0,
+          "title": "Sequencia",
+          "type": "integer"
+        },
+        "solicitacao_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Solicitacao Id",
+          "type": "string"
+        },
+        "texto": {
+          "maxLength": 8000,
+          "minLength": 1,
+          "title": "Texto",
+          "type": "string"
+        },
+        "tipo": {
+          "const": "raciocinio.delta",
+          "title": "Tipo",
+          "type": "string"
+        }
+      },
+      "required": [
+        "solicitacao_id",
+        "conversa_id",
+        "mensagem_id",
+        "sequencia",
+        "tipo",
+        "texto"
+      ],
+      "title": "EventoRaciocinioDelta",
+      "type": "object"
+    },
+    "EventoSolicitacaoCancelada": {
+      "additionalProperties": false,
+      "description": "Confirma que o gestor cancelou a solicitação em andamento.",
+      "properties": {
+        "conversa_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Conversa Id",
+          "type": "string"
+        },
+        "mensagem_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Mensagem Id",
+          "type": "string"
+        },
+        "sequencia": {
+          "minimum": 0,
+          "title": "Sequencia",
+          "type": "integer"
+        },
+        "solicitacao_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Solicitacao Id",
+          "type": "string"
+        },
+        "tipo": {
+          "const": "solicitacao.cancelada",
+          "title": "Tipo",
+          "type": "string"
+        }
+      },
+      "required": [
+        "solicitacao_id",
+        "conversa_id",
+        "mensagem_id",
+        "sequencia",
+        "tipo"
+      ],
+      "title": "EventoSolicitacaoCancelada",
+      "type": "object"
+    },
+    "EventoSolicitacaoConcluida": {
+      "additionalProperties": false,
+      "description": "Marca o encerramento bem-sucedido da resposta.",
+      "properties": {
+        "conversa_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Conversa Id",
+          "type": "string"
+        },
+        "mensagem_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Mensagem Id",
+          "type": "string"
+        },
+        "sequencia": {
+          "minimum": 0,
+          "title": "Sequencia",
+          "type": "integer"
+        },
+        "solicitacao_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Solicitacao Id",
+          "type": "string"
+        },
+        "tipo": {
+          "const": "solicitacao.concluida",
+          "title": "Tipo",
+          "type": "string"
+        }
+      },
+      "required": [
+        "solicitacao_id",
+        "conversa_id",
+        "mensagem_id",
+        "sequencia",
+        "tipo"
+      ],
+      "title": "EventoSolicitacaoConcluida",
+      "type": "object"
+    },
+    "EventoSolicitacaoFalhou": {
+      "additionalProperties": false,
+      "description": "Expõe código estável, orientação clara e possibilidade de nova tentativa.",
+      "properties": {
+        "codigo": {
+          "enum": [
+            "unauthenticated",
+            "forbidden",
+            "not_found",
+            "validation_error",
+            "rate_limited",
+            "source_unavailable",
+            "model_unavailable",
+            "timeout",
+            "internal_error"
+          ],
+          "title": "Codigo",
+          "type": "string"
+        },
+        "conversa_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Conversa Id",
+          "type": "string"
+        },
+        "mensagem": {
+          "minLength": 1,
+          "title": "Mensagem",
+          "type": "string"
+        },
+        "mensagem_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Mensagem Id",
+          "type": "string"
+        },
+        "pode_tentar_novamente": {
+          "title": "Pode Tentar Novamente",
+          "type": "boolean"
+        },
+        "sequencia": {
+          "minimum": 0,
+          "title": "Sequencia",
+          "type": "integer"
+        },
+        "solicitacao_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Solicitacao Id",
+          "type": "string"
+        },
+        "tipo": {
+          "const": "solicitacao.falhou",
+          "title": "Tipo",
+          "type": "string"
+        }
+      },
+      "required": [
+        "solicitacao_id",
+        "conversa_id",
+        "mensagem_id",
+        "sequencia",
+        "tipo",
+        "codigo",
+        "mensagem",
+        "pode_tentar_novamente"
+      ],
+      "title": "EventoSolicitacaoFalhou",
+      "type": "object"
+    },
+    "EventoSolicitacaoIniciada": {
+      "additionalProperties": false,
+      "description": "Confirma ao cliente que o Backend iniciou o processamento da solicitação.",
+      "properties": {
+        "conversa_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Conversa Id",
+          "type": "string"
+        },
+        "mensagem_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Mensagem Id",
+          "type": "string"
+        },
+        "sequencia": {
+          "minimum": 0,
+          "title": "Sequencia",
+          "type": "integer"
+        },
+        "solicitacao_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Solicitacao Id",
+          "type": "string"
+        },
+        "tipo": {
+          "const": "solicitacao.iniciada",
+          "title": "Tipo",
+          "type": "string"
+        }
+      },
+      "required": [
+        "solicitacao_id",
+        "conversa_id",
+        "mensagem_id",
+        "sequencia",
+        "tipo"
+      ],
+      "title": "EventoSolicitacaoIniciada",
+      "type": "object"
+    },
+    "EventoSolicitacaoStatus": {
+      "additionalProperties": false,
+      "description": "Apresenta ao gestor uma etapa de processamento em linguagem simples.",
+      "properties": {
+        "conversa_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Conversa Id",
+          "type": "string"
+        },
+        "mensagem": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Mensagem",
+          "type": "string"
+        },
+        "mensagem_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Mensagem Id",
+          "type": "string"
+        },
+        "sequencia": {
+          "minimum": 0,
+          "title": "Sequencia",
+          "type": "integer"
+        },
+        "solicitacao_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Solicitacao Id",
+          "type": "string"
+        },
+        "tipo": {
+          "const": "solicitacao.status",
+          "title": "Tipo",
+          "type": "string"
+        }
+      },
+      "required": [
+        "solicitacao_id",
+        "conversa_id",
+        "mensagem_id",
+        "sequencia",
+        "tipo",
+        "mensagem"
+      ],
+      "title": "EventoSolicitacaoStatus",
+      "type": "object"
+    },
+    "EventoTextoDelta": {
+      "additionalProperties": false,
+      "description": "Entrega um trecho novo de texto da resposta progressiva.",
+      "properties": {
+        "conversa_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Conversa Id",
+          "type": "string"
+        },
+        "mensagem_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Mensagem Id",
+          "type": "string"
+        },
+        "sequencia": {
+          "minimum": 0,
+          "title": "Sequencia",
+          "type": "integer"
+        },
+        "solicitacao_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Solicitacao Id",
+          "type": "string"
+        },
+        "texto": {
+          "minLength": 1,
+          "title": "Texto",
+          "type": "string"
+        },
+        "tipo": {
+          "const": "texto.delta",
+          "title": "Tipo",
+          "type": "string"
+        }
+      },
+      "required": [
+        "solicitacao_id",
+        "conversa_id",
+        "mensagem_id",
+        "sequencia",
+        "tipo",
+        "texto"
+      ],
+      "title": "EventoTextoDelta",
+      "type": "object"
+    },
+    "EventoTextoProgresso": {
+      "additionalProperties": false,
+      "description": "Entrega o delta.content mais recente como prévia transitória de processamento.\n\nEste evento não representa a resposta pública validada e não deve ser persistido\nno histórico, em logs nem no contexto de solicitações futuras.",
+      "properties": {
+        "conversa_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Conversa Id",
+          "type": "string"
+        },
+        "mensagem_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Mensagem Id",
+          "type": "string"
+        },
+        "sequencia": {
+          "minimum": 0,
+          "title": "Sequencia",
+          "type": "integer"
+        },
+        "solicitacao_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Solicitacao Id",
+          "type": "string"
+        },
+        "texto": {
+          "maxLength": 8000,
+          "minLength": 1,
+          "title": "Texto",
+          "type": "string"
+        },
+        "tipo": {
+          "const": "texto.progresso",
+          "title": "Tipo",
+          "type": "string"
+        }
+      },
+      "required": [
+        "solicitacao_id",
+        "conversa_id",
+        "mensagem_id",
+        "sequencia",
+        "tipo",
+        "texto"
+      ],
+      "title": "EventoTextoProgresso",
+      "type": "object"
+    },
+    "GrupoKPIs": {
+      "additionalProperties": false,
+      "description": "Agrupa indicadores relacionados sob um título opcional no contrato v1.",
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/BlocoKPI"
+          },
+          "minItems": 1,
+          "title": "Items",
+          "type": "array"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "type": {
+          "const": "kpi_group",
+          "default": "kpi_group",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "items"
+      ],
+      "title": "GrupoKPIs",
+      "type": "object"
+    },
+    "SerieGrafico": {
+      "additionalProperties": false,
+      "description": "Representa uma série e sua cor opcional validada no contrato público.\n\nO Backend valida as cores recebidas do serviço antes de persistir ou emitir o\nbloco. O Frontend usa seu token categórico quando ``cor`` não é informado.",
+      "properties": {
+        "color": {
+          "anyOf": [
+            {
+              "pattern": "^#[0-9A-Fa-f]{6}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Color"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z]{3}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currency"
+        },
+        "format": {
+          "default": "number",
+          "enum": [
+            "number",
+            "currency",
+            "percent"
+          ],
+          "title": "Format",
+          "type": "string"
+        },
+        "key": {
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        },
+        "label": {
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "label"
+      ],
+      "title": "SerieGrafico",
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "discriminator": {
+    "mapping": {
+      "andamento.delta": "#/$defs/EventoAndamentoDelta",
+      "bloco.pronto": "#/$defs/EventoBlocoPronto",
+      "raciocinio.delta": "#/$defs/EventoRaciocinioDelta",
+      "solicitacao.cancelada": "#/$defs/EventoSolicitacaoCancelada",
+      "solicitacao.concluida": "#/$defs/EventoSolicitacaoConcluida",
+      "solicitacao.falhou": "#/$defs/EventoSolicitacaoFalhou",
+      "solicitacao.iniciada": "#/$defs/EventoSolicitacaoIniciada",
+      "solicitacao.status": "#/$defs/EventoSolicitacaoStatus",
+      "texto.delta": "#/$defs/EventoTextoDelta",
+      "texto.progresso": "#/$defs/EventoTextoProgresso"
+    },
+    "propertyName": "tipo"
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/EventoSolicitacaoIniciada"
+    },
+    {
+      "$ref": "#/$defs/EventoSolicitacaoStatus"
+    },
+    {
+      "$ref": "#/$defs/EventoTextoProgresso"
+    },
+    {
+      "$ref": "#/$defs/EventoRaciocinioDelta"
+    },
+    {
+      "$ref": "#/$defs/EventoAndamentoDelta"
+    },
+    {
+      "$ref": "#/$defs/EventoTextoDelta"
+    },
+    {
+      "$ref": "#/$defs/EventoBlocoPronto"
+    },
+    {
+      "$ref": "#/$defs/EventoSolicitacaoConcluida"
+    },
+    {
+      "$ref": "#/$defs/EventoSolicitacaoFalhou"
+    },
+    {
+      "$ref": "#/$defs/EventoSolicitacaoCancelada"
+    }
+  ]
+}

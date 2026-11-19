@@ -14,11 +14,15 @@ O gestor não escolhe nem vê provider ou modelo. O Backend pode persistir a ide
 
 Para dados empresariais, a fonte selecionada é o Grafana MCP. O Backend consulta ferramentas de leitura autorizadas e encaminha resultados necessários ao Model Gateway; a LLM interpreta e apresenta esses resultados nos blocos tipados da Iara. Não há acesso direto da aplicação ao banco empresarial nem análise espontânea. A LLM só descreve tendências ou calcula indicadores quando o gestor pedir explicitamente, usando dados retornados pela consulta autorizada; não inventa valores nem causas. Transporte, autenticação, catálogo de ferramentas e acesso ao MCP permanecem pendentes. Desenvolvimento e testes usam fixtures JSON sintéticas; elas também são a fonte padrão da demonstração por período prolongado. Consultas reais exigem autorização explícita.
 
-HTML arbitrário do modelo nunca é injetado na página. Blocos `text` podem conter Markdown, renderizado pelo Frontend como elementos semânticos com HTML bruto desabilitado e URLs validadas; imagens remotas da resposta não são carregadas. Até contrato tipado/versionado e sanitização isolada existirem, HTML recebido como texto não é interpretado.
+O Frontend apresenta Markdown em `text` sem executar HTML bruto. JSON, código, HTML solto e fences permanecem como texto. Somente o HTML posterior a `iara-visuals` segue em `api_html`, na mensagem v2, para o iframe isolado. O renderer permite os scripts e recursos desse HTML; o iframe não recebe `allow-same-origin`, cookies ou credenciais da aplicação. Blocos legados `html` e `code` são apresentados literalmente.
 
 ## Conteúdo de mensagem
 
-Uma resposta é uma lista ordenada de blocos discriminados. Os tipos previstos são texto, KPI, grupo de KPIs, tabela, gráfico, erro e processamento. Cada tipo precisa de um discriminador explícito e de campos definidos por esquema; campos desconhecidos devem ser rejeitados na entrada confiável ou tratados pelo fallback seguro da UI, sem renderizar o payload cru.
+### Fonte e distribuição dos schemas compartilhados
+
+Os schemas canônicos v1 e v2 são versionados em `Iara/contracts` neste repositório. Em um workspace com checkouts separados de Backend e Frontend, execute `Iara/scripts/exportarContratos.ps1 -workspaceRoot <raiz-do-workspace>` para copiar os quatro arquivos à pasta comum `<raiz-do-workspace>/contracts`. O script valida JSON e confirma os hashes SHA-256, sem reconstruir os schemas. A cópia do workspace é gerada a partir da revisão versionada; não a edite como fonte independente.
+
+Uma resposta é uma lista ordenada de blocos discriminados: `text`, `code`, `kpi`, `kpi_group`, `table`, `chart`, `html`, `api_html`, `error` e `processing`. Cada tipo tem um discriminador público e campos definidos no schema da versão da mensagem. O Backend valida o envelope público e os blocos tipados legados, enquanto preserva o conteúdo de `text` e o HTML recebido em `api_html`.
 
 - Preserve o ID, o tipo, a ordem e os dados necessários de cada bloco ao salvar e reabrir a conversa.
 - Valores numéricos devem carregar unidade e precisão adequadas. Valores comparativos devem identificar período e contexto; proveniência deve ser declarada quando houver fonte analítica.

@@ -51,6 +51,9 @@
       "kpi_group",
       "table",
       "chart",
+      "html",
+      "api_html",
+      "code",
       "error",
       "processing"
     ]
@@ -215,7 +218,7 @@
       "solicitacao.falhou",
       "solicitacao.cancelada"
     ],
-    "streaming_event_schema": "contracts/eventos-sse-v1.schema.json",
+    "streaming_event_schema": "contracts/eventos-sse-v2.schema.json",
     "internal_query_result_contract": "Backend/app/contrato_consulta.py",
     "default_test_provider": "fake",
     "live_provider_test": "explicit-opt-in",

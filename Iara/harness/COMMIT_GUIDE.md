@@ -8,15 +8,15 @@ Use commits para registrar pontos de controle revisaveis no historico Git. Um po
 <tipo>(<escopo>): <descricao>
 ```
 
-Tipos e escopos estao em [`config/commit-policy.json`](config/commit-policy.json). Escreva a descricao em portugues, curta, especifica e iniciada por verbo no infinitivo.
+Tipos e escopos estao em [`config/commit-policy.json`](config/commit-policy.json). Escreva a descricao em portugues, curta e especifica, iniciada por letra maiuscula e descrevendo o resultado concluido.
 
 Exemplos:
 
 ```text
-docs(decisoes): registrar o fluxo de autenticacao do MVP
-feat(conversas): persistir mensagens e blocos analiticos
-fix(streaming): permitir nova tentativa apos desconexao
-test(gateway): cobrir normalizacao de falhas do provider
+docs(decisoes): Fluxo de autenticacao do MVP registrado
+feat(conversas): Mensagens e blocos analiticos persistidos
+fix(streaming): Nova tentativa apos desconexao habilitada
+test(gateway): Normalizacao de falhas do provider verificada
 ```
 
 O escopo entre parenteses e opcional quando o tipo ja deixa a area clara. Nao use uma unica mensagem generica para esconder varias mudancas sem relacao.
@@ -44,7 +44,7 @@ git -C Backend commit -m "feat(conversas): persistir mensagens e blocos analitic
 git -C Frontend add src e2e
 git -C Frontend commit -m "feat(conversas): retomar historico pela API"
 
-git -C .. add -- Iara/harness/config/commit-policy.json Iara/harness/COMMIT_GUIDE.md Iara/harness/README.md Iara/scripts/validate-harness.py Iara/AGENTS.md
+git -C .. add -- Iara/harness/config/commit-policy.json Iara/harness/COMMIT_GUIDE.md Iara/harness/README.md Iara/scripts/validate-harness.py Iara/scripts/exportarContratos.ps1 Iara/contracts Iara/AGENTS.md Iara/README.md
 git -C .. commit -m "docs(harness): definir checkpoints de commit"
 ```
 
@@ -54,7 +54,7 @@ Substitua os caminhos de exemplo pela lista explicita de arquivos da mudanca. Ev
 
 Nunca inclua `.env`, credenciais, bancos SQLite de runtime/teste, logs, caches, artefatos gerados, dados reais da empresa ou conteudo privado de conversas. Nao use `--amend`, force push ou reescrita de historico compartilhado sem pedido explicito.
 
-O Harness compartilhado em `Iara/harness/` nao tem um repositorio Git proprio. No workspace atual, ele pertence ao Git externo em `C:/projects`; portanto, registre mudancas compartilhadas nesse historico com uma lista explicita de arquivos sob `Iara/harness/`, `Iara/scripts/`, `Iara/AGENTS.md` ou `Iara/README.md`. Nunca use `git add .` ou `git add Iara` nesse repositorio abrangente. As copias locais do Harness podem ser registradas nos commits de Backend e Frontend quando a mudanca pertence a esses componentes.
+O Harness e os contratos compartilhados vivem em `Iara/` neste repositorio. Ao registrar mudancas compartilhadas, use a raiz Git do checkout atual e limite o stage a caminhos explicitos sob `Iara/harness/`, `Iara/scripts/`, `Iara/contracts/`, `Iara/AGENTS.md` ou `Iara/README.md`. Nunca use `git add .` ou `git add Iara` nesse repositorio abrangente. As copias locais do Harness podem ser registradas nos commits de Backend e Frontend quando a mudanca pertence a esses componentes.
 
 ## Registro no handoff
 

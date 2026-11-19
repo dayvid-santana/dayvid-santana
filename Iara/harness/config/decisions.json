@@ -59,6 +59,17 @@
       "source": "Grafana MCP",
       "access_status": "deferred-until-final-mvp-stage"
     },
+    "public_contracts": {
+      "status": "approved-and-versioned-on-feature-branch",
+      "value": "Os schemas públicos v1 e v2 são mantidos em Iara/contracts neste repositório. Em workspaces com Backend e Frontend separados, Iara/scripts/exportarContratos.ps1 gera a cópia comum contracts/ no workspace. O $schema permanece com JSON Schema 2020-12. O mensagem-v2 define ErroHttp e EnvelopeErro para HTTP 401, 403, 404 e 422; o HTTP 503 de /api/v1/health permanece fora desse envelope.",
+      "scope": "public-message-and-sse-contracts-shared-by-backend-and-frontend",
+      "source": "Decisões do usuário em 19/11/2026 para a OLZ-150.",
+      "evidence": [
+        "contracts/eventos-sse-v2.schema.json",
+        "contracts/mensagem-v2.schema.json",
+        "scripts/exportarContratos.ps1"
+      ]
+    },
     "context_contract": {
       "status": "approved-and-internal-schema-defined",
       "value": "Internal consultation result contract stays backend-only and preserves approved completeness, partial-data, provenance and fail-closed rules",

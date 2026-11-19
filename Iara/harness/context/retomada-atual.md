@@ -1,6 +1,8 @@
 # Retomada atual
 
-Atualizado em 16/10/2026. O provider ativo do MVP é a API dedicada da Iara, acessada pelo Model Gateway. As decisões duráveis ficam em `harness/context/estado-do-projeto.md`; o roteiro está em `docs/fases-do-projeto.md` no diretório de documentos do projeto.
+Atualizado em 19/11/2026. A OLZ-150 e suas subtarefas OLZ-157 a OLZ-160 constam como finalizadas no Jira. Os contratos compartilhados v1 e v2 estão versionados em `contracts/` neste repositório; `scripts/exportarContratos.ps1` distribui a cópia para workspaces com checkouts separados. A branch `feat/olz150ContratosCanonicos` reúne a fonte canônica e sua documentação. O próximo passo de integração é coordenar a incorporação dessa branch ao fluxo principal deste repositório. Não confunda a cópia gerada no workspace com a fonte canônica versionada.
+
+O provider ativo do MVP é a API dedicada da Iara, acessada pelo Model Gateway. As decisões duráveis ficam em `harness/context/estado-do-projeto.md`; o roteiro está em `docs/fases-do-projeto.md` no diretório de documentos do projeto.
 
 ## Frentes em andamento
 

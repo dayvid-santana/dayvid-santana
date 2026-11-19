@@ -8,7 +8,7 @@ A Iara é uma aplicação conversacional para gestores. Ela entende a pergunta, 
 - **Backend:** FastAPI, Pydantic e SQLite local para a demonstração. Controla sessão, conversas, mensagens, erros e comunicação com o Model Gateway.
 - **Model Gateway:** abstrai o modelo usado. O provider falso é o padrão local e de testes; o provider LLM do MVP é o endpoint da Iara, acessado pelo cliente LangChain compatível com Chat Completions no Backend.
 - **Fonte de dados:** fixtures JSON sintéticas no ambiente atual. O adapter do Grafana MCP real será integrado na etapa final do MVP.
-- **Contratos:** mensagem pública v1 e payloads SSE compartilhados ficam em `contracts/`; o contrato interno de consulta e completude é exclusivo do Backend.
+- **Contratos:** os schemas públicos v1 e v2 ficam versionados em `contracts/` neste repositório. Para um workspace com Backend e Frontend separados, execute `Iara/scripts/exportarContratos.ps1 -workspaceRoot <raiz-do-workspace>` para copiar os quatro schemas à pasta compartilhada `contracts/` do workspace; o script informa a revisão e os hashes exportados.
 - **Painel administrativo:** `/admin`, disponível somente em localhost no modo de desenvolvimento. Mostra saúde, logs técnicos sanitizados e a fila de erros, sem acesso às conversas.
 - **Ambiente local:** Docker Compose conecta Frontend e Backend para desenvolvimento e testes integrados; a API fica privada, o SQLite de desenvolvimento persiste em volume, e o smoke usa provider fake e dados isolados.
 
